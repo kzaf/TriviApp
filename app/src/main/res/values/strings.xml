@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">TriviApp</string>
 
-    <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_repeat_password">Re enter Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_google">Login with Google</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_sign_up_google">Sign up with Google</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
 </resources>

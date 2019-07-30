@@ -1,11 +1,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight"> <!--Theme.AppCompat.Light.DarkActionBar -->
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="android:textColorPrimary">@color/textBlack</item>
+
+        <!-- font for the entire app -->
+        <item name="android:fontFamily">@font/paddis_handwritten</item>
+
+    </style>
+
+    <style name="AppThemeDark" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryNight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
+        <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="android:textColorPrimary">@color/textWhite</item>
+
+        <!-- font for the entire app -->
+        <item name="android:fontFamily">@font/paddis_handwritten</item>
+
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">

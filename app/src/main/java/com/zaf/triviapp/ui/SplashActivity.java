@@ -1,4 +1,4 @@
-package com.zaf.triviapp;
+package com.zaf.triviapp.ui;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -9,9 +9,11 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
+import com.zaf.triviapp.R;
+
 public class SplashActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 2500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +23,7 @@ public class SplashActivity extends AppCompatActivity {
 
         hideSystemUI();
 
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Paddis_Handwritten.ttf");
-
         TextView triviApp_tv = findViewById(R.id.splash_text);
-        triviApp_tv.setTypeface(typeface);
         triviApp_tv.setText(Html.fromHtml("<font color=#0031AA>Trivi</font><font color=#AD0000>App</font>"));
 
 
@@ -32,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Create an Intent that will start the Main-Activity.
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
             }
