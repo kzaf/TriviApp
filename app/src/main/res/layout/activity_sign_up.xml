@@ -112,28 +112,5 @@
             app:strokeColor="@color/black_overlay"
             app:strokeWidth="2dp" />
 
-        <TextView
-            android:id="@+id/signup_or_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="or"
-            android:textSize="18sp" />
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/signup_with_google_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:text="@string/action_sign_up_google"
-            android:textColor="@color/black_overlay"
-            android:textSize="18sp"
-            app:backgroundTint="@color/colorAccentRedPale"
-            app:cornerRadius="8dp"
-            app:rippleColor="#33AAAAAA"
-            app:strokeColor="@color/black_overlay"
-            app:strokeWidth="2dp" />
-
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

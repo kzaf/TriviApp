@@ -26,8 +26,13 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:support-v4:28.0.0'
 
-
+    // Firebase Auth
     implementation 'com.google.firebase:firebase-auth:16.0.5'
+
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
+    // Dynamic Toasts
+    implementation 'com.pranavpandey.android:dynamic-toasts:1.3.0'
 
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
