@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.zaf.triviapp.MainActivity;
 import com.zaf.triviapp.R;
 
 import java.util.Arrays;
@@ -55,7 +53,7 @@ public class LoginAuth extends AppCompatActivity {
             if (resultCode == RESULT_OK){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Toast.makeText(this, "" + user.getEmail(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginAuth.this, MainActivity.class);
+                Intent intent = new Intent(LoginAuth.this, SelectCategoryActivity.class);
                 intent.putExtra("LoggedUser", user);
                 startActivity(intent);
                 finish();

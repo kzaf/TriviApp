@@ -1,7 +1,6 @@
 package com.zaf.triviapp.ui;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,6 @@ import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
-import com.zaf.triviapp.MainActivity;
 import com.zaf.triviapp.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -32,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Create an Intent that will start the Main-Activity.
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(SplashActivity.this, SelectCategoryActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
             }
