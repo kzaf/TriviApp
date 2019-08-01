@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
-    <color name="colorPrimaryDark">#C4C4C4</color>
+    <color name="colorPrimaryDark">#72FFFFFF</color>
     <color name="textBlack">#000</color>
 
     <color name="colorPrimaryNight">#1D1D1D</color>
@@ -10,9 +10,6 @@
 
     <color name="colorAccentRed">#AD0000</color>
     <color name="colorAccentBlue">#0031AA</color>
-
-    <color name="colorAccentRedPale">#9FFF9191</color>
-    <color name="colorAccentBluePale">#9E91B0FF</color>
 
     <color name="black_overlay">#66000000</color>
 </resources>
