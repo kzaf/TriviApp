@@ -8,16 +8,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.models.Categories;
+import com.zaf.triviapp.models.Category;
 
 import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder>{
 
     final private CategoriesAdapterListItemClickListener mOnClickListener;
-    private List<Categories> categoriesList;
+    private List<Category> categoriesList;
 
-    public CategoriesAdapter(CategoriesAdapterListItemClickListener mOnClickListener, List<Categories> categoriesList) {
+    public CategoriesAdapter(CategoriesAdapterListItemClickListener mOnClickListener, List<Category> categoriesList) {
         this.mOnClickListener = mOnClickListener;
         this.categoriesList = categoriesList;
     }

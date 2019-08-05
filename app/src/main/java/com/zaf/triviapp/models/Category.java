@@ -1,10 +1,10 @@
 package com.zaf.triviapp.models;
 
-public class Categories {
+public class Category {
     private String name;
     private int id;
 
-    public Categories(String name, int id) {
+    public Category(String name, int id) {
         this.name = name;
         this.id = id;
     }

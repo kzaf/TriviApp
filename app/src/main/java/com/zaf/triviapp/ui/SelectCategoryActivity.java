@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +20,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
-import com.zaf.triviapp.models.Categories;
+import com.zaf.triviapp.models.CategoriesList;
+import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 
@@ -39,7 +39,7 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     Toolbar toolbar;
     ProgressDialog progressDialog;
     RecyclerView categoriesRecyclerView;
-    ArrayList<Categories> categoriesList;
+    ArrayList<Category> categoriesList;
 
 
     @Override
@@ -100,34 +100,33 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     private void fetchCategories() {
 
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
-        Call<List<Categories>> call = service.getAllCategories(); // Get all categories request
+        Call<CategoriesList> call = service.getAllCategories(); // Get all categories request
 
-        call.enqueue(new Callback<List<Categories>>() {
+        call.enqueue(new Callback<CategoriesList>() {
             @Override
-            public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
+            public void onResponse(Call<CategoriesList> call, Response<CategoriesList> response) {
                 progressDialog.dismiss();
-                generateCategoriesList(response.body());
+                generateCategoriesList(response.body().getCategory());
                 if (response.body() != null) {
-                    Toast.makeText(SelectCategoryActivity.this, "body empty", Toast.LENGTH_SHORT).show();
-                    categoriesList = new ArrayList<>(response.body());
+                    categoriesList = (ArrayList<Category>) response.body().getCategory();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Categories>> call, Throwable t) {
+            public void onFailure(Call<CategoriesList> call, Throwable t) {
                 progressDialog.dismiss();
             }
         });
     }
 
-    private void generateCategoriesList(List<Categories> categoriesList) {
+    private void generateCategoriesList(List<Category> categoriesList) {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(SelectCategoryActivity.this));
         categoriesRecyclerView.setAdapter(new CategoriesAdapter(this, categoriesList));
     }
 
     @Override
     public void onListItemClick(int item) {
-        Toast.makeText(this, "AAAAAAAA", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, ""+categoriesList.get(item).getName(), Toast.LENGTH_SHORT).show();
 //        Intent intent = new Intent(this, DetailsScreenActivity.class); TODO:
 //        intent.putExtra("Cake", cakeList.get(item));
 //
