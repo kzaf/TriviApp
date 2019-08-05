@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/categories_menu_scores"
+        android:id="@+id/category_details_scores"
         android:title="Scores"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/categories_menu_settings"
+        android:id="@+id/category_details_settings"
         android:title="Settings"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/categories_menu_login"
-        android:title="Login"
+        android:id="@+id/category_details_refresh"
+        android:title="Refresh"
         app:showAsAction="never"/>
 
 </menu>

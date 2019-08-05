@@ -13,14 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.CategoryDetailsActivity"></activity>
         <activity
             android:name=".ui.LoginAuth"
             android:label="@string/title_activity_login_auth"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.SelectCategoryActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
