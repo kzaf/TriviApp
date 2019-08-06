@@ -62,8 +62,8 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         TextView selectCategoryLabel= findViewById(R.id.select_category_label);
-        toolbarTitle.setText(Html.fromHtml("<font color=#0031AA>Trivi</font><font color=#AD0000>App</font>"));
-        selectCategoryLabel.setText(Html.fromHtml("<font color=#0031AA>Select </font><font color=#AD0000>Category</font>"));
+        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -101,7 +101,7 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
 
     private void initializeDialog() {
         progressDialog = new ProgressDialog(SelectCategoryActivity.this);
-        progressDialog.setMessage("Loading categories..");
+        progressDialog.setMessage(getResources().getString(R.string.loading_categories));
         progressDialog.show();
     }
 

@@ -14,6 +14,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".ui.GameplayActivity"
+            android:parentActivityName=".ui.CategoryDetailsActivity">
+            </activity>
+        <activity
             android:name=".ui.CategoryDetailsActivity"
             android:parentActivityName=".ui.SelectCategoryActivity">
         </activity>
