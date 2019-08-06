@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_CATEGORY = "selected_category";
     Toolbar toolbar;
     TextView categoryName;
+    ImageView selectedCategoryImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,10 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category_details);
 
         toolbarOptions();
-
         Category selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
+
+        selectedCategoryImage = findViewById(R.id.category_details_image);
+        selectedCategoryImage.setImageResource(getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName()));
 
         categoryName = findViewById(R.id.selected_category_name);
         categoryName.setText(selectedCategory.getName());

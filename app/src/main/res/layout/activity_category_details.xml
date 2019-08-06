@@ -59,12 +59,12 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/category_details_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10sp"
                     android:scaleType="fitXY"
-                    app:srcCompat="@drawable/mathematics" />
+                    app:srcCompat="@drawable/t19" />
 
                 <TextView
                     android:id="@+id/selected_category_name"
