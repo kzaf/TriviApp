@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,9 +43,19 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
     }
 
+
     private void toolbarOptions() {
         toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.category_details_menu_items);
+
+        ImageView back = findViewById(R.id.back_button);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText(Html.fromHtml("<font color=#0031AA>Trivi</font><font color=#AD0000>App</font>"));

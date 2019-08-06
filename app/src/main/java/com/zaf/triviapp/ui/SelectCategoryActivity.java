@@ -134,7 +134,6 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
 
     @Override
     public void onListItemClick(int item) {
-        Toast.makeText(this, ""+categoriesList.get(item).getName(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, CategoryDetailsActivity.class);
         intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
 

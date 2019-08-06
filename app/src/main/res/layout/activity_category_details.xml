@@ -12,7 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        app:contentInsetStart="5dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView
             android:id="@+id/imageView"
