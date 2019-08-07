@@ -118,7 +118,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         else type = null;
 
         if(difficulty.equals("Any Difficulty")) difficulty = null;
-        else difficulty.toLowerCase();
+        else difficulty = difficulty.toLowerCase();
 
         Call<QuestionList> call = service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
 
