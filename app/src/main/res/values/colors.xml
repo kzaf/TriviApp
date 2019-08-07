@@ -11,5 +11,7 @@
     <color name="colorAccentRed">#AD0000</color>
     <color name="colorAccentBlue">#0031AA</color>
 
+    <color name="orange">#FF6F00</color>
+    <color name="green">#1B5E20</color>
     <color name="black_overlay">#66000000</color>
 </resources>

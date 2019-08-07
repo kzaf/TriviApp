@@ -2,14 +2,13 @@ package com.zaf.triviapp.ui;
 
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,11 +32,14 @@ import java.util.LinkedList;
 public class CategoryDetailsActivity extends AppCompatActivity {
 
     public static final String SELECTED_CATEGORY = "selected_category";
+    public static final String DIFFICULTY = "difficulty";
+    public static final String TYPE = "type";
     Toolbar toolbar;
-    TextView categoryName;
-    ImageView selectedCategoryImage;
+    TextView categoryName, toolbarTitle;
+    ImageView selectedCategoryImage, back;
     PieChart mChart;
     LinearLayout play;
+    NiceSpinner difficulty, type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,34 +48,41 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
         final Category selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
 
+        categoryName = findViewById(R.id.selected_category_name);
+        mChart = findViewById(R.id.piechart);
+        difficulty = findViewById(R.id.nice_spinner_difficulty);
+        type = findViewById(R.id.nice_spinner_type);
+        toolbar = findViewById(R.id.toolbar);
+        toolbarTitle = findViewById(R.id.toolbar_title);
+        play = findViewById(R.id.play_button);
+        selectedCategoryImage = findViewById(R.id.category_details_image);
+        back = findViewById(R.id.back_button);
+
         toolbarOptions();
         spinnersOptions();
         chartOptions();
         backgroundPictureOptions(selectedCategory);
 
-        categoryName = findViewById(R.id.selected_category_name);
         categoryName.setText(selectedCategory.getName());
 
-        play = findViewById(R.id.play_button);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CategoryDetailsActivity.this, GameplayActivity.class);
                 intent.putExtra(SELECTED_CATEGORY, selectedCategory);
+                intent.putExtra(DIFFICULTY, difficulty.getSelectedItem().toString());
+                intent.putExtra(TYPE, type.getSelectedItem().toString());
 
                 startActivity(intent);
             }
         });
-
     }
 
     private void backgroundPictureOptions(Category selectedCategory) {
-        selectedCategoryImage = findViewById(R.id.category_details_image);
         selectedCategoryImage.setImageResource(getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName()));
     }
 
     private void chartOptions() {
-        mChart = findViewById(R.id.piechart);
         mChart.setNoDataText(getResources().getString(R.string.no_chart));
         Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
 
@@ -82,20 +91,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void spinnersOptions() {
-        NiceSpinner difficulty = findViewById(R.id.nice_spinner_difficulty);
         difficulty.attachDataSource(new LinkedList<>(Arrays.asList("Easy", "Medium", "Hard")));
-
-        NiceSpinner type = findViewById(R.id.nice_spinner_type);
         type.attachDataSource(new LinkedList<>(Arrays.asList("Any Type", "Multiple Choice", "True/False")));
     }
 
-
     private void toolbarOptions() {
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.category_details_menu_items);
-
-        ImageView back = findViewById(R.id.back_button);
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,8 +103,9 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             }
         });
 
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+
+        toolbar.inflateMenu(R.menu.category_details_menu_items);
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

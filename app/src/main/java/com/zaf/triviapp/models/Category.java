@@ -30,7 +30,11 @@ public class Category implements Parcelable {
     };
 
     public String getName() {
-        return name;
+        if(name.contains(":")){
+            return name.split(": ")[1];
+        }else{
+            return name;
+        }
     }
 
     public void setName(String name) {
