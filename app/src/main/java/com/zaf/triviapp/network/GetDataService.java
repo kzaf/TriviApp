@@ -1,9 +1,7 @@
 package com.zaf.triviapp.network;
 
 import com.zaf.triviapp.models.CategoriesList;
-import com.zaf.triviapp.models.Question;
-
-import java.util.List;
+import com.zaf.triviapp.models.QuestionList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -14,5 +12,7 @@ public interface GetDataService {
     Call<CategoriesList> getAllCategories();
 
     @GET("/api.php?amount=10")
-    Call<List<Question>> getQuestions(@Query("category") int category, @Query("difficulty") String difficulty, @Query("type") String type);
+    Call<QuestionList> getQuestions(@Query("category") int category,
+                                    @Query("difficulty") String difficulty,
+                                    @Query("type") String type);
 }

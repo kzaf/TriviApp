@@ -91,7 +91,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void spinnersOptions() {
-        difficulty.attachDataSource(new LinkedList<>(Arrays.asList("Easy", "Medium", "Hard")));
+        difficulty.attachDataSource(new LinkedList<>(Arrays.asList("Any Difficulty", "Easy", "Medium", "Hard")));
         type.attachDataSource(new LinkedList<>(Arrays.asList("Any Type", "Multiple Choice", "True/False")));
     }
 

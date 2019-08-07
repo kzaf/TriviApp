@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
@@ -17,6 +18,7 @@ import com.zaf.triviapp.R;
 import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
+import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 
@@ -39,6 +41,7 @@ public class GameplayActivity extends AppCompatActivity {
     LinearLayout secondTwoButtons;
     Category selectedCategory;
     String difficulty, type;
+    ArrayList<Question> questionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +77,6 @@ public class GameplayActivity extends AppCompatActivity {
         initializeDialog();
         toolbarOptions();
         fetchQuestions();
-
-        if(type.equals("True/False")){
-            secondTwoButtons.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void toolbarOptions() {
@@ -108,20 +107,38 @@ public class GameplayActivity extends AppCompatActivity {
     private void fetchQuestions() {
 
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
-        Call<List<Question>> call = service.getQuestions(selectedCategory.getId(), difficulty, type); // Get questions request
 
-        call.enqueue(new Callback<List<Question>>() {
+        if(type.equals("True/False")){
+            type = "boolean";
+        }else if(type.equals("Multiple Choice")){
+            type = "multiple";
+        }else{
+            type = null;
+        }
+
+        if(difficulty.equals("Easy")){
+            difficulty = "easy";
+        }else if(difficulty.equals("Medium")){
+            difficulty = "medium";
+        }else if(difficulty.equals("Hard")){
+            difficulty = "hard";
+        }else{
+            difficulty = null;
+        }
+
+        Call<QuestionList> call = service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
+
+        call.enqueue(new Callback<QuestionList>() {
             @Override
-            public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
+            public void onResponse(Call<QuestionList> call, Response<QuestionList> response) {
                 progressDialog.dismiss();
 //                generateCategoriesList(response.body().getCategory());
-//                if (response.body() != null) {
-//                    categoriesList = (ArrayList<Category>) response.body().getCategory();
-//                }
+                if (response.body() != null) {
+                    questionList = (ArrayList<Question>) response.body().getTrivia_questions();
+                }
             }
-
             @Override
-            public void onFailure(Call<List<Question>> call, Throwable t) {
+            public void onFailure(Call<QuestionList> call, Throwable t) {
                 progressDialog.dismiss();
             }
         });

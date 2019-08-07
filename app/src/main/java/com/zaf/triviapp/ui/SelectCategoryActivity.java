@@ -119,7 +119,6 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
                     categoriesList = (ArrayList<Category>) response.body().getCategory();
                 }
             }
-
             @Override
             public void onFailure(Call<CategoriesList> call, Throwable t) {
                 progressDialog.dismiss();
