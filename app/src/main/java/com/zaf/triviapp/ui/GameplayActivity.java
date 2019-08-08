@@ -1,6 +1,9 @@
 package com.zaf.triviapp.ui;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +12,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.plattysoft.leonids.ParticleSystem;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
@@ -67,7 +72,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         answer2 = findViewById(R.id.answer2);
         answer3 = findViewById(R.id.answer3);
         answer4 = findViewById(R.id.answer4);
-
         button1 = findViewById(R.id.play_button);
         button2 = findViewById(R.id.play_button2);
         button3 = findViewById(R.id.play_button3);
@@ -284,8 +288,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void checkAnswerCorrection(TextView answer, LinearLayout button) {
 
-
-
         button1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         button2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         button3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
@@ -296,6 +298,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         if(answerText.equals(answerCorrect)){
             button.setBackgroundColor(getResources().getColor(R.color.green));
+            particlesEffect(button);
             scoreCorrectAnswers++;
         }else{
             ArrayList<TextView> questions = new ArrayList<>();
@@ -305,13 +308,15 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             questions.add(answer4);
             for (int j=0; j<questions.size(); j++){
                 if(questions.get(j).getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
-                    ((LinearLayout) questions.get(j).getParent()).setBackgroundColor(getResources().getColor(R.color.green));
+                    //((LinearLayout) questions.get(j).getParent()).setBackgroundColor(getResources().getColor(R.color.green));
+                    manageBlinkEffect((LinearLayout) questions.get(j).getParent());
                 }
             }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 if(questionIndex == 10){
                     alertDialogEndGame(scoreCorrectAnswers);
                     return;
@@ -319,5 +324,24 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 populateQuestions(questionList);
             }
         }, 2000);
+    }
+
+    private void particlesEffect(LinearLayout button){
+        new ParticleSystem(this, 10, getResources().getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
+                .setSpeedRange(0.2f, 0.5f)
+                .oneShot(button, 10);
+    }
+
+    private void manageBlinkEffect(LinearLayout parent) {
+        ObjectAnimator anim = ObjectAnimator.ofInt(parent,
+                "backgroundColor",
+                getResources().getColor(R.color.green),
+                Color.WHITE,
+                getResources().getColor(R.color.green));
+        anim.setDuration(500);
+        anim.setEvaluator(new ArgbEvaluator());
+        anim.setRepeatMode(Animation.RESTART);
+        anim.setRepeatCount(2);
+        anim.start();
     }
 }

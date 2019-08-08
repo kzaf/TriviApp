@@ -53,6 +53,8 @@ dependencies {
     // Fancy gif dialog
     implementation 'com.github.Shashank02051997:FancyGifDialog-Android:1.2'
 
+    implementation 'com.plattysoft.leonids:LeonidsLib:1.3.2'
+
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
