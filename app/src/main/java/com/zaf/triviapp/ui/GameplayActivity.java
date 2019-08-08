@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,7 +18,6 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
@@ -25,7 +25,6 @@ import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +38,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     public static final String DIFFICULTY = "difficulty";
     public static final String TYPE = "type";
     private int questionIndex = 0;
+    private int scoreCorrectAnswers = 0;
     Toolbar toolbar;
     ProgressDialog progressDialog;
     ImageView back, cancel;
@@ -89,14 +89,14 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialog();
+                alertDialogExit();
             }
         });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialog();
+                alertDialogExit();
             }
         });
 
@@ -128,7 +128,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 progressDialog.dismiss();
                 if (response.body() != null) {
                     questionList = (ArrayList<Question>) response.body().getTrivia_questions();
-                    populateQuestions(questionList, questionIndex);
+                    populateQuestions(questionList);
                 }
             }
             @Override
@@ -138,19 +138,14 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         });
     }
 
-    private void populateQuestions(ArrayList<Question> questionList, int i){
+    private void populateQuestions(ArrayList<Question> questionList){
 
-        if(i == 10){
-            Toast.makeText(this, "DONE", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        button1.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        button2.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        button3.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        button4.setBackground(getResources().getDrawable(R.drawable.custom_border));
 
-        answer1.setTextColor(getResources().getColor(R.color.textBlack));
-        answer2.setTextColor(getResources().getColor(R.color.textBlack));
-        answer3.setTextColor(getResources().getColor(R.color.textBlack));
-        answer4.setTextColor(getResources().getColor(R.color.textBlack));
-
-        switch (questionList.get(i).getDifficulty()){
+        switch (questionList.get(questionIndex).getDifficulty()){
             case "medium":
                 gameplayDifficultyLevel.setText("Medium");
                 gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
@@ -164,38 +159,62 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.green));
         }
 
-        List<String> mixedQuestions = questionList.get(i).getIncorrect_answers();
-        mixedQuestions.add(questionList.get(i).getCorrect_answer());
+        List<String> mixedQuestions = questionList.get(questionIndex).getIncorrect_answers();
+        mixedQuestions.add(questionList.get(questionIndex).getCorrect_answer());
         Collections.shuffle(mixedQuestions);
 
         // Question
-        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(i).getQuestion(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex).getQuestion(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
 
         // Answers
-        if(questionList.get(i).getType().equals("boolean")){
+        if(questionList.get(questionIndex).getType().equals("boolean")){
             secondTwoButtons.setVisibility(View.INVISIBLE);
-            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer1.setOnClickListener(this);
-            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer2.setOnClickListener(this);
         }else{
             secondTwoButtons.setVisibility(View.VISIBLE);
-            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer1.setOnClickListener(this);
-            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer2.setOnClickListener(this);
-            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer3.setOnClickListener(this);
-            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(i).getQuestion()));
+            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
             answer4.setOnClickListener(this);
         }
 
         // Step counter
-        gameplayStepNumber.setText(++i + "/10");
+        int step = questionIndex + 1;
+        gameplayStepNumber.setText(step + "/10");
 
+        questionIndex++;
     }
 
-    private void alertDialog(){
+    private void alertDialogEndGame(int score){
+        String message;
+        if(score==10) message = "Wow! You rock!";
+        else if(score<10 && score>5) message = "Well done!";
+        else if(score<5 && score>2) message = "You can do better";
+        else message = "Hmm.. Again?";
+        new FancyGifDialog.Builder(this)
+                .setTitle(message)
+                .setMessage("Your score is " + score + "/10")
+                .setPositiveBtnBackground("#b80c00")
+                .setPositiveBtnText("OK")
+                .setGifResource(R.drawable.cancel)
+                .isCancellable(false)
+                .OnPositiveClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+                        finish();
+                    }
+                })
+                .build();
+    }
+
+    private void alertDialogExit(){
         new FancyGifDialog.Builder(this)
                 .setTitle("Are you sure you want to give up?")
                 .setMessage("Score will not be saved if you leave the quiz!")
@@ -230,19 +249,19 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         switch (v.getId()) {
             case R.id.answer1:
-                checkAnswerCorrection(answer1);
+                checkAnswerCorrection(answer1, button1);
                 break;
 
             case R.id.answer2:
-                checkAnswerCorrection(answer2);
+                checkAnswerCorrection(answer2, button2);
                 break;
 
             case R.id.answer3:
-                checkAnswerCorrection(answer3);
+                checkAnswerCorrection(answer3, button3);
                 break;
 
             case R.id.answer4:
-                checkAnswerCorrection(answer4);
+                checkAnswerCorrection(answer4, button4);
                 break;
 
             default:
@@ -250,24 +269,38 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void checkAnswerCorrection(TextView answer) {
-        if(answer.getText().toString().equals(questionList.get(questionIndex).getCorrect_answer())){
-            answer1.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer2.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer3.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer4.setTextColor(getResources().getColor(R.color.colorAccentRed));
+    private void checkAnswerCorrection(TextView answer, LinearLayout button) {
 
-            answer.setTextColor(getResources().getColor(R.color.green));
+        if(questionIndex == 10){
+            Toast.makeText(this, "DONE", Toast.LENGTH_SHORT).show();
+            alertDialogEndGame(scoreCorrectAnswers);
+            return;
+        }
+
+        button1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        button2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        button3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        button4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+
+        if(answer.getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
+            button.setBackgroundColor(getResources().getColor(R.color.green));
+            scoreCorrectAnswers++;
         }else{
-            answer1.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer2.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer3.setTextColor(getResources().getColor(R.color.colorAccentRed));
-            answer4.setTextColor(getResources().getColor(R.color.colorAccentRed));
+            ArrayList<String> questions = new ArrayList<>();
+            questions.add(answer1.getText().toString());
+            questions.add(answer2.getText().toString());
+            questions.add(answer3.getText().toString());
+            questions.add(answer4.getText().toString());
+            for (int j=0; j<questions.size(); j++){
+                if(questions.get(j).equals(questionList.get(questionIndex-1).getCorrect_answer())){
+                    ((LinearLayout) answer1.getParent()).setBackgroundColor(getResources().getColor(R.color.green));
+                }
+            }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                populateQuestions(questionList, questionIndex++);
+                populateQuestions(questionList);
             }
         }, 2000);
     }
