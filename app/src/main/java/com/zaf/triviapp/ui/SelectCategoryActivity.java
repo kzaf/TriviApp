@@ -45,6 +45,7 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_category);
 
