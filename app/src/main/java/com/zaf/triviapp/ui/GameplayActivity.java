@@ -144,6 +144,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void populateQuestions(ArrayList<Question> questionList){
 
+        if (questionList.size() == 0){
+            errorDialog();
+            return;
+        }
+
         button1.setBackground(getResources().getDrawable(R.drawable.custom_border));
         button2.setBackground(getResources().getDrawable(R.drawable.custom_border));
         button3.setBackground(getResources().getDrawable(R.drawable.custom_border));
@@ -221,6 +226,23 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 .setPositiveBtnBackground("#b80c00")
                 .setPositiveBtnText("OK")
                 .setGifResource(gifImage)
+                .isCancellable(false)
+                .OnPositiveClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+                        finish();
+                    }
+                })
+                .build();
+    }
+
+    private void errorDialog(){
+        new FancyGifDialog.Builder(this)
+                .setTitle("Ooops.. something went wrong!")
+                .setMessage("Please refresh!")
+                .setPositiveBtnBackground("#b80c00")
+                .setPositiveBtnText("Back to Quiz!")
+                .setGifResource(R.drawable.error)
                 .isCancellable(false)
                 .OnPositiveClicked(new FancyGifDialogListener() {
                     @Override
