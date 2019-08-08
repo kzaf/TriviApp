@@ -194,16 +194,29 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void alertDialogEndGame(int score){
         String message;
-        if(score==10) message = "Wow! You rock!";
-        else if(score<10 && score>5) message = "Well done!";
-        else if(score<5 && score>2) message = "You can do better";
-        else message = "Hmm.. Again?";
+        int gifImage;
+        if(score==10){
+            message = "Wow! You rock!";
+            gifImage = R.drawable.wow;
+        }
+        else if(score<10 && score>=5){
+            message = "Well done!";
+            gifImage = R.drawable.welldone;
+        }
+        else if(score<5 && score>=2){
+            message = "You can do better";
+            gifImage = R.drawable.meh;
+        }
+        else{
+            message = "Hmm.. Again?";
+            gifImage = R.drawable.fail;
+        }
         new FancyGifDialog.Builder(this)
                 .setTitle(message)
                 .setMessage("Your score is " + score + "/10")
                 .setPositiveBtnBackground("#b80c00")
                 .setPositiveBtnText("OK")
-                .setGifResource(R.drawable.cancel)
+                .setGifResource(gifImage)
                 .isCancellable(false)
                 .OnPositiveClicked(new FancyGifDialogListener() {
                     @Override
@@ -271,35 +284,38 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void checkAnswerCorrection(TextView answer, LinearLayout button) {
 
-        if(questionIndex == 10){
-            Toast.makeText(this, "DONE", Toast.LENGTH_SHORT).show();
-            alertDialogEndGame(scoreCorrectAnswers);
-            return;
-        }
+
 
         button1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         button2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         button3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         button4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
 
-        if(answer.getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
+        String answerText = answer.getText().toString();
+        String answerCorrect = questionList.get(questionIndex-1).getCorrect_answer();
+
+        if(answerText.equals(answerCorrect)){
             button.setBackgroundColor(getResources().getColor(R.color.green));
             scoreCorrectAnswers++;
         }else{
-            ArrayList<String> questions = new ArrayList<>();
-            questions.add(answer1.getText().toString());
-            questions.add(answer2.getText().toString());
-            questions.add(answer3.getText().toString());
-            questions.add(answer4.getText().toString());
+            ArrayList<TextView> questions = new ArrayList<>();
+            questions.add(answer1);
+            questions.add(answer2);
+            questions.add(answer3);
+            questions.add(answer4);
             for (int j=0; j<questions.size(); j++){
-                if(questions.get(j).equals(questionList.get(questionIndex-1).getCorrect_answer())){
-                    ((LinearLayout) answer1.getParent()).setBackgroundColor(getResources().getColor(R.color.green));
+                if(questions.get(j).getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
+                    ((LinearLayout) questions.get(j).getParent()).setBackgroundColor(getResources().getColor(R.color.green));
                 }
             }
         }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if(questionIndex == 10){
+                    alertDialogEndGame(scoreCorrectAnswers);
+                    return;
+                }
                 populateQuestions(questionList);
             }
         }, 2000);
