@@ -1,6 +1,7 @@
 package com.zaf.triviapp.ui;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,13 +57,16 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbarTitle = findViewById(R.id.toolbar_title);
         play = findViewById(R.id.play_button);
-        selectedCategoryImage = findViewById(R.id.category_details_image);
         back = findViewById(R.id.back_button);
 
         toolbarOptions();
         spinnersOptions();
         chartOptions();
-        backgroundPictureOptions(selectedCategory);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            selectedCategoryImage = findViewById(R.id.category_details_image);
+            backgroundPictureOptions(selectedCategory);
+        }
 
         categoryName.setText(selectedCategory.getName());
 
