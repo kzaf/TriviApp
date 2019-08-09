@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,12 +37,15 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String DIFFICULTY = "difficulty";
     public static final String TYPE = "type";
+    public static final String DIFFICULTY_SELECTION = "difficulty_selection";
+    public static final String TYPE_SELECTION = "type_selection";
     Toolbar toolbar;
     TextView categoryName, toolbarTitle;
     ImageView selectedCategoryImage, back;
     PieChart mChart;
     LinearLayout play;
     NiceSpinner difficulty, type;
+    String difficultySelection, typeSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
