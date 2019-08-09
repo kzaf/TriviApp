@@ -2,7 +2,9 @@ package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
+import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.network.GetDataService;
@@ -38,13 +39,15 @@ import retrofit2.Response;
 public class SelectCategoryActivity extends AppCompatActivity implements CategoriesAdapter.CategoriesAdapterListItemClickListener{
 
     public static final String SELECTED_CATEGORY = "selected_category";
+    public static final String CATEGORIES_LIST = "categories_list";
+    public static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
     Toolbar toolbar;
     ProgressDialog progressDialog;
     RecyclerView categoriesRecyclerView;
     ArrayList<Category> categoriesList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_category);
@@ -53,8 +56,46 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
 
         categoriesRecyclerView = findViewById(R.id.categories_recycler_view);
 
-        initializeDialog();
-        fetchCategories();
+        if(savedInstanceState != null){
+            // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
+            // It's a hack to delay the onRestoreInstanceState
+            new Handler().postDelayed(new Runnable() {
+                @Override public void run() {
+                    categoriesRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(CATEGORIES_LAYOUT_MANAGER));
+                }
+            }, 300);
+            categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
+            generateCategoriesList(categoriesList);
+        }else{
+            initializeDialog();
+            fetchCategories();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(CATEGORIES_LIST, categoriesList);
+        outState.putParcelable(CATEGORIES_LAYOUT_MANAGER, categoriesRecyclerView.getLayoutManager().onSaveInstanceState());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+                categoriesRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(CATEGORIES_LAYOUT_MANAGER));
+            }
+        }, 300);
+        categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
+        generateCategoriesList(categoriesList);
+    }
+
+    @Override
+    public void onListItemClick(int item) {
+        Intent intent = new Intent(this, CategoryDetailsActivity.class);
+        intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
+
+        startActivity(intent);
     }
 
     private void toolbarOptions() {
@@ -130,13 +171,5 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     private void generateCategoriesList(List<Category> categoriesList) {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(SelectCategoryActivity.this));
         categoriesRecyclerView.setAdapter(new CategoriesAdapter(this, categoriesList));
-    }
-
-    @Override
-    public void onListItemClick(int item) {
-        Intent intent = new Intent(this, CategoryDetailsActivity.class);
-        intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
-
-        startActivity(intent);
     }
 }

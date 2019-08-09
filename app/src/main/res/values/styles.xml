@@ -8,8 +8,6 @@
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="android:textColorPrimary">@color/textBlack</item>
 
-        <item name="android:windowBackground">@color/textWhite</item>
-
         <!-- font for the entire app -->
         <item name="android:fontFamily">@font/paddis_handwritten</item>
 

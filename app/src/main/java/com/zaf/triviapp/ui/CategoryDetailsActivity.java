@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
 import org.angmarch.views.NiceSpinner;
