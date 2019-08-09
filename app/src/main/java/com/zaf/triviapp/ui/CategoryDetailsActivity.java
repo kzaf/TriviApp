@@ -19,6 +19,10 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +33,7 @@ import com.zaf.triviapp.models.Category;
 
 import org.angmarch.views.NiceSpinner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -45,7 +50,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     PieChart mChart;
     LinearLayout play;
     NiceSpinner difficulty, type;
-    String difficultySelection, typeSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

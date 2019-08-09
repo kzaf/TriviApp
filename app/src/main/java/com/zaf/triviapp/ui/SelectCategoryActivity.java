@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mlsdev.animatedrv.AnimatedRecyclerView;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
 import com.zaf.triviapp.login.LoginAuth;
@@ -41,6 +43,8 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String CATEGORIES_LIST = "categories_list";
     public static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
+    public static final String DIALOG = "dialog";
+    SwipeRefreshLayout mSwipeRefreshLayout;
     Toolbar toolbar;
     ProgressDialog progressDialog;
     RecyclerView categoriesRecyclerView;
@@ -53,6 +57,14 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
         setContentView(R.layout.activity_select_category);
 
         toolbarOptions();
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchCategories();
+            }
+        });
 
         categoriesRecyclerView = findViewById(R.id.categories_recycler_view);
 
@@ -67,7 +79,6 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
             categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
             generateCategoriesList(categoriesList);
         }else{
-            initializeDialog();
             fetchCategories();
         }
     }
@@ -148,6 +159,7 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     }
 
     private void fetchCategories() {
+        initializeDialog();
 
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
         Call<CategoriesList> call = service.getAllCategories(); // Get all categories request
@@ -159,17 +171,26 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
                 generateCategoriesList(response.body().getCategory());
                 if (response.body() != null) {
                     categoriesList = (ArrayList<Category>) response.body().getCategory();
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<CategoriesList> call, Throwable t) {
                 progressDialog.dismiss();
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
 
     private void generateCategoriesList(List<Category> categoriesList) {
+        CategoriesAdapter adapter = new CategoriesAdapter(this, categoriesList);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(SelectCategoryActivity.this));
-        categoriesRecyclerView.setAdapter(new CategoriesAdapter(this, categoriesList));
+        categoriesRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        categoriesRecyclerView.scheduleLayoutAnimation();
     }
 }

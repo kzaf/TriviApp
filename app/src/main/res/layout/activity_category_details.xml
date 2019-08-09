@@ -41,10 +41,10 @@
     <View
         android:id="@+id/toolbar_shadow"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="3sp"
+        android:background="@drawable/toolbar_dropshadow"
         app:layout_anchor="@id/toolbar"
-        app:layout_anchorGravity="bottom|end"
-        android:background="@drawable/toolbar_dropshadow" />
+        app:layout_anchorGravity="bottom|end" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -69,7 +69,6 @@
                     android:id="@+id/category_details_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
                     android:scaleType="fitXY"
                     app:srcCompat="@drawable/t19" />
 

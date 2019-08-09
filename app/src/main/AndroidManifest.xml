@@ -24,7 +24,8 @@
         <activity
             android:name=".login.LoginAuth"
             android:label="@string/title_activity_login_auth"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.SelectCategoryActivity">
         </activity>
         <activity
             android:name=".ui.SelectCategoryActivity"

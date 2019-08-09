@@ -59,7 +59,7 @@ public class LoginAuth extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }else{
-                Toast.makeText(this, ""+response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
 
