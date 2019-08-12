@@ -19,6 +19,11 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.gohn.nativedialog.ButtonClickListener;
 import com.gohn.nativedialog.ButtonType;
 import com.gohn.nativedialog.NDialog;
@@ -29,6 +34,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
@@ -62,7 +70,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         back = findViewById(R.id.back_button);
 
         toolbarOptions();
-        spinnersOptions();
         chartOptions();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -137,14 +144,33 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void chartOptions() {
+
+        PieChart mChart = findViewById(R.id.piechart);
+
         mChart.setNoDataText(getResources().getString(R.string.no_chart));
         Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
-
         paint.setColor(getResources().getColor(R.color.colorAccentRed));
-        mChart.invalidate();
-    }
 
-    private void spinnersOptions() {
+        List<PieEntry> pieChartEntries = new ArrayList<>();
+        pieChartEntries.add(new PieEntry(24.0f, "Correct"));
+        pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
+
+        PieDataSet dataset = new PieDataSet(pieChartEntries, "");
+        dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+        dataset.setSliceSpace(0);
+
+        Description description = new Description();
+        description.setText("This is Pie Chart");
+
+        mChart.setDescription(description);
+
+        mChart.setDrawHoleEnabled(false);
+        mChart.setUsePercentValues(true);
+
+        PieData data = new PieData(dataset);
+        data.setValueFormatter(new PercentFormatter());
+
+        mChart.setData(data);
 
     }
 
