@@ -2,9 +2,9 @@ package com.zaf.triviapp.ui;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +19,9 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.gohn.nativedialog.ButtonClickListener;
+import com.gohn.nativedialog.ButtonType;
+import com.gohn.nativedialog.NDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -31,11 +30,7 @@ import com.zaf.triviapp.R;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
-import org.angmarch.views.NiceSpinner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class CategoryDetailsActivity extends AppCompatActivity {
 
@@ -44,12 +39,13 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     public static final String TYPE = "type";
     public static final String DIFFICULTY_SELECTION = "difficulty_selection";
     public static final String TYPE_SELECTION = "type_selection";
+    String difficulty = "Any Difficulty", type = "Any Type";
     Toolbar toolbar;
     TextView categoryName, toolbarTitle;
     ImageView selectedCategoryImage, back;
     PieChart mChart;
     LinearLayout play;
-    NiceSpinner difficulty, type;
+    NDialog nDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +56,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
         categoryName = findViewById(R.id.selected_category_name);
         mChart = findViewById(R.id.piechart);
-        difficulty = findViewById(R.id.nice_spinner_difficulty);
-        type = findViewById(R.id.nice_spinner_type);
         toolbar = findViewById(R.id.toolbar);
         toolbarTitle = findViewById(R.id.toolbar_title);
         play = findViewById(R.id.play_button);
@@ -81,14 +75,61 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CategoryDetailsActivity.this, GameplayActivity.class);
-                intent.putExtra(SELECTED_CATEGORY, selectedCategory);
-                intent.putExtra(DIFFICULTY, difficulty.getSelectedItem().toString());
-                intent.putExtra(TYPE, type.getSelectedItem().toString());
-
-                startActivity(intent);
+                bottomSheet(selectedCategory);
             }
         });
+    }
+
+    private void bottomSheet(final Category selectedCategory){
+        View dialogLayout = View.inflate(this, R.layout.gameplay_options_dialog, null);
+
+        nDialog = new NDialog(CategoryDetailsActivity.this, ButtonType.TWO_BUTTON);
+        nDialog.setIcon(R.drawable.triviapp_icon);
+        nDialog.setTitle("Select gameplay options");
+        nDialog.setCustomView(dialogLayout);
+
+        SwitchMultiButton mSwitchMultiButtonDifficulty = dialogLayout.findViewById(R.id.switch_difficulty);
+        mSwitchMultiButtonDifficulty.setText("Any Difficulty", "Easy", "Medium", "Hard").setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
+            @Override
+            public void onSwitch(int position, String tabText) {
+                difficulty = tabText;
+            }
+        });
+
+        SwitchMultiButton mSwitchMultiButtonType = dialogLayout.findViewById(R.id.switch_type);
+        mSwitchMultiButtonType.setText("Any Type", "Multiple Choice", "True/False").setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
+            @Override
+            public void onSwitch(int position, String tabText) {
+                type = tabText;
+            }
+        });
+
+        ButtonClickListener buttonClickListener = new ButtonClickListener() {
+            @Override
+            public void onClick(int button) {
+                switch (button) {
+                    case NDialog.BUTTON_POSITIVE:
+                        Intent intent = new Intent(CategoryDetailsActivity.this, GameplayActivity.class);
+                        intent.putExtra(SELECTED_CATEGORY, selectedCategory);
+                        intent.putExtra(DIFFICULTY, difficulty);
+                        intent.putExtra(TYPE, type);
+
+                        startActivity(intent);
+                        break;
+                    case NDialog.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        nDialog.setPositiveButtonText("Play!");
+        nDialog.setPositiveButtonTextColor(Color.BLUE);
+        nDialog.setPositiveButtonClickListener(buttonClickListener);
+
+        nDialog.setNegativeButtonText("Back");
+        nDialog.setNegativeButtonTextColor(Color.RED);
+        nDialog.setNegativeButtonClickListener(buttonClickListener);
+
+        nDialog.show();
     }
 
     private void backgroundPictureOptions(Category selectedCategory) {
@@ -104,8 +145,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void spinnersOptions() {
-        difficulty.attachDataSource(new LinkedList<>(Arrays.asList("Any Difficulty", "Easy", "Medium", "Hard")));
-        type.attachDataSource(new LinkedList<>(Arrays.asList("Any Type", "Multiple Choice", "True/False")));
+
     }
 
     private void toolbarOptions() {

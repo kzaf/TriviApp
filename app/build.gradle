@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // nice-spinner
-    implementation 'com.github.arcadefire:nice-spinner:1.4.3'
+    implementation 'lib.kingja.switchbutton:switchbutton:1.1.8'
 
     // Fancy gif dialog
     implementation 'com.github.Shashank02051997:FancyGifDialog-Android:1.2'
@@ -58,6 +58,9 @@ dependencies {
 
     // Recycler-View animation
     implementation "com.mlsdev.animatedrv:library:1.0.1"
+
+    // Easy native dialog
+    implementation 'com.github.Haegon:EasyNativeDialog-for-Android:0.3.0'
 
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
