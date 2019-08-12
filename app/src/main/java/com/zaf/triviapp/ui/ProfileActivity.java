@@ -1,0 +1,94 @@
+package com.zaf.triviapp.ui;
+
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.zaf.triviapp.R;
+import com.zaf.triviapp.adapters.CategoriesAdapter;
+import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
+import com.zaf.triviapp.login.LoginAuth;
+import com.zaf.triviapp.models.Category;
+
+import java.util.List;
+
+public class ProfileActivity extends AppCompatActivity {
+
+    Toolbar toolbar;
+    TextView toolbarTitle;
+    ImageView back;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
+
+        toolbar = findViewById(R.id.toolbar);
+        toolbarTitle = findViewById(R.id.toolbar_title);
+        back = findViewById(R.id.back_button);
+
+        toolbarOptions();
+    }
+
+    private void toolbarOptions() {
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+
+        toolbar.inflateMenu(R.menu.profile_menu_items);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if(menuItem.getItemId()==R.id.profile_settings)
+                    Toast.makeText(ProfileActivity.this, "Settings", Toast.LENGTH_SHORT).show();
+                else{
+                    if (FirebaseAuth.getInstance().getCurrentUser() == null){
+                        Intent intent = new Intent(ProfileActivity.this, LoginAuth.class);
+                        startActivity(intent);
+                    }else{
+                        AuthUI.getInstance()
+                                .signOut(ProfileActivity.this)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        //showSignInOptions();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                }
+                return false;
+            }
+        });
+    }
+
+    private void generateCategoriesList(List<Category> categoriesList) {
+        //TODO: Fix Adapter
+
+    }
+}

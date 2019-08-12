@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -45,8 +46,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String DIFFICULTY = "difficulty";
     public static final String TYPE = "type";
-    public static final String DIFFICULTY_SELECTION = "difficulty_selection";
-    public static final String TYPE_SELECTION = "type_selection";
+    SwipeRefreshLayout mSwipeRefreshLayout;
     String difficulty = "Any Difficulty", type = "Any Type";
     Toolbar toolbar;
     TextView categoryName, toolbarTitle;
@@ -83,6 +83,14 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheet(selectedCategory);
+            }
+        });
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout_details);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                chartOptions();
             }
         });
     }
@@ -144,6 +152,10 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void chartOptions() {
+//        TODO: Fix refresh
+//        if (mSwipeRefreshLayout.isRefreshing()) {
+//            mSwipeRefreshLayout.setRefreshing(false);
+//        }
 
         PieChart mChart = findViewById(R.id.piechart);
 
@@ -189,9 +201,9 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.categories_menu_scores)
-                    Toast.makeText(CategoryDetailsActivity.this, "Scores", Toast.LENGTH_SHORT).show();
-                else if(menuItem.getItemId()== R.id.categories_menu_settings)
+                if(menuItem.getItemId()==R.id.category_details_profile)
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                else if(menuItem.getItemId()== R.id.category_details_settings)
                     Toast.makeText(CategoryDetailsActivity.this, "Categories", Toast.LENGTH_SHORT).show();
                 else{
                     if (FirebaseAuth.getInstance().getCurrentUser() == null){

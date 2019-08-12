@@ -40,7 +40,6 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String CATEGORIES_LIST = "categories_list";
     public static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
-    public static final String DIALOG = "dialog";
     SwipeRefreshLayout mSwipeRefreshLayout;
     Toolbar toolbar;
     ProgressDialog progressDialog;
@@ -118,10 +117,12 @@ public class SelectCategoryActivity extends AppCompatActivity implements Categor
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.categories_menu_scores)
-                    Toast.makeText(SelectCategoryActivity.this, "Scores", Toast.LENGTH_SHORT).show();
+                if(menuItem.getItemId()==R.id.categories_menu_profile)
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 else if(menuItem.getItemId()== R.id.categories_menu_settings)
                     Toast.makeText(SelectCategoryActivity.this, "Categories", Toast.LENGTH_SHORT).show();
+                else if(menuItem.getItemId()== R.id.categories_menu_refresh)
+                    fetchCategories();
                 else{
                     if (FirebaseAuth.getInstance().getCurrentUser() == null){
                         Intent intent = new Intent(SelectCategoryActivity.this, LoginAuth.class);
