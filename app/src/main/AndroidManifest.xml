@@ -13,18 +13,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.ProfileActivity"></activity>
+        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsFragment" />
+        <activity android:name=".ui.ProfileActivity" />
         <activity
             android:name=".ui.GameplayActivity"
-            android:parentActivityName=".ui.CategoryDetailsActivity"></activity>
+            android:parentActivityName=".ui.CategoryDetailsActivity" />
         <activity
             android:name=".ui.CategoryDetailsActivity"
-            android:parentActivityName=".ui.SelectCategoryActivity"></activity>
+            android:parentActivityName=".ui.SelectCategoryActivity" />
         <activity
             android:name=".login.LoginAuth"
             android:label="@string/title_activity_login_auth"
             android:parentActivityName=".ui.SelectCategoryActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.SelectCategoryActivity"
             android:theme="@style/SplashTheme">

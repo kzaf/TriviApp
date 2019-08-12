@@ -1,6 +1,7 @@
 package com.zaf.triviapp.ui;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +32,7 @@ import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -42,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         back = findViewById(R.id.back_button);
 
         toolbarOptions();
+        chartOptions();
     }
 
     private void toolbarOptions() {
@@ -87,8 +97,38 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void chartOptions() {
+
+        PieChart mChart = findViewById(R.id.piechart_sum);
+
+        mChart.setNoDataText(getResources().getString(R.string.no_chart));
+        Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
+        paint.setColor(getResources().getColor(R.color.colorAccentRed));
+
+        List<PieEntry> pieChartEntries = new ArrayList<>();
+        pieChartEntries.add(new PieEntry(24.0f, "Correct"));
+        pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
+
+        PieDataSet dataset = new PieDataSet(pieChartEntries, "");
+        dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+        dataset.setSliceSpace(0);
+
+        Description description = new Description();
+        description.setText("This is Pie Chart");
+
+        mChart.setDescription(description);
+
+        mChart.setDrawHoleEnabled(false);
+        mChart.setUsePercentValues(true);
+
+        PieData data = new PieData(dataset);
+        data.setValueFormatter(new PercentFormatter());
+
+        mChart.setData(data);
+
+    }
+
     private void generateCategoriesList(List<Category> categoriesList) {
         //TODO: Fix Adapter
-
     }
 }

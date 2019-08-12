@@ -14,10 +14,10 @@
         <!-- Status bar stuff. -->
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowLightStatusBar">true</item>
-    </style>
 
-    <style name="AppTheme.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppTheme.BottomSheetStyle</item>
+        <!--Preference theme-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
     </style>
 
     <style name="AppTheme.BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
