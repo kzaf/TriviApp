@@ -123,12 +123,9 @@ public class SelectCategoryActivity extends AppCompatActivity
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.categories_menu_profile)
-                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                else if(menuItem.getItemId()== R.id.categories_menu_settings)
-                    startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                else if(menuItem.getItemId()== R.id.categories_menu_refresh)
-                    fetchCategories();
+                if(menuItem.getItemId()==R.id.categories_menu_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                else if(menuItem.getItemId()== R.id.categories_menu_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                else if(menuItem.getItemId()== R.id.categories_menu_refresh) fetchCategories();
                 else{
                     if (FirebaseAuth.getInstance().getCurrentUser() == null){
                         Intent intent = new Intent(SelectCategoryActivity.this, LoginAuth.class);

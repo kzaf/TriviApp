@@ -37,10 +37,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     sharedPref.setNightModeEnabled(true);
-                    restartApp();
+                    restartApp(SettingsActivity.class);
                 }else{
                     sharedPref.setNightModeEnabled(false);
-                    restartApp();
+                    restartApp(SettingsActivity.class);
                 }
             }
         });
@@ -48,8 +48,8 @@ public class SettingsActivity extends AppCompatActivity {
         toolbarOptions();
     }
 
-    private void restartApp(){
-        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+    private void restartApp(Class c){
+        Intent intent = new Intent(getApplicationContext(), c);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -61,6 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                restartApp(SelectCategoryActivity.class);
                 finish();
             }
         });
