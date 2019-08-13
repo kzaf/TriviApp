@@ -13,8 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".SettingsFragment" />
+        <activity android:name=".ui.SettingsActivity"/>
         <activity android:name=".ui.ProfileActivity" />
         <activity
             android:name=".ui.GameplayActivity"

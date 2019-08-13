@@ -6,7 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccentRed</item>
-        <item name="android:textColorPrimary">@color/textBlack</item>
+        <item name="backgroundcolor">@color/colorPrimary</item>
+        <item name="recyclerviewcolor">@color/colorPrimary</item>
+        <item name="textcolor">@color/textBlack</item>
+
+        <item name="android:textColorSecondary">@color/black_overlay</item>
 
         <!-- font for the entire app -->
         <item name="android:fontFamily">@font/paddis_handwritten</item>
@@ -14,59 +18,37 @@
         <!-- Status bar stuff. -->
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowLightStatusBar">true</item>
-
-        <!--Preference theme-->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-
     </style>
 
-    <style name="AppTheme.BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="behavior_hideable">true</item>
-        <item name="behavior_skipCollapsed">true</item>
-    </style>
-
-    <style name="LoginThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/white</item>
-    </style>
-
-    <style name="LoginThemeDark" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/black</item>
-    </style>
-
-    <style name="AppThemeDark" parent="Theme.AppCompat">
+    <style name="AppThemeDark" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryNight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
         <item name="colorAccent">@color/colorAccentRed</item>
-        <item name="android:textColorPrimary">@color/textWhite</item>
+        <item name="backgroundcolor">@color/colorPrimaryDarkNight</item>
+        <item name="recyclerviewcolor">@color/colorPrimaryDarkNight</item>
+        <item name="textcolor">@color/textWhite</item>
+
+        <item name="android:textColorSecondary">@color/textWhite</item>
 
         <!-- font for the entire app -->
         <item name="android:fontFamily">@font/paddis_handwritten</item>
 
+        <!-- Status bar stuff. -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
-    <!--<style name="FullscreenTheme" parent="AppTheme">-->
-        <!--<item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>-->
-        <!--<item name="android:windowActionBarOverlay">true</item>-->
-        <!--<item name="android:windowBackground">@null</item>-->
-        <!--<item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>-->
-        <!--<item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>-->
-    <!--</style>-->
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-    </style>
-
+    <!--Login Auth theme-->
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!--<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

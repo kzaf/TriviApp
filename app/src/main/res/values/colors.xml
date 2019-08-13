@@ -2,11 +2,11 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#72FFFFFF</color>
-    <color name="textBlack">#000</color>
+    <color name="textBlack">#3C3C3C</color>
 
     <color name="colorPrimaryNight">#1D1D1D</color>
     <color name="colorPrimaryDarkNight">#202020</color>
-    <color name="textWhite">#FFF</color>
+    <color name="textWhite">#D1D1D1</color>
 
     <color name="colorAccentRed">#AD0000</color>
     <color name="colorAccentBlue">#0031AA</color>

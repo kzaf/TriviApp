@@ -40,7 +40,7 @@ public class LoginAuth extends AppCompatActivity {
                 AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                 .setLogo(R.drawable.triviapp_icon)
-                .setTheme(R.style.LoginThemeLight)
+                .setTheme(R.style.AppTheme)
                 .build(), MY_REQUEST_CODE
         );
     }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/backgroundcolor"
     tools:context=".ui.GameplayActivity">
 
     <android.support.v7.widget.Toolbar
@@ -32,6 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="8sp"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -77,6 +80,7 @@
                     android:layout_weight="1"
                     android:paddingStart="10sp"
                     android:text="Mathematics"
+                    android:textColor="?attr/textcolor"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -113,7 +117,6 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -128,6 +131,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="TextView"
+                android:textColor="?attr/textcolor"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -163,8 +167,10 @@
                             android:layout_marginLeft="10sp"
                             android:gravity="center|start"
                             android:text="Play"
+                            android:textColor="?attr/textcolor"
                             android:textSize="18sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -184,8 +190,10 @@
                             android:layout_marginLeft="10sp"
                             android:gravity="center|start"
                             android:text="Play"
+                            android:textColor="?attr/textcolor"
                             android:textSize="18sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
 
                 </LinearLayout>
@@ -215,8 +223,10 @@
                             android:layout_marginLeft="10sp"
                             android:gravity="center|start"
                             android:text="Play"
+                            android:textColor="?attr/textcolor"
                             android:textSize="18sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -236,13 +246,18 @@
                             android:layout_marginLeft="10sp"
                             android:gravity="center|start"
                             android:text="Play"
+                            android:textColor="?attr/textcolor"
                             android:textSize="18sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
 
                 </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>

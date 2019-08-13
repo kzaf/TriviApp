@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
@@ -54,9 +55,13 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     PieChart mChart;
     LinearLayout play;
     NDialog nDialog;
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
+        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
+        else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_details);
 
@@ -201,31 +206,9 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.category_details_profile)
-                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                else if(menuItem.getItemId()== R.id.category_details_settings)
-                    Toast.makeText(CategoryDetailsActivity.this, "Categories", Toast.LENGTH_SHORT).show();
-                else{
-                    if (FirebaseAuth.getInstance().getCurrentUser() == null){
-                        Intent intent = new Intent(CategoryDetailsActivity.this, LoginAuth.class);
-                        startActivity(intent);
-                    }else{
-                        AuthUI.getInstance()
-                                .signOut(CategoryDetailsActivity.this)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        //showSignInOptions();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(CategoryDetailsActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                }
+                if(menuItem.getItemId()==R.id.category_details_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                else if(menuItem.getItemId()== R.id.category_details_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                else chartOptions();
                 return false;
             }
         });

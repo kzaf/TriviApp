@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/backgroundcolor"
     tools:context=".ui.ProfileActivity">
 
     <android.support.v7.widget.Toolbar
@@ -33,6 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="8sp"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -46,13 +48,180 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end" />
 
-    <fragment
-        android:id="@+id/activity_settings"
-        android:name="com.zaf.triviapp.SettingsFragment"
-        android:layout_marginTop="?attr/actionBarSize"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginRight="20sp"
+        android:layout_marginBottom="20sp"
+        android:orientation="vertical"
+        android:weightSum="12">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Account"
+                android:textColor="?attr/textcolor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/button_update_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_border"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:text="Update">
+
+                <TextView
+                    android:id="@+id/update_account_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10sp"
+                    android:gravity="center|start"
+                    android:text="Update"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/button_delete_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_border_red"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:text="Update">
+
+                <TextView
+                    android:id="@+id/delete_account_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10sp"
+                    android:gravity="center|start"
+                    android:text="Delete"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider6"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Score"
+                android:textColor="?attr/textcolor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/button_reset_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10sp"
+                android:layout_marginLeft="10sp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_border"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:text="Update">
+
+                <TextView
+                    android:id="@+id/reset_score_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10sp"
+                    android:gravity="center|start"
+                    android:text="Reset"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider7"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Night Mode"
+                android:textSize="18sp"
+                android:textColor="?attr/textcolor"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/theme_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider8"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|start"
+            android:text="About"
+            android:textColor="?attr/textcolor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 

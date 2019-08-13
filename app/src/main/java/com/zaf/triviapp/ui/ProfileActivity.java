@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -27,8 +26,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.adapters.CategoriesAdapter;
-import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
+import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
@@ -40,9 +38,13 @@ public class ProfileActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView toolbarTitle;
     ImageView back;
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
+        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
+        else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 

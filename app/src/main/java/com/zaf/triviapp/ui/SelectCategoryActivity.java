@@ -2,13 +2,11 @@ package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.SettingsActivity;
+import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.CategoriesList;
@@ -39,8 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SelectCategoryActivity extends AppCompatActivity
-        implements CategoriesAdapter.CategoriesAdapterListItemClickListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        implements CategoriesAdapter.CategoriesAdapterListItemClickListener {
 
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String CATEGORIES_LIST = "categories_list";
@@ -50,15 +47,18 @@ public class SelectCategoryActivity extends AppCompatActivity
     ProgressDialog progressDialog;
     RecyclerView categoriesRecyclerView;
     ArrayList<Category> categoriesList;
+    SharedPref sharedPref;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
+        sharedPref = new SharedPref(this);
+        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
+        else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_category);
 
         toolbarOptions();
-        setupSharedPreferences();
 
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -83,13 +83,6 @@ public class SelectCategoryActivity extends AppCompatActivity
         }else{
             fetchCategories();
         }
-    }
-
-    private void setupSharedPreferences(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Register the listener
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -157,7 +150,6 @@ public class SelectCategoryActivity extends AppCompatActivity
                     }
 
                 }
-
                 return false;
             }
         });
@@ -203,21 +195,5 @@ public class SelectCategoryActivity extends AppCompatActivity
         categoriesRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         categoriesRecyclerView.scheduleLayoutAnimation();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals("dark_mode")){
-            if(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_dark_mode))){
-                // TODO: Set dark mode
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister VisualizerActivity as an OnPreferenceChangedListener to avoid any memory leaks.
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".ui.SelectCategoryActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundcolor"
+    tools:context=".ui.SelectCategoryActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -26,6 +27,7 @@ tools:context=".ui.SelectCategoryActivity">
             android:layout_height="wrap_content"
             android:paddingLeft="8sp"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -81,6 +83,5 @@ tools:context=".ui.SelectCategoryActivity">
         </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

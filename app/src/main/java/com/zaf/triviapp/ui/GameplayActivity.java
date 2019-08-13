@@ -11,18 +11,17 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.plattysoft.leonids.ParticleSystem;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
@@ -51,11 +50,15 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     Category selectedCategory;
     String difficulty, type;
     ArrayList<Question> questionList;
+    SharedPref sharedPref;
     TextView toolbarTitle, gameplayCategoryName, gameplayDifficultyLevel, gameplayStepNumber,
             question, answer1, answer2, answer3, answer4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPref = new SharedPref(this);
+        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
+        else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 

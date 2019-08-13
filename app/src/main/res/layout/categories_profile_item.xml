@@ -19,6 +19,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textAllCaps="false"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -31,6 +32,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textSize="24sp"
             android:textStyle="bold" />
 

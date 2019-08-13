@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/backgroundcolor"
     tools:context=".ui.ProfileActivity">
 
     <android.support.v7.widget.Toolbar
@@ -33,6 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="8sp"
             android:text="TextView"
+            android:textColor="?attr/textcolor"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -77,6 +79,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="UserName"
+                    android:textColor="?attr/textcolor"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -86,6 +89,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="email"
+                    android:textColor="?attr/textcolor"
                     android:textSize="18sp" />
 
                 <com.github.mikephil.charting.charts.PieChart
