@@ -40,6 +40,8 @@ import com.zaf.triviapp.models.Category;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class CategoryDetailsActivity extends AppCompatActivity {
@@ -47,15 +49,17 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String DIFFICULTY = "difficulty";
     public static final String TYPE = "type";
-    SwipeRefreshLayout mSwipeRefreshLayout;
     String difficulty = "Any Difficulty", type = "Any Type";
-    Toolbar toolbar;
-    TextView categoryName, toolbarTitle;
-    ImageView selectedCategoryImage, back;
-    PieChart mChart;
-    LinearLayout play;
     NDialog nDialog;
     SharedPref sharedPref;
+    @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.selected_category_name) TextView categoryName;
+    @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.category_details_image) ImageView selectedCategoryImage;
+    @BindView(R.id.back_button) ImageView back;
+    @BindView(R.id.piechart) PieChart mChart;
+    @BindView(R.id.play_button) LinearLayout play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +69,14 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_details);
 
-        final Category selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
+        ButterKnife.bind(this);
 
-        categoryName = findViewById(R.id.selected_category_name);
-        mChart = findViewById(R.id.piechart);
-        toolbar = findViewById(R.id.toolbar);
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        play = findViewById(R.id.play_button);
-        back = findViewById(R.id.back_button);
+        final Category selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
 
         toolbarOptions();
         chartOptions();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            selectedCategoryImage = findViewById(R.id.category_details_image);
             backgroundPictureOptions(selectedCategory);
         }
 
@@ -91,7 +89,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout_details);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -161,8 +158,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 //        if (mSwipeRefreshLayout.isRefreshing()) {
 //            mSwipeRefreshLayout.setRefreshing(false);
 //        }
-
-        PieChart mChart = findViewById(R.id.piechart);
 
         mChart.setNoDataText(getResources().getString(R.string.no_chart));
         Paint paint =  mChart.getPaint(Chart.PAINT_INFO);

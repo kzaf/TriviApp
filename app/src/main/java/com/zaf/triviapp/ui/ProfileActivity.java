@@ -33,11 +33,14 @@ import com.zaf.triviapp.models.Category;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ProfileActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-    TextView toolbarTitle;
-    ImageView back;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.back_button) ImageView back;
     SharedPref sharedPref;
 
     @Override
@@ -48,9 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        toolbar = findViewById(R.id.toolbar);
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        back = findViewById(R.id.back_button);
+        ButterKnife.bind(this);
 
         toolbarOptions();
         chartOptions();

@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,16 +45,29 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     public static final String TYPE = "type";
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
-    Toolbar toolbar;
-    ProgressDialog progressDialog;
-    ImageView back, cancel;
-    LinearLayout secondTwoButtons, button1, button2, button3, button4;
     Category selectedCategory;
     String difficulty, type;
     ArrayList<Question> questionList;
     SharedPref sharedPref;
-    TextView toolbarTitle, gameplayCategoryName, gameplayDifficultyLevel, gameplayStepNumber,
-            question, answer1, answer2, answer3, answer4;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    ProgressDialog progressDialog;
+    @BindView(R.id.back_button) ImageView back;
+    @BindView(R.id.cancel_button) ImageView cancel;
+    @BindView(R.id.second_two_buttons) LinearLayout secondTwoButtons;
+    @BindView(R.id.play_button) LinearLayout button1;
+    @BindView(R.id.play_button2) LinearLayout button2;
+    @BindView(R.id.play_button3) LinearLayout button3;
+    @BindView(R.id.play_button4) LinearLayout button4;
+    @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.gameplay_selected_category_name) TextView gameplayCategoryName;
+    @BindView(R.id.gameplay_difficulty_level) TextView gameplayDifficultyLevel;
+    @BindView(R.id.gameplay_step_number) TextView gameplayStepNumber;
+    @BindView(R.id.question_text) TextView question;
+    @BindView(R.id.answer1) TextView answer1;
+    @BindView(R.id.answer2) TextView answer2;
+    @BindView(R.id.answer3) TextView answer3;
+    @BindView(R.id.answer4) TextView answer4;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +77,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 
-        toolbar = findViewById(R.id.toolbar);
-        back = findViewById(R.id.back_button);
-        cancel = findViewById(R.id.cancel_button);
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        gameplayCategoryName = findViewById(R.id.gameplay_selected_category_name);
-        gameplayDifficultyLevel = findViewById(R.id.gameplay_difficulty_level);
-        gameplayStepNumber = findViewById(R.id.gameplay_step_number);
-        secondTwoButtons = findViewById(R.id.second_two_buttons);
-        question = findViewById(R.id.question_text);
-        answer1 = findViewById(R.id.answer1);
-        answer2 = findViewById(R.id.answer2);
-        answer3 = findViewById(R.id.answer3);
-        answer4 = findViewById(R.id.answer4);
-        button1 = findViewById(R.id.play_button);
-        button2 = findViewById(R.id.play_button2);
-        button3 = findViewById(R.id.play_button3);
-        button4 = findViewById(R.id.play_button4);
+        ButterKnife.bind(this);
 
         selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
         difficulty = getIntent().getStringExtra(DIFFICULTY);
@@ -338,7 +337,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             questions.add(answer4);
             for (int j=0; j<questions.size(); j++){
                 if(questions.get(j).getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
-                    //((LinearLayout) questions.get(j).getParent()).setBackgroundColor(getResources().getColor(R.color.green));
                     manageBlinkEffect((LinearLayout) questions.get(j).getParent());
                 }
             }

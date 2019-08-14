@@ -13,22 +13,26 @@ import android.widget.TextView;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SettingsActivity extends AppCompatActivity {
 
-    TextView toolbarTitle;
-    ImageView back;
-    Switch themeSwitch;
+    @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.back_button) ImageView back;
+    @BindView(R.id.theme_switch) Switch themeSwitch;
     SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
-        //AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
         if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
         else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        themeSwitch = findViewById(R.id.theme_switch);
+
+        ButterKnife.bind(this);
+
         if(sharedPref.loadNightModeState()){
             themeSwitch.setChecked(true);
         }
@@ -55,9 +59,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void toolbarOptions() {
-        toolbarTitle = findViewById(R.id.toolbar_title);
-        back = findViewById(R.id.back_button);
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

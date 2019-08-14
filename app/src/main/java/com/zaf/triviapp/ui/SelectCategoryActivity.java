@@ -32,6 +32,8 @@ import com.zaf.triviapp.network.RetrofitClientInstance;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,12 +44,14 @@ public class SelectCategoryActivity extends AppCompatActivity
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String CATEGORIES_LIST = "categories_list";
     public static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    Toolbar toolbar;
     ProgressDialog progressDialog;
-    RecyclerView categoriesRecyclerView;
     ArrayList<Category> categoriesList;
     SharedPref sharedPref;
+    @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.categories_recycler_view) RecyclerView categoriesRecyclerView;
+    @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.select_category_label) TextView selectCategoryLabel;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -58,17 +62,16 @@ public class SelectCategoryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_category);
 
+        ButterKnife.bind(this);
+
         toolbarOptions();
 
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchCategories();
             }
         });
-
-        categoriesRecyclerView = findViewById(R.id.categories_recycler_view);
 
         if(savedInstanceState != null){
             // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
@@ -112,14 +115,9 @@ public class SelectCategoryActivity extends AppCompatActivity
     }
 
     private void toolbarOptions() {
-        toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.select_category_menu_items);
-
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        TextView selectCategoryLabel= findViewById(R.id.select_category_label);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
         selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
-
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
