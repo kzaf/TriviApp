@@ -1,7 +1,9 @@
 package com.zaf.triviapp.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
@@ -21,7 +23,10 @@ public class SettingsActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.theme_switch) Switch themeSwitch;
+    @BindView(R.id.vibrate_switch) Switch vibrateSwitch;
     private SharedPref sharedPref;
+    private Vibrator vibe;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,21 @@ public class SettingsActivity extends AppCompatActivity {
                 }else{
                     sharedPref.setNightModeEnabled(false);
                     restartApp(SettingsActivity.class);
+                }
+            }
+        });
+
+        if(sharedPref.loadVibrateState()) vibrateSwitch.setChecked(true);
+
+        vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    sharedPref.setVibrateEnabled(true);
+                    vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibe.vibrate(50);
+                }else{
+                    sharedPref.setVibrateEnabled(false);
                 }
             }
         });

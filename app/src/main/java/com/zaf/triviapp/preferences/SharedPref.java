@@ -19,4 +19,13 @@ public class SharedPref {
     public Boolean loadNightModeState(){
         return mySharedPref.getBoolean("NightMode", false);
     }
+
+    public void setVibrateEnabled(Boolean state){
+        mySharedPref.edit().putBoolean("Vibrate", state).apply();
+    }
+
+    public Boolean loadVibrateState(){
+        return mySharedPref.getBoolean("Vibrate", false);
+    }
+
 }

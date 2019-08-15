@@ -333,10 +333,12 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         if(answerText.contentEquals(answerCorrect.toString())){
             button.setBackgroundColor(getResources().getColor(R.color.green));
             particlesEffect(button);
-            vibe.vibrate(50);
+            if(sharedPref.loadVibrateState()) vibe.vibrate(50);
+            else vibe.vibrate(0);
             scoreCorrectAnswers++;
         }else{
-            vibe.vibrate(300);
+            if(sharedPref.loadVibrateState()) vibe.vibrate(300);
+            else vibe.vibrate(0);
             ArrayList<TextView> questions = new ArrayList<>();
             questions.add(answer1);
             questions.add(answer2);
