@@ -21,7 +21,7 @@ public class SettingsActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.theme_switch) Switch themeSwitch;
-    SharedPref sharedPref;
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

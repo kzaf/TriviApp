@@ -41,12 +41,12 @@ import retrofit2.Response;
 public class SelectCategoryActivity extends AppCompatActivity
         implements CategoriesAdapter.CategoriesAdapterListItemClickListener {
 
-    public static final String SELECTED_CATEGORY = "selected_category";
-    public static final String CATEGORIES_LIST = "categories_list";
-    public static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
-    ProgressDialog progressDialog;
-    ArrayList<Category> categoriesList;
-    SharedPref sharedPref;
+    private static final String SELECTED_CATEGORY = "selected_category";
+    private static final String CATEGORIES_LIST = "categories_list";
+    private static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
+    private ProgressDialog progressDialog;
+    private ArrayList<Category> categoriesList;
+    private SharedPref sharedPref;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.categories_recycler_view) RecyclerView categoriesRecyclerView;

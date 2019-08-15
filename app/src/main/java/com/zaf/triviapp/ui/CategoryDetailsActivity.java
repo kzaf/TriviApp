@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -46,17 +47,17 @@ import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class CategoryDetailsActivity extends AppCompatActivity {
 
-    public static final String SELECTED_CATEGORY = "selected_category";
-    public static final String DIFFICULTY = "difficulty";
-    public static final String TYPE = "type";
-    String difficulty = "Any Difficulty", type = "Any Type";
-    NDialog nDialog;
-    SharedPref sharedPref;
+    private static final String SELECTED_CATEGORY = "selected_category";
+    private static final String DIFFICULTY = "difficulty";
+    private static final String TYPE = "type";
+    private String difficulty = "Any Difficulty", type = "Any Type";
+    private NDialog nDialog;
+    private SharedPref sharedPref;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.selected_category_name) TextView categoryName;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
-    @BindView(R.id.category_details_image) ImageView selectedCategoryImage;
+    @BindView(R.id.category_details_image) @Nullable ImageView selectedCategoryImage;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.piechart) PieChart mChart;
     @BindView(R.id.play_button) LinearLayout play;

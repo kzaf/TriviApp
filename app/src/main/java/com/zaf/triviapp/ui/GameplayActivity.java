@@ -3,13 +3,16 @@ package com.zaf.triviapp.ui;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -40,17 +43,18 @@ import retrofit2.Response;
 
 public class GameplayActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String SELECTED_CATEGORY = "selected_category";
-    public static final String DIFFICULTY = "difficulty";
-    public static final String TYPE = "type";
+    private static final String SELECTED_CATEGORY = "selected_category";
+    private static final String DIFFICULTY = "difficulty";
+    private static final String TYPE = "type";
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
-    Category selectedCategory;
-    String difficulty, type;
-    ArrayList<Question> questionList;
-    SharedPref sharedPref;
+    private Vibrator vibe;
+    private Category selectedCategory;
+    private String difficulty, type;
+    private ArrayList<Question> questionList;
+    private SharedPref sharedPref;
+    private ProgressDialog progressDialog;
     @BindView(R.id.toolbar) Toolbar toolbar;
-    ProgressDialog progressDialog;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.cancel_button) ImageView cancel;
     @BindView(R.id.second_two_buttons) LinearLayout secondTwoButtons;
@@ -84,6 +88,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         type = getIntent().getStringExtra(TYPE);
 
         gameplayCategoryName.setText(selectedCategory.getName());
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         initializeDialog();
         toolbarOptions();
@@ -323,20 +328,22 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         button4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
-        String answerCorrect = questionList.get(questionIndex-1).getCorrect_answer();
+        Spanned answerCorrect = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer());
 
-        if(answerText.equals(answerCorrect)){
+        if(answerText.contentEquals(answerCorrect.toString())){
             button.setBackgroundColor(getResources().getColor(R.color.green));
             particlesEffect(button);
+            vibe.vibrate(50);
             scoreCorrectAnswers++;
         }else{
+            vibe.vibrate(300);
             ArrayList<TextView> questions = new ArrayList<>();
             questions.add(answer1);
             questions.add(answer2);
             questions.add(answer3);
             questions.add(answer4);
             for (int j=0; j<questions.size(); j++){
-                if(questions.get(j).getText().toString().equals(questionList.get(questionIndex-1).getCorrect_answer())){
+                if(questions.get(j).getText().toString().equals(answerCorrect.toString())){
                     manageBlinkEffect((LinearLayout) questions.get(j).getParent());
                 }
             }
