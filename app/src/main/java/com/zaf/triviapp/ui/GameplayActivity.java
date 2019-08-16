@@ -6,10 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -24,12 +24,12 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
+import com.zaf.triviapp.preferences.SharedPref;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +46,16 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String DIFFICULTY = "difficulty";
     private static final String TYPE = "type";
+    public static final String QUESTION_LIST = "question_list";
+    public static final String QUESTION_INDEX = "question_index";
+    public static final String QUESTION = "question";
+    public static final String ANSWER_1 = "answer1";
+    public static final String ANSWER_2 = "answer2";
+    public static final String ANSWER_3 = "answer3";
+    public static final String ANSWER_4 = "answer4";
+    public static final String STEP = "step";
+    public static final String IS_TRUE_FALSE = "is_true_false";
+    public static final String LEVEL = "level";
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
     private Vibrator vibe;
@@ -58,10 +68,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.cancel_button) ImageView cancel;
     @BindView(R.id.second_two_buttons) LinearLayout secondTwoButtons;
-    @BindView(R.id.play_button) LinearLayout button1;
-    @BindView(R.id.play_button2) LinearLayout button2;
-    @BindView(R.id.play_button3) LinearLayout button3;
-    @BindView(R.id.play_button4) LinearLayout button4;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.gameplay_selected_category_name) TextView gameplayCategoryName;
     @BindView(R.id.gameplay_difficulty_level) TextView gameplayDifficultyLevel;
@@ -90,14 +96,79 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         gameplayCategoryName.setText(selectedCategory.getName());
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        initializeDialog();
         toolbarOptions();
-        fetchQuestions();
+        if (savedInstanceState != null){
+            populateUiOnOrientationChange(savedInstanceState);
+        }else{
+            initializeDialog();
+            fetchQuestions();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(QUESTION_LIST, questionList);
+        outState.putInt(QUESTION_INDEX, questionIndex);
+        outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
+        outState.putString(QUESTION, question.getText().toString());
+        outState.putString(ANSWER_1, answer1.getText().toString());
+        outState.putString(ANSWER_2, answer2.getText().toString());
+        outState.putString(ANSWER_3, answer3.getText().toString());
+        outState.putString(ANSWER_4, answer4.getText().toString());
+        outState.putString(STEP, gameplayStepNumber.getText().toString());
+        outState.putBoolean(IS_TRUE_FALSE, questionList.get(questionIndex).getType().equals("boolean"));
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.answer1:
+                checkAnswerCorrection(answer1);
+                break;
+
+            case R.id.answer2:
+                checkAnswerCorrection(answer2);
+                break;
+
+            case R.id.answer3:
+                checkAnswerCorrection(answer3);
+                break;
+
+            case R.id.answer4:
+                checkAnswerCorrection(answer4);
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override
     public void onBackPressed() {
         alertDialogExit();
+    }
+
+    private void populateUiOnOrientationChange(Bundle savedInstanceState) {
+        questionList = savedInstanceState.getParcelableArrayList(QUESTION_LIST);
+        questionIndex = savedInstanceState.getInt(QUESTION_INDEX);
+        setLevelTextAndColor(savedInstanceState.getString(LEVEL));
+        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(QUESTION)));
+        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_1)));
+        answer1.setOnClickListener(this);
+        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_2)));
+        answer2.setOnClickListener(this);
+        if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) secondTwoButtons.setVisibility(View.INVISIBLE);
+        else{
+            secondTwoButtons.setVisibility(View.VISIBLE);
+            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_3)));
+            answer3.setOnClickListener(this);
+            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_4)));
+            answer4.setOnClickListener(this);
+        }
+        gameplayStepNumber.setText(savedInstanceState.getString(STEP));
     }
 
     private void toolbarOptions() {
@@ -161,12 +232,43 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        button1.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        button2.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        button3.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        button4.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        answer1.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        answer2.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        answer3.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        answer4.setBackground(getResources().getDrawable(R.drawable.custom_border));
 
-        switch (questionList.get(questionIndex).getDifficulty()){
+        setLevelTextAndColor(questionList.get(questionIndex).getDifficulty());
+
+        List<String> mixedQuestions = questionList.get(questionIndex).getIncorrect_answers();
+        mixedQuestions.add(questionList.get(questionIndex).getCorrect_answer());
+        Collections.shuffle(mixedQuestions);
+
+        // Question
+        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex).getQuestion(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
+
+        // Answers
+        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(0)));
+        answer1.setOnClickListener(this);
+        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(1)));
+        answer2.setOnClickListener(this);
+        if(questionList.get(questionIndex).getType().equals("boolean")) secondTwoButtons.setVisibility(View.INVISIBLE);
+        else{
+            secondTwoButtons.setVisibility(View.VISIBLE);
+            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(2)));
+            answer3.setOnClickListener(this);
+            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(3)));
+            answer4.setOnClickListener(this);
+        }
+
+        // Step counter
+        int step = questionIndex + 1;
+        gameplayStepNumber.setText(step + "/10");
+
+        questionIndex++;
+    }
+
+    private void setLevelTextAndColor(String level) {
+        switch (level){
             case "medium":
                 gameplayDifficultyLevel.setText("Medium");
                 gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
@@ -179,38 +281,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 gameplayDifficultyLevel.setText("Easy");
                 gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.green));
         }
-
-        List<String> mixedQuestions = questionList.get(questionIndex).getIncorrect_answers();
-        mixedQuestions.add(questionList.get(questionIndex).getCorrect_answer());
-        Collections.shuffle(mixedQuestions);
-
-        // Question
-        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex).getQuestion(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
-
-        // Answers
-        if(questionList.get(questionIndex).getType().equals("boolean")){
-            secondTwoButtons.setVisibility(View.INVISIBLE);
-            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(0)));
-            answer1.setOnClickListener(this);
-            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(1)));
-            answer2.setOnClickListener(this);
-        }else{
-            secondTwoButtons.setVisibility(View.VISIBLE);
-            answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(0)));
-            answer1.setOnClickListener(this);
-            answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(1)));
-            answer2.setOnClickListener(this);
-            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(2)));
-            answer3.setOnClickListener(this);
-            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(3)));
-            answer4.setOnClickListener(this);
-        }
-
-        // Step counter
-        int step = questionIndex + 1;
-        gameplayStepNumber.setText(step + "/10");
-
-        questionIndex++;
     }
 
     private void alertDialogEndGame(int score){
@@ -246,6 +316,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     }
                 })
                 .build();
+
+
     }
 
     private void errorDialog(){
@@ -295,44 +367,19 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 .build();
     }
 
-    @Override
-    public void onClick(View v) {
+    private void checkAnswerCorrection(TextView answer) {
 
-        switch (v.getId()) {
-            case R.id.answer1:
-                checkAnswerCorrection(answer1, button1);
-                break;
-
-            case R.id.answer2:
-                checkAnswerCorrection(answer2, button2);
-                break;
-
-            case R.id.answer3:
-                checkAnswerCorrection(answer3, button3);
-                break;
-
-            case R.id.answer4:
-                checkAnswerCorrection(answer4, button4);
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private void checkAnswerCorrection(TextView answer, LinearLayout button) {
-
-        button1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        button2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        button3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        button4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        answer1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        answer2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        answer3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        answer4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
         Spanned answerCorrect = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer());
 
         if(answerText.contentEquals(answerCorrect.toString())){
-            button.setBackgroundColor(getResources().getColor(R.color.green));
-            particlesEffect(button);
+            answer.setBackgroundColor(getResources().getColor(R.color.green));
+            particlesEffect(answer);
             if(sharedPref.loadVibrateState()) vibe.vibrate(50);
             else vibe.vibrate(0);
             scoreCorrectAnswers++;
@@ -346,7 +393,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             questions.add(answer4);
             for (int j=0; j<questions.size(); j++){
                 if(questions.get(j).getText().toString().equals(answerCorrect.toString())){
-                    manageBlinkEffect((LinearLayout) questions.get(j).getParent());
+                    manageBlinkEffect(questions.get(j));
                 }
             }
         }
@@ -363,14 +410,14 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         }, 2000);
     }
 
-    private void particlesEffect(LinearLayout button){
+    private void particlesEffect(TextView button){
         new ParticleSystem(this, 10, getResources().getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
                 .setSpeedRange(0.2f, 0.5f)
                 .oneShot(button, 10);
     }
 
-    private void manageBlinkEffect(LinearLayout parent) {
-        ObjectAnimator anim = ObjectAnimator.ofInt(parent,
+    private void manageBlinkEffect(TextView buttonClicked) {
+        ObjectAnimator anim = ObjectAnimator.ofInt(buttonClicked,
                 "backgroundColor",
                 getResources().getColor(R.color.green),
                 Color.WHITE,

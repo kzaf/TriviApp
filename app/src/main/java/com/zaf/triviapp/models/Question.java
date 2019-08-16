@@ -1,8 +1,11 @@
 package com.zaf.triviapp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class Question {
+public class Question implements Parcelable {
     private String category;
     private String type;
     private String difficulty;
@@ -18,6 +21,27 @@ public class Question {
         this.correct_answer = correct_answer;
         this.incorrect_answers = incorrect_answers;
     }
+
+    protected Question(Parcel in) {
+        category = in.readString();
+        type = in.readString();
+        difficulty = in.readString();
+        question = in.readString();
+        correct_answer = in.readString();
+        incorrect_answers = in.createStringArrayList();
+    }
+
+    public static final Creator<Question> CREATOR = new Creator<Question>() {
+        @Override
+        public Question createFromParcel(Parcel in) {
+            return new Question(in);
+        }
+
+        @Override
+        public Question[] newArray(int size) {
+            return new Question[size];
+        }
+    };
 
     public String getCategory() {
         return category;
@@ -65,5 +89,20 @@ public class Question {
 
     public void setIncorrect_answers(List<String> incorrect_answers) {
         this.incorrect_answers = incorrect_answers;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(category);
+        dest.writeString(type);
+        dest.writeString(difficulty);
+        dest.writeString(question);
+        dest.writeString(correct_answer);
+        dest.writeStringList(incorrect_answers);
     }
 }
