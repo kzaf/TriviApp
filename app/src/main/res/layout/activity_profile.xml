@@ -73,22 +73,43 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/profile_username_tv"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="UserName"
-                    android:textColor="?attr/textcolor"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/profile_username_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5sp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Login to continue.."
+                        android:textColor="?attr/textcolor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/login_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="50sp"
+                        android:layout_marginEnd="10sp"
+                        android:layout_weight="2"
+                        android:textColor="?attr/textcolor"
+                        android:background="@drawable/custom_border_blue"
+                        android:gravity="center"
+                        android:text="Login" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/profile_email_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="email"
+                    android:layout_marginStart="5sp"
+                    android:gravity="start"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp" />
 

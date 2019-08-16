@@ -10,7 +10,12 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
+import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.ui.ProfileActivity;
 import com.zaf.triviapp.ui.SelectCategoryActivity;
 
 import java.util.Arrays;
@@ -20,11 +25,14 @@ public class LoginAuth extends AppCompatActivity {
 
     private static final int MY_REQUEST_CODE = 101;
     List<AuthUI.IdpConfig> providers;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_auth);
+
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         // Init providers
         providers = Arrays.asList(
@@ -53,8 +61,9 @@ public class LoginAuth extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginAuth.this, SelectCategoryActivity.class);
+                importUserDetailsToDb(user);
+
+                Intent intent = new Intent(LoginAuth.this, ProfileActivity.class);
                 intent.putExtra("LoggedUser", user);
                 startActivity(intent);
                 finish();
@@ -63,5 +72,21 @@ public class LoginAuth extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void importUserDetailsToDb(final FirebaseUser user){
+        final UserDetails userDetails = new UserDetails(user.getUid(), user.getDisplayName(), user.getEmail(), 0);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDb.taskDao().insertLoggedUser(userDetails);
+            }
+        });
+        DynamicToast.make(getApplicationContext(),
+                "Welcome " + user.getDisplayName(),
+                getResources().getColor(R.color.colorAccentBlue),
+                getResources().getColor(R.color.textWhite))
+                .show();
+        Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
     }
 }

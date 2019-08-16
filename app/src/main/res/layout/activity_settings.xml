@@ -106,6 +106,8 @@
                 android:background="@drawable/custom_border_red"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:paddingTop="10sp"
+                android:paddingBottom="10sp"
                 android:text="Update">
 
                 <TextView

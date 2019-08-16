@@ -1,5 +1,7 @@
 package com.zaf.triviapp.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.persistence.room.Database;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -34,6 +36,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
@@ -53,6 +57,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private String difficulty = "Any Difficulty", type = "Any Type";
     private NDialog nDialog;
     private SharedPref sharedPref;
+    private AppDatabase mDb;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.selected_category_name) TextView categoryName;
@@ -73,6 +78,8 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         final Category selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
+
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         toolbarOptions();
         chartOptions();
@@ -151,40 +158,52 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void backgroundPictureOptions(Category selectedCategory) {
-        selectedCategoryImage.setImageResource(getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName()));
+        int imageId = getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName());
+        if (imageId != 0){
+            selectedCategoryImage.setImageResource(imageId);
+        }else{
+            selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", getPackageName()));
+        }
     }
 
     private void chartOptions() {
-//        TODO: Fix refresh
-//        if (mSwipeRefreshLayout.isRefreshing()) {
-//            mSwipeRefreshLayout.setRefreshing(false);
-//        }
+        mDb.taskDao().loadUserDetails().observe(this, new Observer<UserDetails>() {
+            @Override
+            public void onChanged(@Nullable UserDetails userDetails) {
+                if (userDetails == null) {
+                    // NOT LOGGED
+                    if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+                    mChart.setNoDataText(getResources().getString(R.string.no_chart));
+                    Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
+                    paint.setColor(getResources().getColor(R.color.colorAccentRed));
 
-        mChart.setNoDataText(getResources().getString(R.string.no_chart));
-        Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
-        paint.setColor(getResources().getColor(R.color.colorAccentRed));
+                } else {
+                    // LOGGED
+                    List<PieEntry> pieChartEntries = new ArrayList<>();
+                    pieChartEntries.add(new PieEntry(24.0f, "Correct"));
+                    pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
 
-        List<PieEntry> pieChartEntries = new ArrayList<>();
-        pieChartEntries.add(new PieEntry(24.0f, "Correct"));
-        pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
+                    PieDataSet dataset = new PieDataSet(pieChartEntries, "");
+                    dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                    dataset.setSliceSpace(0);
 
-        PieDataSet dataset = new PieDataSet(pieChartEntries, "");
-        dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
-        dataset.setSliceSpace(0);
+                    Description description = new Description();
+                    description.setText("This is Pie Chart");
 
-        Description description = new Description();
-        description.setText("This is Pie Chart");
+                    mChart.setDescription(description);
 
-        mChart.setDescription(description);
+                    mChart.setDrawHoleEnabled(false);
+                    mChart.setUsePercentValues(true);
 
-        mChart.setDrawHoleEnabled(false);
-        mChart.setUsePercentValues(true);
+                    PieData data = new PieData(dataset);
+                    data.setValueFormatter(new PercentFormatter());
 
-        PieData data = new PieData(dataset);
-        data.setValueFormatter(new PercentFormatter());
+                    mChart.setData(data);
 
-        mChart.setData(data);
-
+                    if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
 
     private void toolbarOptions() {

@@ -13,9 +13,5 @@
         android:id="@+id/categories_menu_refresh"
         android:title="Refresh"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/categories_menu_login"
-        android:title="Login"
-        app:showAsAction="never"/>
 
 </menu>

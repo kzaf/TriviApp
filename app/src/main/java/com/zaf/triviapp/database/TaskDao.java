@@ -14,26 +14,26 @@ public interface TaskDao {
 
     // User
     @Query("SELECT * FROM user_details")
-    LiveData<UserDetails[]> LoadUserDetails();
+    LiveData<UserDetails> loadUserDetails();
 
     @Insert
-    void InsertLoggedUser(UserDetails user);
+    void insertLoggedUser(UserDetails user);
 
-    @Delete
-    void DeleteUser(UserDetails user);
+    @Query("DELETE FROM user_details")
+    void deleteUser();
 
 
     // Scores
     @Query("SELECT * FROM category_scores")
-    LiveData<Scores[]> LoadAllCategoriesScore();
+    LiveData<Scores[]> loadAllCategoriesScore();
 
     @Query("SELECT * FROM category_scores WHERE category_name = :category")
-    LiveData<Scores> LoadSelectedCategoryScore(String category);
+    LiveData<Scores> loadSelectedCategoryScore(String category);
 
     @Insert
-    void UpdateScore(Scores score);
+    void updateScore(Scores score);
 
     @Delete
-    void ResetScore(Scores score);
+    void resetScore(Scores score);
 
 }

@@ -1,8 +1,11 @@
 package com.zaf.triviapp.ui;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +28,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
+import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
+import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
+import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
@@ -40,8 +49,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.profile_username_tv) TextView userName;
+    @BindView(R.id.profile_email_tv) TextView userEmail;
+    @BindView(R.id.login_user) TextView loginUser;
     @BindView(R.id.back_button) ImageView back;
     private SharedPref sharedPref;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +66,83 @@ public class ProfileActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        mDb = AppDatabase.getInstance(getApplicationContext());
+
         toolbarOptions();
         chartOptions();
+        setupUi(mDb.taskDao().loadUserDetails());
+    }
+
+    private void setupUi(final LiveData<UserDetails> loggedUser){
+        loggedUser.observe(this, new Observer<UserDetails>() {
+            @Override
+            public void onChanged(@Nullable UserDetails userDetails) {
+                if(userDetails == null){
+                    userName.setText("Login to continue...");
+                    userEmail.setText("");
+
+                    loginUser.setText("Login");
+                    loginUser.setBackgroundResource(R.drawable.custom_border_blue);
+
+                    loginUser.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(ProfileActivity.this, LoginAuth.class);
+                            startActivity(intent);
+                        }
+                    });
+                }else{
+                    userName.setText(userDetails.getUserName());
+                    userEmail.setText(userDetails.getUserEmail());
+
+                    loginUser.setText("Logout");
+                    loginUser.setBackgroundResource(R.drawable.custom_border_red);
+
+                    loginUser.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialogLogout();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void alertDialogLogout(){
+        new FancyGifDialog.Builder(this)
+                .setTitle("Are you sure you want to logout?")
+                .setNegativeBtnText("Nop! Keep me signed!")
+                .setPositiveBtnBackground("#b80c00")
+                .setPositiveBtnText("Yes I am sure!")
+                .setNegativeBtnBackground("#FFA9A7A8")
+                .setGifResource(R.drawable.cancel)
+                .isCancellable(true)
+                .OnPositiveClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDb.taskDao().deleteUser();
+                            }
+                        });
+                        DynamicToast.make(getApplicationContext(), "See you again!", getResources()
+                                .getColor(R.color.colorAccentBlue), getResources()
+                                .getColor(R.color.textWhite))
+                                .show();
+                    }
+                })
+                .OnNegativeClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+                        DynamicToast.make(getApplicationContext(), "Cool!", getResources()
+                                .getColor(R.color.colorAccentBlue), getResources()
+                                .getColor(R.color.textWhite))
+                                .show();
+                    }
+                })
+                .build();
     }
 
     private void toolbarOptions() {

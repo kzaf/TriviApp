@@ -5,10 +5,7 @@
     <item
         android:id="@+id/profile_settings"
         android:title="Settings"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/profile_logout"
-        android:title="Logout"
+        android:icon="@drawable/ic_settings_applications_24dp"
         app:showAsAction="never"/>
 
 </menu>

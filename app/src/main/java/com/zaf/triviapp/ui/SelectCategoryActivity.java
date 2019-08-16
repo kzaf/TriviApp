@@ -1,6 +1,7 @@
 package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +25,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
 import com.zaf.triviapp.login.LoginAuth;
@@ -50,7 +55,6 @@ public class SelectCategoryActivity extends AppCompatActivity
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
     private SharedPref sharedPref;
-    private FirebaseUser user;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.categories_recycler_view) RecyclerView categoriesRecyclerView;
@@ -69,8 +73,6 @@ public class SelectCategoryActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         toolbarOptions();
-
-        user = getIntent().getParcelableExtra("LoggedUser");
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -94,6 +96,11 @@ public class SelectCategoryActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressDialog.dismiss();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -125,33 +132,13 @@ public class SelectCategoryActivity extends AppCompatActivity
         toolbar.inflateMenu(R.menu.select_category_menu_items);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
         selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId()==R.id.categories_menu_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 else if(menuItem.getItemId()== R.id.categories_menu_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                else if(menuItem.getItemId()== R.id.categories_menu_refresh) fetchCategories();
-                else{
-                    if (FirebaseAuth.getInstance().getCurrentUser() == null){
-                        Intent intent = new Intent(SelectCategoryActivity.this, LoginAuth.class);
-                        startActivity(intent);
-                    }else{
-                        AuthUI.getInstance()
-                                .signOut(SelectCategoryActivity.this)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        //showSignInOptions();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(SelectCategoryActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                }
+                else fetchCategories();
                 return false;
             }
         });
