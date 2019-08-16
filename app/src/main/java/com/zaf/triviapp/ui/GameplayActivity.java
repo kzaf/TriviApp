@@ -2,18 +2,23 @@ package com.zaf.triviapp.ui;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +28,12 @@ import com.plattysoft.leonids.ParticleSystem;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
+import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.Scores;
+import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
@@ -56,6 +66,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     public static final String STEP = "step";
     public static final String IS_TRUE_FALSE = "is_true_false";
     public static final String LEVEL = "level";
+    private AppDatabase mDb;
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
     private Vibrator vibe;
@@ -88,6 +99,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_gameplay);
 
         ButterKnife.bind(this);
+
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
         difficulty = getIntent().getStringExtra(DIFFICULTY);
@@ -283,7 +296,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void alertDialogEndGame(int score){
+    private void alertDialogEndGame(final int score){
         String message;
         int gifImage;
         if(score==10){
@@ -303,21 +316,37 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             gifImage = R.drawable.fail;
         }
         new FancyGifDialog.Builder(this)
-                .setTitle(message)
-                .setMessage("Your score is " + score + "/10")
-                .setPositiveBtnBackground("#b80c00")
-                .setPositiveBtnText("OK")
-                .setGifResource(gifImage)
-                .isCancellable(false)
-                .OnPositiveClicked(new FancyGifDialogListener() {
-                    @Override
-                    public void OnClick() {
-                        finish();
-                    }
-                })
-                .build();
-
-
+            .setTitle(message)
+            .setMessage("Your score is " + score + "/10")
+            .setPositiveBtnBackground("#b80c00")
+            .setPositiveBtnText("OK")
+            .setGifResource(gifImage)
+            .isCancellable(false)
+            .OnPositiveClicked(new FancyGifDialogListener() {
+                @Override
+                public void OnClick() {
+                    mDb.taskDao().loadUserDetails().observe(GameplayActivity.this, new Observer<UserDetails>() {
+                        @Override
+                        public void onChanged(@Nullable final UserDetails userDetails) {
+                            if(userDetails != null){
+                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                        mDb.taskDao().updateScore(new Scores(userDetails.getUserId(), selectedCategory.getName(), score));
+                                    }
+                                });
+                            }else{
+                                DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
+                                        .getColor(R.color.orange), getResources()
+                                        .getColor(R.color.textBlack))
+                                        .show();
+                            }
+                        }
+                    });
+                    finish();
+                }
+            }).build();
     }
 
     private void errorDialog(){
@@ -397,6 +426,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         }
+
+        // Block UI from touch events
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -406,6 +438,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     return;
                 }
                 populateQuestions(questionList);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
             }
         }, 2000);
     }
@@ -416,6 +450,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 .oneShot(button, 10);
     }
 
+    @SuppressLint("WrongConstant")
     private void manageBlinkEffect(TextView buttonClicked) {
         ObjectAnimator anim = ObjectAnimator.ofInt(buttonClicked,
                 "backgroundColor",

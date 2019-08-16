@@ -1,13 +1,11 @@
 package com.zaf.triviapp.ui;
 
 import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Database;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,9 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -31,15 +27,11 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.gohn.nativedialog.ButtonClickListener;
 import com.gohn.nativedialog.ButtonType;
 import com.gohn.nativedialog.NDialog;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
-import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.preferences.SharedPref;
-import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
 import java.util.ArrayList;
@@ -58,6 +50,8 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private NDialog nDialog;
     private SharedPref sharedPref;
     private AppDatabase mDb;
+    private int scorePercentage = 0;
+    private boolean isUserLogged = false;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.selected_category_name) TextView categoryName;
@@ -82,13 +76,14 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         toolbarOptions();
-        chartOptions();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             backgroundPictureOptions(selectedCategory);
         }
 
         categoryName.setText(selectedCategory.getName());
+
+        checkIfUserIsLogged();
 
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +95,48 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                chartOptions();
+                checkIfUserIsLogged();
+            }
+        });
+    }
+
+    private void loadSuccessPercentage(){
+        mDb.taskDao().loadSelectedCategoryScore(categoryName.getText().toString()).observe(CategoryDetailsActivity.this, new Observer<Scores>() {
+            @Override
+            public void onChanged(@Nullable Scores scores) {
+                final List<PieEntry> pieChartEntries = new ArrayList<>();
+
+                final Description description = new Description();
+
+                mChart.setDescription(description);
+
+                mChart.setDrawHoleEnabled(false);
+                mChart.setUsePercentValues(true);
+
+                if (scores != null){
+                    scorePercentage = scores.getCategoryScore() * 10;
+                    float successScore = (float) scorePercentage;
+                    float failScore = (float) 100 - scorePercentage;
+                    pieChartEntries.add(new PieEntry(successScore, "Correct"));
+                    pieChartEntries.add(new PieEntry(failScore, "Wrong"));
+                    description.setText(scorePercentage + "% success in " + categoryName.getText().toString());
+
+                }else{
+                    pieChartEntries.add(new PieEntry(0, "Correct"));
+                    pieChartEntries.add(new PieEntry(0, "Wrong"));
+                    description.setText("You haven't played yet in " + categoryName.getText().toString());
+                }
+
+                PieDataSet dataset = new PieDataSet(pieChartEntries, "");
+                dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                dataset.setSliceSpace(0);
+
+                PieData data = new PieData(dataset);
+                data.setValueFormatter(new PercentFormatter());
+
+                mChart.setData(data);
+
+                if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -166,41 +202,22 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void chartOptions() {
-        mDb.taskDao().loadUserDetails().observe(this, new Observer<UserDetails>() {
+    private void checkIfUserIsLogged() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
-            public void onChanged(@Nullable UserDetails userDetails) {
-                if (userDetails == null) {
-                    // NOT LOGGED
+            public void run() {
+                if (mDb.taskDao().checkIfUsersTableIsEmpty().size() == 0){
+                    isUserLogged = false;
+
                     if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
                     mChart.setNoDataText(getResources().getString(R.string.no_chart));
                     Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
+                }else {
+                    isUserLogged = true;
 
-                } else {
-                    // LOGGED
-                    List<PieEntry> pieChartEntries = new ArrayList<>();
-                    pieChartEntries.add(new PieEntry(24.0f, "Correct"));
-                    pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
+                    loadSuccessPercentage();
 
-                    PieDataSet dataset = new PieDataSet(pieChartEntries, "");
-                    dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
-                    dataset.setSliceSpace(0);
-
-                    Description description = new Description();
-                    description.setText("This is Pie Chart");
-
-                    mChart.setDescription(description);
-
-                    mChart.setDrawHoleEnabled(false);
-                    mChart.setUsePercentValues(true);
-
-                    PieData data = new PieData(dataset);
-                    data.setValueFormatter(new PercentFormatter());
-
-                    mChart.setData(data);
-
-                    if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -223,7 +240,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId()==R.id.category_details_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 else if(menuItem.getItemId()== R.id.category_details_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                else chartOptions();
+                else checkIfUserIsLogged();
                 return false;
             }
         });

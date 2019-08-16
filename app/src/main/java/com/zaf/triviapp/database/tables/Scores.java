@@ -15,9 +15,9 @@ public class Scores {
     @ColumnInfo(name = "category_name")
     private String categoryName;
     @ColumnInfo(name = "category_score")
-    private String categoryScore;
+    private int categoryScore;
 
-    public Scores(@NotNull String userId, String categoryName, String categoryScore) {
+    public Scores(@NotNull String userId, String categoryName, int categoryScore) {
         this.userId = userId;
         this.categoryName = categoryName;
         this.categoryScore = categoryScore;
@@ -39,11 +39,11 @@ public class Scores {
         this.categoryName = categoryName;
     }
 
-    public String getCategoryScore() {
+    public int getCategoryScore() {
         return categoryScore;
     }
 
-    public void setCategoryScore(String categoryScore) {
+    public void setCategoryScore(int categoryScore) {
         this.categoryScore = categoryScore;
     }
 }
