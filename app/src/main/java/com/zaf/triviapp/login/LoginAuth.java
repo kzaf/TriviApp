@@ -53,7 +53,7 @@ public class LoginAuth extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Toast.makeText(this, "" + user.getEmail(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginAuth.this, SelectCategoryActivity.class);
                 intent.putExtra("LoggedUser", user);
                 startActivity(intent);

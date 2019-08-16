@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +20,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
@@ -47,6 +50,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
     private SharedPref sharedPref;
+    private FirebaseUser user;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.categories_recycler_view) RecyclerView categoriesRecyclerView;
@@ -65,6 +69,8 @@ public class SelectCategoryActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         toolbarOptions();
+
+        user = getIntent().getParcelableExtra("LoggedUser");
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -87,6 +93,7 @@ public class SelectCategoryActivity extends AppCompatActivity
             fetchCategories();
         }
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

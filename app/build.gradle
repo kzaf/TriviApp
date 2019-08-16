@@ -69,6 +69,14 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
+    // Room
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
+
+    // Lifecycle
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'

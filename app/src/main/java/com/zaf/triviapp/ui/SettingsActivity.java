@@ -27,7 +27,6 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPref sharedPref;
     private Vibrator vibe;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
