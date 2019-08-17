@@ -7,7 +7,7 @@ public class SharedPref {
     SharedPreferences mySharedPref;
 
     public SharedPref(Context context) {
-        mySharedPref = context.getSharedPreferences("filename", Context.MODE_PRIVATE);
+        mySharedPref = context.getSharedPreferences("Trivi_App_Settings", Context.MODE_PRIVATE);
     }
 
     // This will save the night mode: True/False

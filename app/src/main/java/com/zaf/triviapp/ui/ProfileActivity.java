@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -33,6 +35,7 @@ import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
@@ -53,6 +56,8 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.profile_email_tv) TextView userEmail;
     @BindView(R.id.login_user) TextView loginUser;
     @BindView(R.id.back_button) ImageView back;
+    @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
+
     private SharedPref sharedPref;
     private AppDatabase mDb;
 
@@ -221,6 +226,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void generateCategoriesList(List<Category> categoriesList) {
-        //TODO: Fix Adapter
+//        CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, categoriesList);
+//        profileRecyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this));
+//        profileRecyclerView.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+//        profileRecyclerView.scheduleLayoutAnimation();
     }
 }
