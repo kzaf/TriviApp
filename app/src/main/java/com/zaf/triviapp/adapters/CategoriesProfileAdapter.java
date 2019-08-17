@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.models.Category;
 
 import java.util.List;
@@ -15,11 +16,11 @@ import java.util.List;
 public class CategoriesProfileAdapter extends RecyclerView.Adapter<CategoriesProfileAdapter.CategoriesProfileViewHolder> {
 
     final private CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener mOnClickListener;
-    private List<Category> categoriesList;
+    private List<Scores> scoresList;
 
-    public CategoriesProfileAdapter(CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener mOnClickListener, List<Category> categoriesList) {
+    public CategoriesProfileAdapter(CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener mOnClickListener, List<Scores> scoresList) {
         this.mOnClickListener = mOnClickListener;
-        this.categoriesList = categoriesList;
+        this.scoresList = scoresList;
     }
 
     @NonNull
@@ -31,14 +32,14 @@ public class CategoriesProfileAdapter extends RecyclerView.Adapter<CategoriesPro
 
     @Override
     public void onBindViewHolder(@NonNull CategoriesProfileAdapter.CategoriesProfileViewHolder categoriesProfileViewHolder, int position) {
-        categoriesProfileViewHolder.categoryName.setText(categoriesList.get(position).getName());
-        categoriesProfileViewHolder.categoryScore.setText("80%");
+        categoriesProfileViewHolder.categoryName.setText(scoresList.get(position).getCategoryName());
+        categoriesProfileViewHolder.categoryScore.setText(scoresList.get(position).getCategoryScore() * 10 + "%");
     }
 
     @Override
     public int getItemCount() {
-        if (null == categoriesList) return 0;
-        return categoriesList.size();
+        if (null == scoresList) return 0;
+        return scoresList.size();
     }
 
     public interface CategoriesProfileAdapterListItemClickListener {

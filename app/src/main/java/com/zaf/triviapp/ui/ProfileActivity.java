@@ -37,18 +37,20 @@ import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener{
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
@@ -57,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.login_user) TextView loginUser;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
+    private List<Scores> scoresList;
 
     private SharedPref sharedPref;
     private AppDatabase mDb;
@@ -76,6 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
         toolbarOptions();
         chartOptions();
         setupUi(mDb.taskDao().loadUserDetails());
+        loadScoresList();
     }
 
     private void setupUi(final LiveData<UserDetails> loggedUser){
@@ -225,11 +229,29 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void generateCategoriesList(List<Category> categoriesList) {
-//        CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, categoriesList);
-//        profileRecyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this));
-//        profileRecyclerView.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
-//        profileRecyclerView.scheduleLayoutAnimation();
+    private void loadScoresList(){
+        mDb.taskDao().loadAllCategoriesScore().observe(this, new Observer<Scores[]>() {
+            @Override
+            public void onChanged(@Nullable Scores[] scores) {
+                scoresList = Arrays.asList(scores);
+                generateCategoriesList();
+            }
+        });
+    }
+
+    private void generateCategoriesList() {
+        CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, scoresList);
+        profileRecyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this));
+        profileRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        profileRecyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void onListItemClick(int item) {
+//        Intent intent = new Intent(this, CategoryDetailsActivity.class);
+//        intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
+//
+//        startActivity(intent);
     }
 }

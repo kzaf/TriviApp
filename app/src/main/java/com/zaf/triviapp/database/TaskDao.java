@@ -28,7 +28,6 @@ public interface TaskDao {
     @Query("DELETE FROM user_details")
     void deleteUser();
 
-
     // Scores
     @Query("SELECT * FROM category_scores")
     LiveData<Scores[]> loadAllCategoriesScore();
@@ -41,7 +40,6 @@ public interface TaskDao {
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
     void updateScore(Scores score);
-
 
     @Query("DELETE FROM category_scores")
     void resetScore();
