@@ -76,10 +76,9 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
 
         mDb = AppDatabase.getInstance(getApplicationContext());
 
-        toolbarOptions();
-        chartOptions();
-        setupUi(mDb.taskDao().loadUserDetails());
         loadScoresList();
+        toolbarOptions();
+        setupUi(mDb.taskDao().loadUserDetails());
     }
 
     private void setupUi(final LiveData<UserDetails> loggedUser){
@@ -100,6 +99,8 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
                             startActivity(intent);
                         }
                     });
+
+                    chartOptions(false, 0);
                 }else{
                     userName.setText(userDetails.getUserName());
                     userEmail.setText(userDetails.getUserEmail());
@@ -113,9 +114,25 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
                             alertDialogLogout();
                         }
                     });
+
+                    chartOptions(true, setupTotalScore());
                 }
             }
         });
+    }
+
+    private int setupTotalScore(){
+        if (scoresList == null) {
+            return 0;
+        }else{
+            int totalScores = 0;
+            int sum = 1;
+            for (int i=0; i <scoresList.size(); i++){
+                totalScores =  totalScores + scoresList.get(i).getCategoryScore();
+                sum = i + 1;
+            }
+            return totalScores/sum;
+        }
     }
 
     private void alertDialogLogout(){
@@ -198,35 +215,36 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
         });
     }
 
-    private void chartOptions() {
+    private void chartOptions(boolean isUserLogged, int scores) {
 
         PieChart mChart = findViewById(R.id.piechart_sum);
 
-        mChart.setNoDataText(getResources().getString(R.string.no_chart));
-        Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
-        paint.setColor(getResources().getColor(R.color.colorAccentRed));
+        if (!isUserLogged){
+            mChart.setNoDataText(getResources().getString(R.string.no_chart));
+            Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
+            paint.setColor(getResources().getColor(R.color.colorAccentRed));
+        }else{
+            List<PieEntry> pieChartEntries = new ArrayList<>();
+            pieChartEntries.add(new PieEntry((float) scores * 10, "Success"));
+            pieChartEntries.add(new PieEntry((float) (10 - scores) * 10, "Failure"));
 
-        List<PieEntry> pieChartEntries = new ArrayList<>();
-        pieChartEntries.add(new PieEntry(24.0f, "Correct"));
-        pieChartEntries.add(new PieEntry(30.8f, "Wrong"));
+            PieDataSet dataset = new PieDataSet(pieChartEntries, "");
+            dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+            dataset.setSliceSpace(0);
 
-        PieDataSet dataset = new PieDataSet(pieChartEntries, "");
-        dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
-        dataset.setSliceSpace(0);
+            Description description = new Description();
+            description.setText(scores * 10 + "% Total success");
 
-        Description description = new Description();
-        description.setText("This is Pie Chart");
+            mChart.setDescription(description);
 
-        mChart.setDescription(description);
+            mChart.setDrawHoleEnabled(false);
+            mChart.setUsePercentValues(true);
 
-        mChart.setDrawHoleEnabled(false);
-        mChart.setUsePercentValues(true);
+            PieData data = new PieData(dataset);
+            data.setValueFormatter(new PercentFormatter());
 
-        PieData data = new PieData(dataset);
-        data.setValueFormatter(new PercentFormatter());
-
-        mChart.setData(data);
-
+            mChart.setData(data);
+        }
     }
 
     private void loadScoresList(){

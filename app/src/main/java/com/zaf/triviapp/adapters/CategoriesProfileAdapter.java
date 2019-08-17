@@ -33,7 +33,7 @@ public class CategoriesProfileAdapter extends RecyclerView.Adapter<CategoriesPro
     @Override
     public void onBindViewHolder(@NonNull CategoriesProfileAdapter.CategoriesProfileViewHolder categoriesProfileViewHolder, int position) {
         categoriesProfileViewHolder.categoryName.setText(scoresList.get(position).getCategoryName());
-        categoriesProfileViewHolder.categoryScore.setText(scoresList.get(position).getCategoryScore() * 10 + "%");
+        categoriesProfileViewHolder.categoryScore.setText((scoresList.get(position).getCategoryScore() * 10) + "%");
     }
 
     @Override

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?attr/backgroundcolor"
+    tools:context=".ui.ProfileActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:contentInsetStart="5dp"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            app:srcCompat="@mipmap/ic_launcher_round" />
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8sp"
+            android:text="TextView"
+            android:textColor="?attr/textcolor"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="3sp"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="bottom|end" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:paddingTop="10sp"
+            android:weightSum="2"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/profile_username_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5sp"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Login to continue.."
+                        android:textColor="?attr/textcolor"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/login_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="50sp"
+                        android:layout_marginEnd="10sp"
+                        android:layout_weight="2"
+                        android:background="@drawable/custom_border_blue"
+                        android:gravity="center"
+                        android:text="Login"
+                        android:textColor="?attr/textcolor" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/profile_email_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5sp"
+                    android:gravity="start"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="18sp" />
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/piechart_sum"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="35sp"
+                    android:layout_marginLeft="35sp"
+                    android:layout_marginEnd="35sp"
+                    android:layout_marginRight="35sp"
+                    android:layout_marginBottom="35sp" />
+
+            </LinearLayout>
+
+            <com.mlsdev.animatedrv.AnimatedRecyclerView
+                android:id="@+id/profile_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:animationDuration="600"
+                app:layoutAnimation="@anim/layout_animation_from_bottom"
+                app:layoutManagerOrientation="vertical"
+                app:layoutManagerReverse="false"
+                app:layoutManagerType="linear" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+            </com.mlsdev.animatedrv.AnimatedRecyclerView>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</android.support.design.widget.CoordinatorLayout>

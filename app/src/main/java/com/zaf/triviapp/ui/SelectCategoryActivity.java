@@ -99,7 +99,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        progressDialog.dismiss();
+        if (progressDialog != null) progressDialog.dismiss();
     }
 
     @Override
