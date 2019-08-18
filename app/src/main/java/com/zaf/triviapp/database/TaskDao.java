@@ -17,7 +17,7 @@ public interface TaskDao {
 
     // User
     @Query("SELECT * FROM user_details")
-    LiveData<UserDetails> loadUserDetails();
+    UserDetails loadUserDetails();
 
     @Query("SELECT * FROM user_details")
     List<UserDetails> checkIfUsersTableIsEmpty();
@@ -30,7 +30,7 @@ public interface TaskDao {
 
     // Scores
     @Query("SELECT * FROM category_scores")
-    LiveData<Scores[]> loadAllCategoriesScore();
+    Scores[] loadAllCategoriesScore();
 
     @Query("SELECT * FROM category_scores WHERE category_name = :category")
     LiveData<Scores> loadSelectedCategoryScore(String category);

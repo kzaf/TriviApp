@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,7 @@ import com.zaf.triviapp.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.database.AppDatabase;
+import com.zaf.triviapp.database.TaskDao;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
@@ -60,7 +62,6 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
     private List<Scores> scoresList;
-
     private SharedPref sharedPref;
     private AppDatabase mDb;
 
@@ -75,16 +76,33 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
         ButterKnife.bind(this);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
+        TaskDao taskDao = mDb.taskDao();
 
-        loadScoresList();
         toolbarOptions();
-        setupUi(mDb.taskDao().loadUserDetails());
+        loadScoresList(taskDao);
+        setupUi(taskDao);
     }
 
-    private void setupUi(final LiveData<UserDetails> loggedUser){
-        loggedUser.observe(this, new Observer<UserDetails>() {
+    private void loadScoresList(final TaskDao taskDao){
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
-            public void onChanged(@Nullable UserDetails userDetails) {
+            public void run() {
+                scoresList = Arrays.asList(taskDao.loadAllCategoriesScore());
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        generateCategoriesList();
+                    }
+                });
+            }
+        });
+    }
+
+    private void setupUi(final TaskDao taskDao){
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                UserDetails userDetails = taskDao.loadUserDetails();
                 if(userDetails == null){
                     userName.setText("Login to continue...");
                     userEmail.setText("");
@@ -99,8 +117,12 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
                             startActivity(intent);
                         }
                     });
-
-                    chartOptions(false, 0);
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            chartOptions(false, 0);
+                        }
+                    });
                 }else{
                     userName.setText(userDetails.getUserName());
                     userEmail.setText(userDetails.getUserEmail());
@@ -114,19 +136,23 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
                             alertDialogLogout();
                         }
                     });
-
-                    chartOptions(true, setupTotalScore());
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            chartOptions(true, setupTotalScore());
+                        }
+                    });
                 }
             }
         });
     }
 
-    private int setupTotalScore(){
+    private float setupTotalScore(){
         if (scoresList == null) {
             return 0;
         }else{
-            int totalScores = 0;
-            int sum = 1;
+            float totalScores = 0;
+            float sum = 1;
             for (int i=0; i <scoresList.size(); i++){
                 totalScores =  totalScores + scoresList.get(i).getCategoryScore();
                 sum = i + 1;
@@ -215,18 +241,16 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
         });
     }
 
-    private void chartOptions(boolean isUserLogged, int scores) {
-
+    private void chartOptions(boolean isUserLogged, float scores) {
         PieChart mChart = findViewById(R.id.piechart_sum);
-
         if (!isUserLogged){
             mChart.setNoDataText(getResources().getString(R.string.no_chart));
             Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
             paint.setColor(getResources().getColor(R.color.colorAccentRed));
         }else{
             List<PieEntry> pieChartEntries = new ArrayList<>();
-            pieChartEntries.add(new PieEntry((float) scores * 10, "Success"));
-            pieChartEntries.add(new PieEntry((float) (10 - scores) * 10, "Failure"));
+            pieChartEntries.add(new PieEntry(scores * 10, "Success"));
+            pieChartEntries.add(new PieEntry((10 - scores) * 10, "Failure"));
 
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
             dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
@@ -245,16 +269,6 @@ public class ProfileActivity extends AppCompatActivity implements CategoriesProf
 
             mChart.setData(data);
         }
-    }
-
-    private void loadScoresList(){
-        mDb.taskDao().loadAllCategoriesScore().observe(this, new Observer<Scores[]>() {
-            @Override
-            public void onChanged(@Nullable Scores[] scores) {
-                scoresList = Arrays.asList(scores);
-                generateCategoriesList();
-            }
-        });
     }
 
     private void generateCategoriesList() {

@@ -325,9 +325,10 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             .OnPositiveClicked(new FancyGifDialogListener() {
                 @Override
                 public void OnClick() {
-                    mDb.taskDao().loadUserDetails().observe(GameplayActivity.this, new Observer<UserDetails>() {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
                         @Override
-                        public void onChanged(@Nullable final UserDetails userDetails) {
+                        public void run() {
+                            final UserDetails userDetails = mDb.taskDao().loadUserDetails();
                             if(userDetails != null){
                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                     @Override
