@@ -35,11 +35,8 @@ public interface TaskDao {
     @Query("SELECT * FROM category_scores WHERE category_name = :category")
     LiveData<Scores> loadSelectedCategoryScore(String category);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertScore(Scores score);
-
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    void updateScore(Scores score);
 
     @Query("DELETE FROM category_scores")
     void resetScore();

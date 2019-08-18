@@ -8,12 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 @Entity(tableName = "category_scores")
 public class Scores {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
     @ColumnInfo(name = "scores_uid")
     private String userId;
+    @PrimaryKey
     @ColumnInfo(name = "category_name")
-    private String categoryName;
+    private @NotNull String categoryName;
     @ColumnInfo(name = "category_score")
     private int categoryScore;
 
@@ -21,14 +20,6 @@ public class Scores {
         this.userId = userId;
         this.categoryName = categoryName;
         this.categoryScore = categoryScore;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUserId() {

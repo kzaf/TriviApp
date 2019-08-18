@@ -333,8 +333,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
-                                        mDb.taskDao().updateScore(new Scores(userDetails.getUserId(), selectedCategory.getName(), score));
+//                                        if (mDb.taskDao().checkIfScoreExists(selectedCategory.getName()).getCategoryName().equals(selectedCategory.getName())){
+//                                            mDb.taskDao().updateScore(new Scores(userDetails.getUserId(), selectedCategory.getName(), score));
+//                                        }else{
+                                            mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+//                                        }
                                     }
                                 });
                             }else{
