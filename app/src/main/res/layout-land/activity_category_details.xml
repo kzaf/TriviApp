@@ -88,12 +88,53 @@
                             android:textSize="36sp"
                             android:textStyle="bold" />
 
-                        <com.github.mikephil.charting.charts.PieChart
-                            android:id="@+id/piechart"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:layout_margin="5sp" />
+                            android:layout_marginStart="35sp"
+                            android:layout_marginLeft="35sp"
+                            android:layout_marginEnd="35sp"
+                            android:layout_marginRight="35sp"
+                            android:layout_marginBottom="35sp"
+                            android:orientation="vertical"
+                            android:weightSum="6">
+
+                            <com.github.mikephil.charting.charts.PieChart
+                                android:id="@+id/piechart"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="35sp"
+                                android:layout_marginLeft="35sp"
+                                android:layout_marginEnd="35sp"
+                                android:layout_marginRight="35sp"
+                                android:layout_marginBottom="15sp"
+                                android:layout_weight="6" />
+
+                            <TextView
+                                android:id="@+id/text_percent"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="%"
+                                android:textColor="?attr/textcolor"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/text_success"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="success"
+                                android:textColor="?attr/textcolor"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>

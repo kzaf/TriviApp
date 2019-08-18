@@ -52,7 +52,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProfileActivity extends AppCompatActivity implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener{
+public class ProfileActivity extends AppCompatActivity
+        implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener{
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;

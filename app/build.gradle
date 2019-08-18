@@ -77,8 +77,8 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
+    // Debug tool to view SQLite in browser: DEVICE_IP:8080/#
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
-
 
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'

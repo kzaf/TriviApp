@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,11 +52,12 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private SharedPref sharedPref;
     private AppDatabase mDb;
     private int scorePercentage = 0;
-    private boolean isUserLogged = false;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.selected_category_name) TextView categoryName;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.text_percent) TextView textPercent;
+    @BindView(R.id.text_success) TextView textSuccess;
     @BindView(R.id.category_details_image) @Nullable ImageView selectedCategoryImage;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.piechart) PieChart mChart;
@@ -106,35 +108,35 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             public void onChanged(@Nullable Scores scores) {
                 final List<PieEntry> pieChartEntries = new ArrayList<>();
 
-                final Description description = new Description();
-
-                mChart.setDescription(description);
-
-                mChart.setDrawHoleEnabled(false);
-                mChart.setUsePercentValues(true);
-
                 if (scores != null){
                     scorePercentage = scores.getCategoryScore() * 10;
                     float successScore = (float) scorePercentage;
                     float failScore = (float) 100 - scorePercentage;
                     pieChartEntries.add(new PieEntry(successScore, "Correct"));
                     pieChartEntries.add(new PieEntry(failScore, "Wrong"));
-                    description.setText(scorePercentage + "% success in " + categoryName.getText().toString());
-
+                    textPercent.setText(scorePercentage + " %");
                 }else{
                     pieChartEntries.add(new PieEntry(0, "Correct"));
                     pieChartEntries.add(new PieEntry(0, "Wrong"));
-                    description.setText("You haven't played yet in " + categoryName.getText().toString());
+                    textPercent.setText("You haven't played yet in " + categoryName.getText().toString());
+                    textSuccess.setText("");
                 }
 
                 PieDataSet dataset = new PieDataSet(pieChartEntries, "");
                 dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
                 dataset.setSliceSpace(0);
+                dataset.setValueTextSize(20);
+                dataset.setValueTextColor(android.R.color.white);
 
                 PieData data = new PieData(dataset);
                 data.setValueFormatter(new PercentFormatter());
+                data.setValueTextSize(20);
 
+                mChart.setDrawHoleEnabled(false);
                 mChart.setData(data);
+                mChart.setDrawSliceText(false);
+                mChart.getDescription().setEnabled(false);
+                mChart.getLegend().setEnabled(false);
 
                 if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -207,17 +209,12 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (mDb.taskDao().checkIfUsersTableIsEmpty().size() == 0){
-                    isUserLogged = false;
-
                     if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
                     mChart.setNoDataText(getResources().getString(R.string.no_chart));
                     Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
                 }else {
-                    isUserLogged = true;
-
                     loadSuccessPercentage();
-
                 }
             }
         });
@@ -234,7 +231,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
 
         toolbar.inflateMenu(R.menu.category_details_menu_items);
-
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
