@@ -120,7 +120,7 @@
                                 android:gravity="center"
                                 android:text="%"
                                 android:textColor="?attr/textcolor"
-                                android:textSize="20sp"
+                                android:textSize="26sp"
                                 android:textStyle="bold" />
 
                             <TextView

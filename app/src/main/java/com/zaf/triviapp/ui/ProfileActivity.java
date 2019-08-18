@@ -58,6 +58,8 @@ public class ProfileActivity extends AppCompatActivity
     @BindView(R.id.profile_username_tv) TextView userName;
     @BindView(R.id.profile_email_tv) TextView userEmail;
     @BindView(R.id.login_user) TextView loginUser;
+    @BindView(R.id.profile_percent) TextView profilePercent;
+    @BindView(R.id.profile_success) TextView profileSuccess;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
     private ArrayList<Scores> scoresList;
@@ -103,18 +105,6 @@ public class ProfileActivity extends AppCompatActivity
         outState.putParcelableArrayList(SCORES_LIST, scoresList);
         outState.putParcelable(SCORES_LAYOUT_MANAGER, profileRecyclerView.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                profileRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SCORES_LAYOUT_MANAGER));
-            }
-        }, 300);
-        scoresList = savedInstanceState.getParcelableArrayList(SCORES_LIST);
-        generateProfileCategoriesList(scoresList);
-        setupUi(taskDao);
     }
 
     private void loadScoresList(final TaskDao taskDao){
@@ -281,25 +271,32 @@ public class ProfileActivity extends AppCompatActivity
             mChart.setNoDataText(getResources().getString(R.string.no_chart));
             Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
             paint.setColor(getResources().getColor(R.color.colorAccentRed));
+            profilePercent.setText("");
+            profileSuccess.setText("");
         }else{
+
             List<PieEntry> pieChartEntries = new ArrayList<>();
             pieChartEntries.add(new PieEntry(scores * 10, "Success"));
             pieChartEntries.add(new PieEntry((10 - scores) * 10, "Failure"));
 
+            profilePercent.setText(scores * 10 + "%");
+            profileSuccess.setText("total score");
+
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
             dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
             dataset.setSliceSpace(0);
-
-            Description description = new Description();
-            description.setText(scores * 10 + "% Total success");
-
-            mChart.setDescription(description);
-
-            mChart.setDrawHoleEnabled(false);
-            mChart.setUsePercentValues(true);
+            dataset.setValueTextSize(20);
+            dataset.setValueTextColor(android.R.color.white);
 
             PieData data = new PieData(dataset);
             data.setValueFormatter(new PercentFormatter());
+            data.setValueTextSize(20);
+
+            mChart.setDrawHoleEnabled(false);
+            mChart.setData(data);
+            mChart.setDrawSliceText(false);
+            mChart.getDescription().setEnabled(false);
+            mChart.getLegend().setEnabled(false);
 
             mChart.setData(data);
         }

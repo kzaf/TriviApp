@@ -112,16 +112,60 @@
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp" />
 
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/piechart_sum"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="35sp"
-                    android:layout_marginLeft="35sp"
-                    android:layout_marginEnd="35sp"
-                    android:layout_marginRight="35sp"
-                    android:layout_marginBottom="35sp" />
+                    android:orientation="vertical"
+                    android:weightSum="4">
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/piechart_sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="35sp"
+                        android:layout_marginLeft="35sp"
+                        android:layout_marginTop="5sp"
+                        android:layout_marginEnd="35sp"
+                        android:layout_marginRight="35sp"
+                        android:layout_marginBottom="5sp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="35sp"
+                        android:layout_marginBottom="35sp"
+                        android:layout_weight="3"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:id="@+id/profile_percent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center|end"
+                            android:paddingEnd="5sp"
+                            android:textColor="?attr/textcolor"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            tools:text="%" />
+
+                        <TextView
+                            android:id="@+id/profile_success"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center|start"
+                            android:textColor="?attr/textcolor"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="total score" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 

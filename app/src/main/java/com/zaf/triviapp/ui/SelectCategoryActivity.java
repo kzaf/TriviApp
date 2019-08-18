@@ -110,17 +110,6 @@ public class SelectCategoryActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                categoriesRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(CATEGORIES_LAYOUT_MANAGER));
-            }
-        }, 300);
-        categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
-        generateCategoriesList(categoriesList);
-    }
-
-    @Override
     public void onListItemClick(int item) {
         Intent intent = new Intent(this, CategoryDetailsActivity.class);
         intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
