@@ -134,14 +134,7 @@
                 app:layoutAnimation="@anim/layout_animation_from_bottom"
                 app:layoutManagerOrientation="vertical"
                 app:layoutManagerReverse="false"
-                app:layoutManagerType="linear" >
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
-            </com.mlsdev.animatedrv.AnimatedRecyclerView>
+                app:layoutManagerType="linear" />
 
         </LinearLayout>
 

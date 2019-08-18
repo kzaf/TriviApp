@@ -1,14 +1,11 @@
 package com.zaf.triviapp.ui;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -41,9 +38,8 @@ import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.TaskDao;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
-import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.login.LoginAuth;
-import com.zaf.triviapp.models.Category;
+import com.zaf.triviapp.preferences.SharedPref;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +51,8 @@ import butterknife.ButterKnife;
 public class ProfileActivity extends AppCompatActivity
         implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener{
 
+    public static final String SCORES_LIST = "scores_list";
+    public static final String SCORES_LAYOUT_MANAGER = "scores_layout_manager";
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.profile_username_tv) TextView userName;
@@ -62,12 +60,13 @@ public class ProfileActivity extends AppCompatActivity
     @BindView(R.id.login_user) TextView loginUser;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
-    private List<Scores> scoresList;
+    private ArrayList<Scores> scoresList;
     private SharedPref sharedPref;
     private AppDatabase mDb;
+    private TaskDao taskDao;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
         if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
         else setTheme(R.style.AppTheme);
@@ -77,10 +76,44 @@ public class ProfileActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
-        TaskDao taskDao = mDb.taskDao();
+        taskDao = mDb.taskDao();
 
         toolbarOptions();
-        loadScoresList(taskDao);
+
+        if(savedInstanceState != null){
+            // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
+            // It's a hack to delay the onRestoreInstanceState
+            new Handler().postDelayed(new Runnable() {
+                @Override public void run() {
+                    profileRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SCORES_LAYOUT_MANAGER));
+                }
+            }, 300);
+            scoresList = savedInstanceState.getParcelableArrayList(SCORES_LIST);
+            generateProfileCategoriesList(scoresList);
+            setupUi(taskDao);
+
+        }else{
+            loadScoresList(taskDao);
+            setupUi(taskDao);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(SCORES_LIST, scoresList);
+        outState.putParcelable(SCORES_LAYOUT_MANAGER, profileRecyclerView.getLayoutManager().onSaveInstanceState());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+                profileRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SCORES_LAYOUT_MANAGER));
+            }
+        }, 300);
+        scoresList = savedInstanceState.getParcelableArrayList(SCORES_LIST);
+        generateProfileCategoriesList(scoresList);
         setupUi(taskDao);
     }
 
@@ -88,11 +121,11 @@ public class ProfileActivity extends AppCompatActivity
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                scoresList = Arrays.asList(taskDao.loadAllCategoriesScore());
+                scoresList = new ArrayList<>(Arrays.asList(taskDao.loadAllCategoriesScore()));
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        generateCategoriesList();
+                        generateProfileCategoriesList(scoresList);
                     }
                 });
             }
@@ -272,7 +305,7 @@ public class ProfileActivity extends AppCompatActivity
         }
     }
 
-    private void generateCategoriesList() {
+    private void generateProfileCategoriesList(List<Scores> scoresList) {
         CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, scoresList);
         profileRecyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this));
         profileRecyclerView.setAdapter(adapter);
