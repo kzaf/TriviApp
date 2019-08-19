@@ -11,12 +11,11 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
-import com.zaf.triviapp.AppExecutors;
+import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.ui.ProfileActivity;
-import com.zaf.triviapp.ui.SelectCategoryActivity;
 
 import java.util.Arrays;
 import java.util.List;

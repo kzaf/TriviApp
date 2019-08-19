@@ -16,10 +16,10 @@ import android.widget.TextView;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
-import com.zaf.triviapp.AppExecutors;
+import com.zaf.triviapp.models.Category;
+import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
-import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.preferences.SharedPref;
 
@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 public class SettingsActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.about_tv) TextView aboutButton;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.theme_switch) Switch themeSwitch;
     @BindView(R.id.vibrate_switch) Switch vibrateSwitch;
@@ -96,11 +97,16 @@ public class SettingsActivity extends AppCompatActivity {
                 alertDialogDeleteAccount();
             }
         });
-
         resetScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertResetScores();
+            }
+        });
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, AboutPage.class));
             }
         });
     }

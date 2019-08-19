@@ -1,4 +1,4 @@
-package com.zaf.triviapp;
+package com.zaf.triviapp.threads;
 
 import android.os.Handler;
 import android.os.Looper;

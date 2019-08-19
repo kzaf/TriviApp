@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -31,7 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
-import com.zaf.triviapp.AppExecutors;
+import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.database.AppDatabase;
@@ -238,29 +237,7 @@ public class ProfileActivity extends AppCompatActivity
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.profile_settings)
-                    Toast.makeText(ProfileActivity.this, "Settings", Toast.LENGTH_SHORT).show();
-                else{
-                    if (FirebaseAuth.getInstance().getCurrentUser() == null){
-                        Intent intent = new Intent(ProfileActivity.this, LoginAuth.class);
-                        startActivity(intent);
-                    }else{
-                        AuthUI.getInstance()
-                                .signOut(ProfileActivity.this)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        //showSignInOptions();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(ProfileActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                }
+                if(menuItem.getItemId()==R.id.profile_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 return false;
             }
         });
