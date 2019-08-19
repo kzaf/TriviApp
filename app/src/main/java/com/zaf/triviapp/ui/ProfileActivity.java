@@ -39,6 +39,7 @@ import com.zaf.triviapp.database.TaskDao;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.login.LoginAuth;
+import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.preferences.SharedPref;
 
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity
 
     public static final String SCORES_LIST = "scores_list";
     public static final String SCORES_LAYOUT_MANAGER = "scores_layout_manager";
+    public static final String SELECTED_CATEGORY = "selected_category";
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.profile_username_tv) TextView userName;
@@ -312,9 +314,10 @@ public class ProfileActivity extends AppCompatActivity
 
     @Override
     public void onListItemClick(int item) {
-//        Intent intent = new Intent(this, CategoryDetailsActivity.class);
-//        intent.putExtra(SELECTED_CATEGORY, categoriesList.get(item));
-//
-//        startActivity(intent);
+        Intent intent = new Intent(this, CategoryDetailsActivity.class);
+        String categoryName = scoresList.get(item).getCategoryName();
+        intent.putExtra(SELECTED_CATEGORY, new Category(categoryName, 0));
+
+        startActivity(intent);
     }
 }

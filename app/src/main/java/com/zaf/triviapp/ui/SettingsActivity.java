@@ -87,4 +87,9 @@ public class SettingsActivity extends AppCompatActivity {
         });
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
     }
+
+    @Override
+    public void onBackPressed() {
+        restartApp(SelectCategoryActivity.class);
+    }
 }
