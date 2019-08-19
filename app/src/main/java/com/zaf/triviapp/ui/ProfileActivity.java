@@ -203,7 +203,6 @@ public class ProfileActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 mDb.taskDao().deleteUser();
-                                mDb.taskDao().resetScore();
                             }
                         });
                         DynamicToast.make(getApplicationContext(), "See you again!", getResources()
