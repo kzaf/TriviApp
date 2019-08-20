@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
-import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
@@ -106,7 +105,7 @@ public class SettingsActivity extends AppCompatActivity {
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, AboutPage.class));
+                startActivity(new Intent(SettingsActivity.this, AboutPageActivity.class));
             }
         });
     }

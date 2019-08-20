@@ -14,7 +14,7 @@ import com.zaf.triviapp.preferences.SharedPref;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AboutPage extends AppCompatActivity {
+public class AboutPageActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar_title_about) TextView toolbarTitle;
     @BindView(R.id.mail_tv) TextView mailTextView;

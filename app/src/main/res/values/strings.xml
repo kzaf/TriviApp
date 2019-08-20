@@ -18,6 +18,7 @@
     <string name="triviapp_label"><![CDATA[<font color=#0031AA>Trivi</font><font color=#AD0000>App</font>]]></string>
     <string name="select_category_label"><![CDATA[<font color=#0031AA>Select </font><font color=#AD0000>Category</font>]]></string>
     <string name="loading_categories">Loading categories..</string>
+    <string name="widget_item_format">%1$d. %2$s, %3$s %4$s</string>
     <string name="about_description"><![CDATA[This app was made as a capstone project for the Udacity Android Developer Nanodegree. <br><br>
         The trivia categories and questions/answers are fetched from <a href="https://www.opentdb.com">Open Trivia Database</a>. <br>
         Firebase is used to store accounts and scores. <br><br>

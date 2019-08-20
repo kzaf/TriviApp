@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,8 +37,10 @@ import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.widget.AppWidgetProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -332,6 +335,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                                         mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                                     }
                                 });
+                                updateWidget();
                             }else{
                                 DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
                                         .getColor(R.color.orange), getResources()
@@ -343,6 +347,20 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     finish();
                 }
             }).build();
+    }
+
+    private void updateWidget(){
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(GameplayActivity.this, AppWidgetProvider.class);
+                intent.putExtra("WidgetUpdatedList", new ArrayList<>(Arrays.asList(mDb.taskDao().loadAllCategoriesScore())));
+                intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+                sendBroadcast(intent);
+            }
+        });
+
+
     }
 
     private void errorDialog(){
