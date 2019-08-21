@@ -113,6 +113,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     pieChartEntries.add(new PieEntry(successScore, "Correct"));
                     pieChartEntries.add(new PieEntry(failScore, "Wrong"));
                     textPercent.setText(scorePercentage + " %");
+                    textSuccess.setText("Success");
                 }else{
                     pieChartEntries.add(new PieEntry(0, "Correct"));
                     pieChartEntries.add(new PieEntry(0, "Wrong"));
