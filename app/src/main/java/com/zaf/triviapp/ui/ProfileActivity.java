@@ -1,11 +1,13 @@
 package com.zaf.triviapp.ui;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,28 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
-import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.adapters.CategoriesProfileAdapter;
 import com.zaf.triviapp.database.AppDatabase;
@@ -46,6 +36,7 @@ import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.threads.AppExecutors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +60,9 @@ public class ProfileActivity extends AppCompatActivity
     @BindView(R.id.profile_success) TextView profileSuccess;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
+    @BindView(R.id.swipe_refresh_layout_profile) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.piechart_sum) PieChart mChart;
+    private ProgressDialog progressDialog;
     private ArrayList<Scores> scoresList;
     private SharedPref sharedPref;
     private AppDatabase mDb;
@@ -89,6 +83,13 @@ public class ProfileActivity extends AppCompatActivity
 
         toolbarOptions();
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupUi(taskDao);
+            }
+        });
+
         if(savedInstanceState != null){
             // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
             // It's a hack to delay the onRestoreInstanceState
@@ -102,7 +103,6 @@ public class ProfileActivity extends AppCompatActivity
             setupUi(taskDao);
 
         }else{
-            loadScoresList(taskDao);
             setupUi(taskDao);
         }
     }
@@ -114,22 +114,8 @@ public class ProfileActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
     }
 
-    private void loadScoresList(final TaskDao taskDao){
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                scoresList = new ArrayList<>(Arrays.asList(taskDao.loadAllCategoriesScore()));
-                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        generateProfileCategoriesList(scoresList);
-                    }
-                });
-            }
-        });
-    }
-
     private void setupUi(final TaskDao taskDao){
+        initializeDialog();
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -156,12 +142,26 @@ public class ProfileActivity extends AppCompatActivity
                 alertDialogLogout();
             }
         });
-        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+        taskDao.loadAllCategoriesScore().observe(this, new Observer<Scores[]>() {
             @Override
-            public void run() {
+            public void onChanged(@Nullable Scores[] scores) {
+                scoresList = new ArrayList<>(Arrays.asList(scores));
                 chartOptions(true, setupTotalScore());
+                generateProfileCategoriesList(scoresList);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog != null) progressDialog.dismiss();
+    }
+
+    private void initializeDialog() {
+        progressDialog = new ProgressDialog(ProfileActivity.this);
+        progressDialog.setMessage(getResources().getString(R.string.loading_profile));
+        progressDialog.show();
     }
 
     private void userNotLoggedPopulateUi() {
@@ -259,7 +259,6 @@ public class ProfileActivity extends AppCompatActivity
     }
 
     private void chartOptions(boolean isUserLogged, float scores) {
-        PieChart mChart = findViewById(R.id.piechart_sum);
         if (!isUserLogged){
             Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
             paint.setColor(getResources().getColor(R.color.colorAccentRed));
@@ -267,13 +266,12 @@ public class ProfileActivity extends AppCompatActivity
             profileSuccess.setText("");
             mChart.setNoDataText(getResources().getString(R.string.no_chart));
         }else{
+            profilePercent.setText(scores * 10 + "%");
+            profileSuccess.setText("total score");
 
             List<PieEntry> pieChartEntries = new ArrayList<>();
             pieChartEntries.add(new PieEntry(scores * 10, "Success"));
             pieChartEntries.add(new PieEntry((10 - scores) * 10, "Failure"));
-
-            profilePercent.setText(scores * 10 + "%");
-            profileSuccess.setText("total score");
 
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
             dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
@@ -286,13 +284,14 @@ public class ProfileActivity extends AppCompatActivity
             data.setValueTextSize(20);
 
             mChart.setDrawHoleEnabled(false);
-            mChart.setData(data);
             mChart.setDrawSliceText(false);
             mChart.getDescription().setEnabled(false);
             mChart.getLegend().setEnabled(false);
 
             mChart.setData(data);
         }
+        if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+        if (progressDialog != null) progressDialog.dismiss();
     }
 
     private void generateProfileCategoriesList(List<Scores> scoresList) {

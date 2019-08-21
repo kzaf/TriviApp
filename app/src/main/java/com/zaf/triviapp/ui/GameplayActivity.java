@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.plattysoft.leonids.ParticleSystem;
@@ -40,10 +38,8 @@ import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 import com.zaf.triviapp.preferences.SharedPref;
-import com.zaf.triviapp.widget.AppWidgetProvider;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +64,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     public static final String STEP = "step";
     public static final String IS_TRUE_FALSE = "is_true_false";
     public static final String LEVEL = "level";
+    public static final String SCORE_CORRECT_ANSWERS = "socre_correct_answers";
+    public static final String IS_DIALOG_OPEN = "is_dialog_open";
+    public static boolean isDialogOpen = false;
     private AppDatabase mDb;
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
@@ -115,7 +114,13 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         toolbarOptions();
         if (savedInstanceState != null){
-            populateUiOnOrientationChange(savedInstanceState);
+            if (savedInstanceState.getInt(SCORE_CORRECT_ANSWERS) != 0){
+                isDialogOpen = savedInstanceState.getBoolean(IS_DIALOG_OPEN);
+                scoreCorrectAnswers = savedInstanceState.getInt(SCORE_CORRECT_ANSWERS);
+                alertDialogEndGame(scoreCorrectAnswers);
+            }else{
+                populateUiOnOrientationChange(savedInstanceState);
+            }
         }else{
             initializeDialog();
             fetchQuestions();
@@ -124,16 +129,21 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(QUESTION_LIST, questionList);
-        outState.putInt(QUESTION_INDEX, questionIndex);
-        outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
-        outState.putString(QUESTION, question.getText().toString());
-        outState.putString(ANSWER_1, answer1.getText().toString());
-        outState.putString(ANSWER_2, answer2.getText().toString());
-        outState.putString(ANSWER_3, answer3.getText().toString());
-        outState.putString(ANSWER_4, answer4.getText().toString());
-        outState.putString(STEP, gameplayStepNumber.getText().toString());
-        outState.putBoolean(IS_TRUE_FALSE, questionList.get(questionIndex).getType().equals("boolean"));
+        if (!isDialogOpen){
+            outState.putParcelableArrayList(QUESTION_LIST, questionList);
+            outState.putInt(QUESTION_INDEX, questionIndex);
+            outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
+            outState.putString(QUESTION, question.getText().toString());
+            outState.putString(ANSWER_1, answer1.getText().toString());
+            outState.putString(ANSWER_2, answer2.getText().toString());
+            outState.putString(ANSWER_3, answer3.getText().toString());
+            outState.putString(ANSWER_4, answer4.getText().toString());
+            outState.putString(STEP, gameplayStepNumber.getText().toString());
+            outState.putBoolean(IS_TRUE_FALSE, questionList.get(questionIndex).getType().equals("boolean"));
+        }else{
+            outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
+            outState.putBoolean(IS_DIALOG_OPEN, isDialogOpen);
+        }
 
         super.onSaveInstanceState(outState);
     }
@@ -301,6 +311,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void alertDialogEndGame(final int score){
+        isDialogOpen = true;
         String message;
         int gifImage;
         if(score==10){
@@ -366,15 +377,15 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void updateWidget(){
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(GameplayActivity.this, AppWidgetProvider.class);
-                intent.putExtra("WidgetUpdatedList", new ArrayList<>(Arrays.asList(mDb.taskDao().loadAllCategoriesScore())));
-                intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-                sendBroadcast(intent);
-            }
-        });
+//        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                Intent intent = new Intent(GameplayActivity.this, AppWidgetProvider.class);
+//                intent.putExtra("WidgetUpdatedList", new ArrayList<>(Arrays.asList(mDb.taskDao().loadAllCategoriesScore())));
+//                intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+//                sendBroadcast(intent);
+//            }
+//        });
 
 
     }

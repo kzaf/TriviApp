@@ -29,7 +29,7 @@ public interface TaskDao {
 
     // Scores
     @Query("SELECT * FROM category_scores")
-    Scores[] loadAllCategoriesScore();
+    LiveData<Scores[]> loadAllCategoriesScore();
 
     @Query("SELECT * FROM category_scores WHERE category_name = :category")
     LiveData<Scores> loadSelectedCategoryScore(String category);
