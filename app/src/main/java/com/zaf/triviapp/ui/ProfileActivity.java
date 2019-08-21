@@ -1,5 +1,6 @@
 package com.zaf.triviapp.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -27,6 +28,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
@@ -129,47 +135,51 @@ public class ProfileActivity extends AppCompatActivity
             public void run() {
                 UserDetails userDetails = taskDao.loadUserDetails();
                 if(userDetails == null){
-                    userName.setText("Login to continue...");
-                    userEmail.setText("");
-
-                    loginUser.setText("Login");
-                    loginUser.setBackgroundResource(R.drawable.custom_border_blue);
-
-                    loginUser.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(ProfileActivity.this, LoginAuth.class);
-                            startActivity(intent);
-                        }
-                    });
-                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            chartOptions(false, 0);
-                        }
-                    });
+                    userNotLoggedPopulateUi();
                 }else{
-                    userName.setText(userDetails.getUserName());
-                    userEmail.setText(userDetails.getUserEmail());
-
-                    loginUser.setText("Logout");
-                    loginUser.setBackgroundResource(R.drawable.custom_border_red);
-
-                    loginUser.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            alertDialogLogout();
-                        }
-                    });
-                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            chartOptions(true, setupTotalScore());
-                        }
-                    });
+                    userLoggedPopulateUi(userDetails);
                 }
             }
         });
+    }
+
+    private void userLoggedPopulateUi(UserDetails userDetails) {
+        userName.setText(userDetails.getUserName());
+        userEmail.setText(userDetails.getUserEmail());
+
+        loginUser.setText("Logout");
+        loginUser.setBackgroundResource(R.drawable.custom_border_red);
+
+        loginUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogLogout();
+            }
+        });
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                chartOptions(true, setupTotalScore());
+            }
+        });
+    }
+
+    private void userNotLoggedPopulateUi() {
+        userName.setText("Login to continue...");
+        userEmail.setText("");
+
+        loginUser.setText("Login");
+        loginUser.setBackgroundResource(R.drawable.custom_border_blue);
+
+        loginUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                Intent intent = new Intent(ProfileActivity.this, LoginAuth.class);
+                startActivity(intent);
+            }
+        });
+        chartOptions(false, 0);
     }
 
     private float setupTotalScore(){
@@ -202,6 +212,9 @@ public class ProfileActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 mDb.taskDao().deleteUser();
+                                mDb.taskDao().resetScore();
+                                finish();
+                                startActivity(new Intent(ProfileActivity.this, SelectCategoryActivity.class));
                             }
                         });
                         DynamicToast.make(getApplicationContext(), "See you again!", getResources()
@@ -226,7 +239,9 @@ public class ProfileActivity extends AppCompatActivity
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(getApplicationContext(), SelectCategoryActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
 
@@ -246,11 +261,11 @@ public class ProfileActivity extends AppCompatActivity
     private void chartOptions(boolean isUserLogged, float scores) {
         PieChart mChart = findViewById(R.id.piechart_sum);
         if (!isUserLogged){
-            mChart.setNoDataText(getResources().getString(R.string.no_chart));
             Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
             paint.setColor(getResources().getColor(R.color.colorAccentRed));
             profilePercent.setText("");
             profileSuccess.setText("");
+            mChart.setNoDataText(getResources().getString(R.string.no_chart));
         }else{
 
             List<PieEntry> pieChartEntries = new ArrayList<>();

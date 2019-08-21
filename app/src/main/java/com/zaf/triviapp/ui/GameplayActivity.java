@@ -22,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.plattysoft.leonids.ParticleSystem;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
@@ -74,6 +77,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private ArrayList<Question> questionList;
     private SharedPref sharedPref;
     private ProgressDialog progressDialog;
+    private DatabaseReference mFirebaseDatabase;
+    private FirebaseDatabase mFirebaseInstance;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.cancel_button) ImageView cancel;
@@ -335,6 +340,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                                         mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                                     }
                                 });
+                                updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                                 updateWidget();
                             }else{
                                 DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
@@ -347,6 +353,16 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     finish();
                 }
             }).build();
+    }
+
+    private void updateFirebase(Scores scores){
+        mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseDatabase = mFirebaseInstance.getReference("DataScores");
+        addScore(scores.getUserId(), scores.getCategoryName(), scores.getCategoryScore());
+    }
+
+    private void addScore(String userId, String categoryName, int categoryScore){
+        mFirebaseDatabase.child("ScoresByUser").child(userId).child(categoryName).child("Score").setValue(categoryScore);
     }
 
     private void updateWidget(){
