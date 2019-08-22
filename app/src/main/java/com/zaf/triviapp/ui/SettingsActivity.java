@@ -229,6 +229,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
             }
+
             private void deleteFirebaseRecords(){
                 Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(user.getUid());
                 Query usersQuery = FirebaseDatabase.getInstance().getReference().child("DataUsers").child("UserDetails").child(user.getUid());
@@ -288,10 +289,22 @@ public class SettingsActivity extends AppCompatActivity {
                                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        DynamicToast.make(getApplicationContext(), "Your score has been reset!", getResources()
-                                                .getColor(R.color.orange), getResources()
-                                                .getColor(R.color.textBlack))
-                                                .show();
+                                        Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(userDetails.getUserId());
+                                        scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                                                    appleSnapshot.getRef().removeValue();
+                                                }
+                                                DynamicToast.make(getApplicationContext(), "Your score has been reset!", getResources()
+                                                        .getColor(R.color.orange), getResources()
+                                                        .getColor(R.color.textBlack))
+                                                        .show();
+                                            }
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) { }
+                                        });
+
                                     }
                                 });
                             }else{
