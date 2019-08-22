@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,8 +39,10 @@ import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.widget.AppWidgetProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,19 +57,19 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String DIFFICULTY = "difficulty";
     private static final String TYPE = "type";
-    public static final String QUESTION_LIST = "question_list";
-    public static final String QUESTION_INDEX = "question_index";
-    public static final String QUESTION = "question";
-    public static final String ANSWER_1 = "answer1";
-    public static final String ANSWER_2 = "answer2";
-    public static final String ANSWER_3 = "answer3";
-    public static final String ANSWER_4 = "answer4";
-    public static final String STEP = "step";
-    public static final String IS_TRUE_FALSE = "is_true_false";
-    public static final String LEVEL = "level";
-    public static final String SCORE_CORRECT_ANSWERS = "socre_correct_answers";
-    public static final String IS_DIALOG_OPEN = "is_dialog_open";
-    public static boolean isDialogOpen = false;
+    private static final String QUESTION_LIST = "question_list";
+    private static final String QUESTION_INDEX = "question_index";
+    private static final String QUESTION = "question";
+    private static final String ANSWER_1 = "answer1";
+    private static final String ANSWER_2 = "answer2";
+    private static final String ANSWER_3 = "answer3";
+    private static final String ANSWER_4 = "answer4";
+    private static final String STEP = "step";
+    private static final String IS_TRUE_FALSE = "is_true_false";
+    private static final String LEVEL = "level";
+    private static final String SCORE_CORRECT_ANSWERS = "socre_correct_answers";
+    private static final String IS_DIALOG_OPEN = "is_dialog_open";
+    private static boolean isDialogOpen = false;
     private AppDatabase mDb;
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
@@ -144,13 +147,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
             outState.putBoolean(IS_DIALOG_OPEN, isDialogOpen);
         }
-
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.answer1:
                 checkAnswerCorrection(answer1);
@@ -199,21 +200,18 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void toolbarOptions() {
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 alertDialogExit();
             }
         });
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 alertDialogExit();
             }
         });
-
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
     }
 
@@ -352,7 +350,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 });
                                 updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
-                                updateWidget();
+//                                updateWidget();
                             }else{
                                 DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
                                         .getColor(R.color.orange), getResources()
@@ -375,8 +373,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private void addScore(String userId, String categoryName, int categoryScore){
         mFirebaseDatabase.child("ScoresByUser").child(userId).child(categoryName).child("Score").setValue(categoryScore);
     }
-
-    private void updateWidget(){
+//
+//    private void updateWidget(){
 //        AppExecutors.getInstance().diskIO().execute(new Runnable() {
 //            @Override
 //            public void run() {
@@ -386,9 +384,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 //                sendBroadcast(intent);
 //            }
 //        });
-
-
-    }
+//    }
 
     private void errorDialog(){
         new FancyGifDialog.Builder(this)

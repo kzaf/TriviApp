@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.AboutPageActivity"></activity>
+        <activity android:name=".ui.AboutPageActivity" />
         <activity android:name=".ui.SettingsActivity" />
         <activity android:name=".ui.ProfileActivity" />
         <activity
@@ -51,7 +51,7 @@
         </receiver>
 
         <service
-            android:name=".service.AppWidgetService"
+            android:name=".service.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>

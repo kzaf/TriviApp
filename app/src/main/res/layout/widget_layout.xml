@@ -1,27 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundcolor"
-    android:orientation="vertical">
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="10sp">
 
-    <TextView
-        android:id="@+id/tv_title_widget"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:textSize="24dp"
-        android:textColor="?attr/textcolor"
-        android:textStyle="bold|italic"
-        tools:text="TriviApp" />
+        android:gravity="center">
+        <!-- Widget heading -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TriviApp"
+            android:textColor="@color/textBlack"
+            android:textSize="22sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
 
     <ListView
-        android:id="@+id/lv_widget"
+        android:id="@+id/widget_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8sp">
+        android:layout_height="match_parent">
 
     </ListView>
 
