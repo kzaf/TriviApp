@@ -26,4 +26,20 @@
         If you experience any issues/errors while using the app, please feel free to contact me.]]>
 
     </string>
+    <string name="gameplay_difficulty_medium">Medium</string>
+    <string name="gameplay_difficulty_hard">Hard</string>
+    <string name="gameplay_difficulty_easy">Easy</string>
+    <string name="gameplay_endgame_dialog_wow">Wow! You rock!</string>
+    <string name="gameplay_endgame_dialog_welldone">Well done!</string>
+    <string name="gameplay_endgame_dialog_can_do_better">You can do better</string>
+    <string name="gameplay_endgame_dialog_fail">Hmm.. Again?</string>
+    <string name="gameplay_endgame_dialog_login_toast">Login to track your score!</string>
+    <string name="gameplay_error_dialog_title">Ooops.. something went wrong!</string>
+    <string name="gameplay_error_dialog_message">Please refresh!</string>
+    <string name="gameplay_error_dialog_positive_button_text">Back to Quiz!</string>
+    <string name="gameplay_exit_dialog_title">Are you sure you want to give up?</string>
+    <string name="gameplay_exit_dialog_message">Score will not be saved if you leave the quiz!</string>
+    <string name="gameplay_exit_dialog_negative_button">Back to Quiz</string>
+    <string name="gameplay_exit_dialog_positive_button">Leave!</string>
+    <string name="gameplay_exit_dialog_keep_going_toast">Nice! Keep going!</string>
 </resources>

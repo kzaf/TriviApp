@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,10 +39,8 @@ import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
 import com.zaf.triviapp.preferences.SharedPref;
-import com.zaf.triviapp.widget.AppWidgetProvider;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,11 +67,12 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private static final String LEVEL = "level";
     private static final String SCORE_CORRECT_ANSWERS = "socre_correct_answers";
     private static final String IS_DIALOG_OPEN = "is_dialog_open";
-    private static boolean isDialogOpen = false;
+    public static final String CORRECT_SCORE = "correct_score";
     private AppDatabase mDb;
+    private Vibrator vibe;
+    private static boolean isDialogOpen = false;
     private int questionIndex = 0;
     private int scoreCorrectAnswers = 0;
-    private Vibrator vibe;
     private Category selectedCategory;
     private String difficulty, type;
     private ArrayList<Question> questionList;
@@ -95,7 +94,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.answer3) TextView answer3;
     @BindView(R.id.answer4) TextView answer4;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
@@ -108,6 +106,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         mDb = AppDatabase.getInstance(getApplicationContext());
 
+        toolbarOptions();
+        populateUi(savedInstanceState);
+    }
+
+    private void populateUi(Bundle savedInstanceState) {
         selectedCategory = getIntent().getParcelableExtra(SELECTED_CATEGORY);
         difficulty = getIntent().getStringExtra(DIFFICULTY);
         type = getIntent().getStringExtra(TYPE);
@@ -115,7 +118,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         gameplayCategoryName.setText(selectedCategory.getName());
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        toolbarOptions();
         if (savedInstanceState != null){
             if (savedInstanceState.getInt(SCORE_CORRECT_ANSWERS) != 0){
                 isDialogOpen = savedInstanceState.getBoolean(IS_DIALOG_OPEN);
@@ -142,7 +144,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             outState.putString(ANSWER_3, answer3.getText().toString());
             outState.putString(ANSWER_4, answer4.getText().toString());
             outState.putString(STEP, gameplayStepNumber.getText().toString());
-            outState.putBoolean(IS_TRUE_FALSE, questionList.get(questionIndex).getType().equals("boolean"));
+            outState.putInt(CORRECT_SCORE, scoreCorrectAnswers);
+            if (secondTwoButtons.getVisibility() == View.INVISIBLE) outState.putBoolean(IS_TRUE_FALSE, true);
+            else outState.putBoolean(IS_TRUE_FALSE, false);
         }else{
             outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
             outState.putBoolean(IS_DIALOG_OPEN, isDialogOpen);
@@ -182,7 +186,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private void populateUiOnOrientationChange(Bundle savedInstanceState) {
         questionList = savedInstanceState.getParcelableArrayList(QUESTION_LIST);
         questionIndex = savedInstanceState.getInt(QUESTION_INDEX);
-        setLevelTextAndColor(savedInstanceState.getString(LEVEL));
+        scoreCorrectAnswers = savedInstanceState.getInt(CORRECT_SCORE);
+        setLevelLabelTextAndColor(savedInstanceState.getString(LEVEL));
         question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(QUESTION)));
         answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_1)));
         answer1.setOnClickListener(this);
@@ -219,11 +224,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         progressDialog = new ProgressDialog(GameplayActivity.this);
         progressDialog.setMessage(getResources().getString(R.string.loading_categories));
         progressDialog.show();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
     }
 
     private void fetchQuestions() {
-
-        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
+        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get Retrofit instance
 
         if(type.equals("True/False")) type = "boolean";
         else if(type.equals("Multiple Choice")) type = "multiple";
@@ -233,11 +238,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         else difficulty = difficulty.toLowerCase();
 
         Call<QuestionList> call = service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
-
         call.enqueue(new Callback<QuestionList>() {
             @Override
             public void onResponse(Call<QuestionList> call, Response<QuestionList> response) {
                 progressDialog.dismiss();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                 if (response.body() != null) {
                     questionList = (ArrayList<Question>) response.body().getTrivia_questions();
                     populateQuestions(questionList);
@@ -246,23 +251,22 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onFailure(Call<QuestionList> call, Throwable t) {
                 progressDialog.dismiss();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
             }
         });
     }
 
     private void populateQuestions(ArrayList<Question> questionList){
-
         if (questionList.size() == 0){
             errorDialog();
             return;
         }
-
         answer1.setBackground(getResources().getDrawable(R.drawable.custom_border));
         answer2.setBackground(getResources().getDrawable(R.drawable.custom_border));
         answer3.setBackground(getResources().getDrawable(R.drawable.custom_border));
         answer4.setBackground(getResources().getDrawable(R.drawable.custom_border));
 
-        setLevelTextAndColor(questionList.get(questionIndex).getDifficulty());
+        setLevelLabelTextAndColor(questionList.get(questionIndex).getDifficulty());
 
         List<String> mixedQuestions = questionList.get(questionIndex).getIncorrect_answers();
         mixedQuestions.add(questionList.get(questionIndex).getCorrect_answer());
@@ -292,19 +296,24 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         questionIndex++;
     }
 
-    private void setLevelTextAndColor(String level) {
-        switch (level){
-            case "medium":
-                gameplayDifficultyLevel.setText("Medium");
-                gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
-                break;
-            case "hard":
-                gameplayDifficultyLevel.setText("Hard");
-                gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.colorAccentRed));
-                break;
-            default:
-                gameplayDifficultyLevel.setText("Easy");
-                gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.green));
+    private void setLevelLabelTextAndColor(String level) {
+        if (level == null){
+            gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_medium));
+            gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
+        }else{
+            switch (level){
+                case "medium":
+                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_medium));
+                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
+                    break;
+                case "hard":
+                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_hard));
+                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.colorAccentRed));
+                    break;
+                default:
+                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_easy));
+                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.green));
+            }
         }
     }
 
@@ -313,19 +322,19 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         String message;
         int gifImage;
         if(score==10){
-            message = "Wow! You rock!";
+            message = getResources().getString(R.string.gameplay_endgame_dialog_wow);
             gifImage = R.drawable.wow;
         }
         else if(score<10 && score>=5){
-            message = "Well done!";
+            message = getResources().getString(R.string.gameplay_endgame_dialog_welldone);
             gifImage = R.drawable.welldone;
         }
         else if(score<5 && score>=2){
-            message = "You can do better";
+            message = getResources().getString(R.string.gameplay_endgame_dialog_can_do_better);
             gifImage = R.drawable.meh;
         }
         else{
-            message = "Hmm.. Again?";
+            message = getResources().getString(R.string.gameplay_endgame_dialog_fail);
             gifImage = R.drawable.fail;
         }
         new FancyGifDialog.Builder(this)
@@ -343,18 +352,23 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                         public void run() {
                             final UserDetails userDetails = mDb.taskDao().loadUserDetails();
                             if(userDetails != null){
-                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                        updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                                     }
                                 });
-                                updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                             }else{
-                                DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
-                                        .getColor(R.color.orange), getResources()
-                                        .getColor(R.color.textBlack))
-                                        .show();
+                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_endgame_dialog_login_toast), getResources()
+                                                .getColor(R.color.orange), getResources()
+                                                .getColor(R.color.textBlack))
+                                                .show();
+                                    }
+                                });
                             }
                         }
                     });
@@ -375,10 +389,10 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void errorDialog(){
         new FancyGifDialog.Builder(this)
-                .setTitle("Ooops.. something went wrong!")
-                .setMessage("Please refresh!")
+                .setTitle(getResources().getString(R.string.gameplay_error_dialog_title))
+                .setMessage(getResources().getString(R.string.gameplay_error_dialog_message))
                 .setPositiveBtnBackground("#b80c00")
-                .setPositiveBtnText("Back to Quiz!")
+                .setPositiveBtnText(getResources().getString(R.string.gameplay_error_dialog_positive_button_text))
                 .setGifResource(R.drawable.error)
                 .isCancellable(false)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -392,11 +406,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
     private void alertDialogExit(){
         new FancyGifDialog.Builder(this)
-                .setTitle("Are you sure you want to give up?")
-                .setMessage("Score will not be saved if you leave the quiz!")
-                .setNegativeBtnText("Back to Quiz")
+                .setTitle(getResources().getString(R.string.gameplay_exit_dialog_title))
+                .setMessage(getResources().getString(R.string.gameplay_exit_dialog_message))
+                .setNegativeBtnText(getResources().getString(R.string.gameplay_exit_dialog_negative_button))
                 .setPositiveBtnBackground("#b80c00")
-                .setPositiveBtnText("Leave!")
+                .setPositiveBtnText(getResources().getString(R.string.gameplay_exit_dialog_positive_button))
                 .setNegativeBtnBackground("#FFA9A7A8")
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(false)
@@ -410,7 +424,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void OnClick() {
                         DynamicToast.make(getApplicationContext(),
-                                "Nice! Keep going!",
+                                getResources().getString(R.string.gameplay_exit_dialog_keep_going_toast),
                                 getResources().getDrawable(R.drawable.ic_thumb_up_blue_24dp),
                                 getResources().getColor(R.color.colorAccentBlue),
                                 getResources().getColor(R.color.textWhite))
@@ -428,7 +442,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         answer4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
-        Spanned answerCorrect = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer());
+        Spanned answerCorrect = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT) :
+                Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer());
 
         if(answerText.contentEquals(answerCorrect.toString())){
             answer.setBackgroundColor(getResources().getColor(R.color.green));
@@ -453,6 +469,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         // Block UI from touch events
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -463,7 +480,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 }
                 populateQuestions(questionList);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
             }
         }, 2000);
     }

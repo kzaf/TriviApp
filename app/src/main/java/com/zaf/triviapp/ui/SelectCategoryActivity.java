@@ -3,6 +3,7 @@ package com.zaf.triviapp.ui;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -99,7 +100,10 @@ public class SelectCategoryActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (progressDialog != null) progressDialog.dismiss();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        }
     }
 
     @Override
@@ -137,6 +141,8 @@ public class SelectCategoryActivity extends AppCompatActivity
         progressDialog = new ProgressDialog(SelectCategoryActivity.this);
         progressDialog.setMessage(getResources().getString(R.string.loading_categories));
         progressDialog.show();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
     }
 
     private void fetchCategories() {
@@ -149,6 +155,7 @@ public class SelectCategoryActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<CategoriesList> call, Response<CategoriesList> response) {
                 progressDialog.dismiss();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                 generateCategoriesList(response.body().getCategory());
                 if (response.body() != null) {
                     categoriesList = (ArrayList<Category>) response.body().getCategory();
@@ -160,6 +167,7 @@ public class SelectCategoryActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<CategoriesList> call, Throwable t) {
                 progressDialog.dismiss();
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                 if (mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(false);
                 }

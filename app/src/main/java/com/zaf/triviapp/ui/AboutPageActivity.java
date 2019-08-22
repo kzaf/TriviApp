@@ -20,11 +20,10 @@ public class AboutPageActivity extends AppCompatActivity {
     @BindView(R.id.mail_tv) TextView mailTextView;
     @BindView(R.id.about_text) TextView aboutTextView;
     @BindView(R.id.back_button_about) ImageView back;
-    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sharedPref = new SharedPref(this);
+        SharedPref sharedPref = new SharedPref(this);
         if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
         else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
@@ -35,7 +34,8 @@ public class AboutPageActivity extends AppCompatActivity {
         toolbarOptions();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            aboutTextView.setText(Html.fromHtml(getResources().getString(R.string.about_description), Html.FROM_HTML_MODE_COMPACT));
+            aboutTextView.setText(Html.fromHtml(getResources().getString(R.string.about_description),
+                    Html.FROM_HTML_MODE_COMPACT));
         } else {
             aboutTextView.setText(Html.fromHtml(getResources().getString(R.string.about_description)));
         }

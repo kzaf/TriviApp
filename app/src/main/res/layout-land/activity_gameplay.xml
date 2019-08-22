@@ -89,6 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="?attr/textcolor"
                     android:gravity="center"
                     android:text="5/10"
                     android:textSize="16sp" />

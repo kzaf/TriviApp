@@ -46,8 +46,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private static final String DIFFICULTY = "difficulty";
     private static final String TYPE = "type";
     private String difficulty = "Any Difficulty", type = "Any Type";
-    private NDialog nDialog;
-    private SharedPref sharedPref;
     private AppDatabase mDb;
     private int scorePercentage = 0;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -63,7 +61,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sharedPref = new SharedPref(this);
+        SharedPref sharedPref = new SharedPref(this);
         if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
         else setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
@@ -77,9 +75,12 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
         toolbarOptions();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        populateUi(selectedCategory);
+    }
+
+    private void populateUi(final Category selectedCategory) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
             backgroundPictureOptions(selectedCategory);
-        }
 
         categoryName.setText(selectedCategory.getName());
 
@@ -88,7 +89,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bottomSheet(selectedCategory);
+                gameOptionsDialog(selectedCategory);
             }
         });
 
@@ -142,10 +143,10 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void bottomSheet(final Category selectedCategory){
+    private void gameOptionsDialog(final Category selectedCategory){
         View dialogLayout = View.inflate(this, R.layout.gameplay_options_dialog, null);
 
-        nDialog = new NDialog(CategoryDetailsActivity.this, ButtonType.TWO_BUTTON);
+        NDialog nDialog = new NDialog(CategoryDetailsActivity.this, ButtonType.TWO_BUTTON);
         nDialog.setIcon(R.drawable.triviapp_icon);
         nDialog.setTitle("Select gameplay options");
         nDialog.setCustomView(dialogLayout);
@@ -196,11 +197,8 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
     private void backgroundPictureOptions(Category selectedCategory) {
         int imageId = getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName());
-        if (imageId != 0){
-            selectedCategoryImage.setImageResource(imageId);
-        }else{
-            selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", getPackageName()));
-        }
+        if (imageId != 0) selectedCategoryImage.setImageResource(imageId);
+        else selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", getPackageName()));
     }
 
     private void checkIfUserIsLogged() {
@@ -212,9 +210,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     mChart.setNoDataText(getResources().getString(R.string.no_chart));
                     Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
-                }else {
-                    loadSuccessPercentage();
-                }
+                }else loadSuccessPercentage();
             }
         });
     }

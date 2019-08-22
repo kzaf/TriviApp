@@ -64,7 +64,6 @@ public class LoginAuth extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == MY_REQUEST_CODE){
             if (resultCode == RESULT_OK){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -73,9 +72,7 @@ public class LoginAuth extends AppCompatActivity {
                 Intent intent = new Intent(LoginAuth.this, ProfileActivity.class);
                 startActivity(intent);
                 finish();
-            }else{
-                finish();
-            }
+            }else finish();
         }
     }
 
