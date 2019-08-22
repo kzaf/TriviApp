@@ -24,6 +24,8 @@ import java.util.List;
 public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private List<Scores> scoresList = new ArrayList<>();
+    String userId;
+    DatabaseReference childNode;
     Context mContext;
     Intent intent;
 
@@ -34,7 +36,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onCreate() {
-        initializeData();
+
     }
 
     @Override
@@ -58,7 +60,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.scores_widget_item);
         remoteViews.setTextViewText(R.id.tv_scores_widget_item, scoresList.get(index).getCategoryName());
-        remoteViews.setTextViewText(R.id.tv_scores_widget_item_score, String.valueOf(scoresList.get(index).getCategoryScore()));
+        remoteViews.setTextViewText(R.id.tv_scores_widget_item_score, scoresList.get(index).getCategoryScore()* 10 + "%");
 
         return remoteViews;
     }
@@ -85,12 +87,10 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     private void initializeData() throws NullPointerException {
         try {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            FirebaseUser user = auth.getCurrentUser();
-            assert user != null;
-            final String userId = auth.getCurrentUser().getUid();
-            DatabaseReference mainNode = FirebaseDatabase.getInstance().getReference("DataScores").child("ScoresByUser");
-            DatabaseReference childNode = mainNode.child(userId);
+            scoresList.clear();
+            assert FirebaseAuth.getInstance().getCurrentUser() != null;
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            childNode = FirebaseDatabase.getInstance().getReference("DataScores").child("ScoresByUser").child(userId);
             childNode.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

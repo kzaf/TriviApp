@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
@@ -213,6 +214,7 @@ public class ProfileActivity extends AppCompatActivity
                             public void run() {
                                 mDb.taskDao().deleteUser();
                                 mDb.taskDao().resetScore();
+                                FirebaseAuth.getInstance().signOut();
                                 finish();
                                 startActivity(new Intent(ProfileActivity.this, SelectCategoryActivity.class));
                             }
