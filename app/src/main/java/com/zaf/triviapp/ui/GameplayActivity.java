@@ -350,7 +350,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 });
                                 updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
-//                                updateWidget();
                             }else{
                                 DynamicToast.make(getApplicationContext(), "Login to track your score!", getResources()
                                         .getColor(R.color.orange), getResources()
@@ -373,18 +372,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private void addScore(String userId, String categoryName, int categoryScore){
         mFirebaseDatabase.child("ScoresByUser").child(userId).child(categoryName).child("Score").setValue(categoryScore);
     }
-//
-//    private void updateWidget(){
-//        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                Intent intent = new Intent(GameplayActivity.this, AppWidgetProvider.class);
-//                intent.putExtra("WidgetUpdatedList", new ArrayList<>(Arrays.asList(mDb.taskDao().loadAllCategoriesScore())));
-//                intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-//                sendBroadcast(intent);
-//            }
-//        });
-//    }
 
     private void errorDialog(){
         new FancyGifDialog.Builder(this)
