@@ -2,10 +2,14 @@ package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +29,10 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
@@ -130,7 +138,53 @@ public class ProfileActivity extends AppCompatActivity
         });
     }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    private void readScores(final String uid){
+        FirebaseDatabase.getInstance().getReference("DataScores").child("ScoresByUser").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot category: dataSnapshot.getChildren()){
+                    final Scores score = new Scores(uid, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString()));
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.taskDao().insertScore(score);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                DynamicToast.make(getApplicationContext(), "" + databaseError.getMessage(), getResources()
+                        .getColor(R.color.colorAccentRed), getResources()
+                        .getColor(R.color.textWhite))
+                        .show();
+            }
+        });
+    }
+
     private void userLoggedPopulateUi(UserDetails userDetails) {
+        if(haveNetworkConnection()){
+            readScores(userDetails.getUserId());
+        }
+
         userName.setText(userDetails.getUserName());
         userEmail.setText(userDetails.getUserEmail());
 
@@ -291,6 +345,7 @@ public class ProfileActivity extends AppCompatActivity
             mChart.getLegend().setEnabled(false);
 
             mChart.setData(data);
+            mChart.invalidate();
         }
         if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
         if (progressDialog != null) progressDialog.dismiss();

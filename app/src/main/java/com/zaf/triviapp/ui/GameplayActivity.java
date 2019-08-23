@@ -67,7 +67,6 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private static final String LEVEL = "level";
     private static final String SCORE_CORRECT_ANSWERS = "socre_correct_answers";
     private static final String IS_DIALOG_OPEN = "is_dialog_open";
-    public static final String CORRECT_SCORE = "correct_score";
     private AppDatabase mDb;
     private Vibrator vibe;
     private static boolean isDialogOpen = false;
@@ -119,7 +118,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState != null){
-            if (savedInstanceState.getInt(SCORE_CORRECT_ANSWERS) != 0){
+            if (isDialogOpen){
                 isDialogOpen = savedInstanceState.getBoolean(IS_DIALOG_OPEN);
                 scoreCorrectAnswers = savedInstanceState.getInt(SCORE_CORRECT_ANSWERS);
                 alertDialogEndGame(scoreCorrectAnswers);
@@ -135,18 +134,21 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (!isDialogOpen){
-            outState.putParcelableArrayList(QUESTION_LIST, questionList);
-            outState.putInt(QUESTION_INDEX, questionIndex);
-            outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
-            outState.putString(QUESTION, question.getText().toString());
-            outState.putString(ANSWER_1, answer1.getText().toString());
-            outState.putString(ANSWER_2, answer2.getText().toString());
-            outState.putString(ANSWER_3, answer3.getText().toString());
-            outState.putString(ANSWER_4, answer4.getText().toString());
-            outState.putString(STEP, gameplayStepNumber.getText().toString());
-            outState.putInt(CORRECT_SCORE, scoreCorrectAnswers);
-            if (secondTwoButtons.getVisibility() == View.INVISIBLE) outState.putBoolean(IS_TRUE_FALSE, true);
-            else outState.putBoolean(IS_TRUE_FALSE, false);
+            if (questionList == null) errorDialog();
+            else{
+                outState.putParcelableArrayList(QUESTION_LIST, questionList);
+                outState.putInt(QUESTION_INDEX, questionIndex);
+                outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
+                outState.putString(QUESTION, question.getText().toString());
+                outState.putString(ANSWER_1, answer1.getText().toString());
+                outState.putString(ANSWER_2, answer2.getText().toString());
+                outState.putString(ANSWER_3, answer3.getText().toString());
+                outState.putString(ANSWER_4, answer4.getText().toString());
+                outState.putString(STEP, gameplayStepNumber.getText().toString());
+                outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
+                if (secondTwoButtons.getVisibility() == View.INVISIBLE) outState.putBoolean(IS_TRUE_FALSE, true);
+                else outState.putBoolean(IS_TRUE_FALSE, false);
+            }
         }else{
             outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
             outState.putBoolean(IS_DIALOG_OPEN, isDialogOpen);
@@ -186,19 +188,29 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private void populateUiOnOrientationChange(Bundle savedInstanceState) {
         questionList = savedInstanceState.getParcelableArrayList(QUESTION_LIST);
         questionIndex = savedInstanceState.getInt(QUESTION_INDEX);
-        scoreCorrectAnswers = savedInstanceState.getInt(CORRECT_SCORE);
+        scoreCorrectAnswers = savedInstanceState.getInt(SCORE_CORRECT_ANSWERS);
         setLevelLabelTextAndColor(savedInstanceState.getString(LEVEL));
-        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(QUESTION)));
-        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_1)));
+        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT) :
+                Html.fromHtml(savedInstanceState.getString(QUESTION)));
+        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT) :
+                Html.fromHtml(savedInstanceState.getString(ANSWER_1)));
         answer1.setOnClickListener(this);
-        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_2)));
+        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT) :
+                Html.fromHtml(savedInstanceState.getString(ANSWER_2)));
         answer2.setOnClickListener(this);
         if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) secondTwoButtons.setVisibility(View.INVISIBLE);
         else{
             secondTwoButtons.setVisibility(View.VISIBLE);
-            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_3)));
+            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                    Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT) :
+                    Html.fromHtml(savedInstanceState.getString(ANSWER_3)));
             answer3.setOnClickListener(this);
-            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(savedInstanceState.getString(ANSWER_4)));
+            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                    Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT) :
+                    Html.fromHtml(savedInstanceState.getString(ANSWER_4)));
             answer4.setOnClickListener(this);
         }
         gameplayStepNumber.setText(savedInstanceState.getString(STEP));
@@ -467,7 +479,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             }
         }
 
-        // Block UI from touch events
+        // Block UI from touch events and orientation change
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         new Handler().postDelayed(new Runnable() {

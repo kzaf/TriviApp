@@ -2,8 +2,11 @@ package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -124,8 +127,8 @@ public class SelectCategoryActivity extends AppCompatActivity
     private void toolbarOptions() {
         toolbar.inflateMenu(R.menu.select_category_menu_items);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
-        selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
-
+        if (haveNetworkConnection()) selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+        else selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -142,37 +145,62 @@ public class SelectCategoryActivity extends AppCompatActivity
         progressDialog.setMessage(getResources().getString(R.string.loading_categories));
         progressDialog.show();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-
     }
 
     private void fetchCategories() {
         initializeDialog();
 
-        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
-        Call<CategoriesList> call = service.getAllCategories(); // Get all categories request
+        if (!haveNetworkConnection()){
+            DynamicToast.make(getApplicationContext(), "No internet connection!", getResources()
+                    .getColor(R.color.colorAccentRed), getResources()
+                    .getColor(R.color.textWhite))
+                    .show();
+            progressDialog.dismiss();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        }else{
+            GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get instance of Retrofit
+            Call<CategoriesList> call = service.getAllCategories(); // Get all categories request
 
-        call.enqueue(new Callback<CategoriesList>() {
-            @Override
-            public void onResponse(Call<CategoriesList> call, Response<CategoriesList> response) {
-                progressDialog.dismiss();
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-                generateCategoriesList(response.body().getCategory());
-                if (response.body() != null) {
-                    categoriesList = (ArrayList<Category>) response.body().getCategory();
+            call.enqueue(new Callback<CategoriesList>() {
+                @Override
+                public void onResponse(Call<CategoriesList> call, Response<CategoriesList> response) {
+                    progressDialog.dismiss();
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                    generateCategoriesList(response.body().getCategory());
+                    if (response.body() != null) {
+                        categoriesList = (ArrayList<Category>) response.body().getCategory();
+                        if (mSwipeRefreshLayout.isRefreshing()) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(Call<CategoriesList> call, Throwable t) {
+                    progressDialog.dismiss();
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                     if (mSwipeRefreshLayout.isRefreshing()) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
-            }
-            @Override
-            public void onFailure(Call<CategoriesList> call, Throwable t) {
-                progressDialog.dismiss();
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-                if (mSwipeRefreshLayout.isRefreshing()) {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
+            });
+        }
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     private void generateCategoriesList(List<Category> categoriesList) {

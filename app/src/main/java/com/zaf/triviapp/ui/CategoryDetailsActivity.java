@@ -138,6 +138,8 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                 mChart.getDescription().setEnabled(false);
                 mChart.getLegend().setEnabled(false);
 
+                mChart.invalidate();
+
                 if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
             }
         });
