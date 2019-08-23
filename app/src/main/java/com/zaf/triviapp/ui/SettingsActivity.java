@@ -193,68 +193,10 @@ public class SettingsActivity extends AppCompatActivity {
                     case NDialog.BUTTON_POSITIVE:
                         emailReauth = email.getText().toString();
                         passReauth = pass.getText().toString();
-                        reauthAndDelete();
+                        reauthAndDelete(user);
                     case NDialog.BUTTON_NEGATIVE:
                         break;
                 }
-            }
-            private void reauthAndDelete() {
-                AuthCredential credential = EmailAuthProvider.getCredential(emailReauth, passReauth);
-                user.reauthenticate(credential)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            user.delete()
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    mDb.taskDao().deleteUser();
-                                                    mDb.taskDao().resetScore();
-                                                }
-                                            });
-                                            deleteFirebaseRecords();
-                                            DynamicToast.make(getApplicationContext(), "Bye bye..!", getResources()
-                                                    .getColor(R.color.colorAccentBlue), getResources()
-                                                    .getColor(R.color.textWhite))
-                                                    .show();
-                                            finish();
-                                            startActivity(new Intent(SettingsActivity.this, SelectCategoryActivity.class));
-                                        }
-                                    }
-                                });
-                        }
-                    });
-            }
-
-            private void deleteFirebaseRecords(){
-                Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(user.getUid());
-                Query usersQuery = FirebaseDatabase.getInstance().getReference().child("DataUsers").child("UserDetails").child(user.getUid());
-
-                scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                            appleSnapshot.getRef().removeValue();
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) { }
-                });
-
-                usersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                            appleSnapshot.getRef().removeValue();
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) { }
-                });
             }
         };
         nDialog.setPositiveButtonText("Delete!");
@@ -266,6 +208,65 @@ public class SettingsActivity extends AppCompatActivity {
         nDialog.setNegativeButtonClickListener(buttonClickListener);
 
         nDialog.show();
+    }
+
+    private void reauthAndDelete(final FirebaseUser user) {
+        AuthCredential credential = EmailAuthProvider.getCredential(emailReauth, passReauth);
+        user.reauthenticate(credential)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    user.delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mDb.taskDao().deleteUser();
+                                            mDb.taskDao().resetScore();
+                                        }
+                                    });
+                                    deleteFirebaseRecords(user);
+                                    DynamicToast.make(getApplicationContext(), "Bye bye..!", getResources()
+                                            .getColor(R.color.colorAccentBlue), getResources()
+                                            .getColor(R.color.textWhite))
+                                            .show();
+                                    finish();
+                                    startActivity(new Intent(SettingsActivity.this, SelectCategoryActivity.class));
+                                }
+                            }
+                        });
+                }
+            });
+    }
+
+    private void deleteFirebaseRecords(FirebaseUser user){
+        Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(user.getUid());
+        Query usersQuery = FirebaseDatabase.getInstance().getReference().child("DataUsers").child("UserDetails").child(user.getUid());
+
+        scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) { }
+        });
+
+        usersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) { }
+        });
     }
 
     private void alertResetScores(){
@@ -280,46 +281,7 @@ public class SettingsActivity extends AppCompatActivity {
             .OnPositiveClicked(new FancyGifDialogListener() {
                 @Override
                 public void OnClick() {
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            final UserDetails userDetails = mDb.taskDao().loadUserDetails();
-                            if(userDetails != null){
-                                mDb.taskDao().resetScore();
-                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(userDetails.getUserId());
-                                        scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                                                    appleSnapshot.getRef().removeValue();
-                                                }
-                                                DynamicToast.make(getApplicationContext(), "Your score has been reset!", getResources()
-                                                        .getColor(R.color.orange), getResources()
-                                                        .getColor(R.color.textBlack))
-                                                        .show();
-                                            }
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) { }
-                                        });
-
-                                    }
-                                });
-                            }else{
-                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DynamicToast.make(getApplicationContext(), "You are not logged in!", getResources()
-                                                .getColor(R.color.orange), getResources()
-                                                .getColor(R.color.textBlack))
-                                                .show();
-                                    }
-                                });
-                            }
-                        }
-                    });
+                    resetScorePositiveAlertButtonClick();
                 }
             })
             .OnNegativeClicked(new FancyGifDialogListener() {
@@ -333,7 +295,48 @@ public class SettingsActivity extends AppCompatActivity {
         }).build();
     }
 
+    private void resetScorePositiveAlertButtonClick() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final UserDetails userDetails = mDb.taskDao().loadUserDetails();
+                if(userDetails != null){
+                    mDb.taskDao().resetScore();
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(userDetails.getUserId());
+                            scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                                        appleSnapshot.getRef().removeValue();
+                                    }
+                                    DynamicToast.make(getApplicationContext(), "Your score has been reset!", getResources()
+                                            .getColor(R.color.orange), getResources()
+                                            .getColor(R.color.textBlack))
+                                            .show();
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) { }
+                            });
 
+                        }
+                    });
+                }else{
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            DynamicToast.make(getApplicationContext(), "You are not logged in!", getResources()
+                                    .getColor(R.color.orange), getResources()
+                                    .getColor(R.color.textBlack))
+                                    .show();
+                        }
+                    });
+                }
+            }
+        });
+    }
 
     private void restartApp(Class c){
         Intent intent = new Intent(getApplicationContext(), c);
