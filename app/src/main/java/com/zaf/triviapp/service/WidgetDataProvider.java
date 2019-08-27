@@ -36,7 +36,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onCreate() {
-
+        initializeData();
     }
 
     @Override
@@ -51,7 +51,6 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public int getCount() {
-        if (scoresList == null) return 0;
         return scoresList.size();
     }
 
@@ -77,12 +76,12 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     private void initializeData() throws NullPointerException {

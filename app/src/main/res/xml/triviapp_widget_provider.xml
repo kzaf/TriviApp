@@ -5,5 +5,5 @@
     android:minWidth="200dp"
     android:previewImage="@mipmap/ic_launcher_round"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="1800000"
+    android:updatePeriodMillis="1800"
     android:widgetCategory="home_screen" />

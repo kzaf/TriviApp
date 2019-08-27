@@ -116,7 +116,6 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alertDialogDeleteAccount();
-//                deleteUserFromFirebase();
             }
         });
         resetScore.setOnClickListener(new View.OnClickListener() {
