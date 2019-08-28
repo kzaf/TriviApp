@@ -86,7 +86,7 @@
                         android:layout_marginStart="5sp"
                         android:layout_weight="1"
                         android:gravity="start"
-                        android:text="Login to continue.."
+                        android:text="@string/activity_profile_login_to_continue"
                         android:textColor="?attr/textcolor"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -101,7 +101,7 @@
                         android:textColor="?attr/textcolor"
                         android:background="@drawable/custom_border_blue"
                         android:gravity="center"
-                        android:text="Login" />
+                        android:text="@string/activity_profile_login" />
                 </LinearLayout>
 
                 <TextView

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Type"
+        android:text="@string/gameplay_options_dialog_type"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Difficulty"
+        android:text="@string/gameplay_options_dialog_difficulty"
         android:textSize="18sp"
         android:textStyle="bold" />
 

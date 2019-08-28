@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/categories_menu_profile"
-        android:title="Profile"
+        android:title="@string/menu_profile"
         app:showAsAction="never"/>
     <item
         android:id="@+id/categories_menu_settings"
-        android:title="Settings"
+        android:title="@string/menu_settings"
         app:showAsAction="never"/>
     <item
         android:id="@+id/categories_menu_refresh"
-        android:title="Refresh"
+        android:title="@string/menu_refresh"
         app:showAsAction="never"/>
 
 </menu>

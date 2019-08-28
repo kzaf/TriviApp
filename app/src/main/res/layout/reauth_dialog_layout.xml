@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="email"
+        android:text="@string/reauth_dialog_email"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="password"
+        android:text="@string/reauth_dialog_password"
         android:textSize="18sp"
         android:textStyle="bold" />
 

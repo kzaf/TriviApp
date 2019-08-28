@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="Account"
+                android:text="@string/activity_settings_account"
                 android:textColor="?attr/textcolor"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -86,7 +86,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="10sp"
-                android:text="Update">
+                android:text="@string/activity_settings_update">
 
                 <TextView
                     android:id="@+id/delete_account_text"
@@ -94,7 +94,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
                     android:gravity="center|start"
-                    android:text="Delete"
+                    android:text="@string/activity_settings_delete"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="Score"
+                android:text="@string/activity_settings_score"
                 android:textColor="?attr/textcolor"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -138,7 +138,7 @@
                 android:background="@drawable/custom_border"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:text="Update">
+                android:text="@string/activity_settings_update">
 
                 <TextView
                     android:id="@+id/reset_score_text"
@@ -146,7 +146,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
                     android:gravity="center|start"
-                    android:text="Reset"
+                    android:text="@string/activity_settings_reset"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -173,7 +173,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Night Mode"
+                android:text="@string/activity_settings_night_mode"
                 android:textSize="18sp"
                 android:textColor="?attr/textcolor"
                 android:textStyle="bold" />
@@ -205,7 +205,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Vibrate"
+                android:text="@string/activity_settings_vibrate"
                 android:textSize="18sp"
                 android:textColor="?attr/textcolor"
                 android:textStyle="bold" />
@@ -231,7 +231,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center|start"
-            android:text="About"
+            android:text="@string/activity_settings_about"
             android:textColor="?attr/textcolor"
             android:textSize="18sp"
             android:textStyle="bold" />

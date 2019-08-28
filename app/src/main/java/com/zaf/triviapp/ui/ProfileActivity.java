@@ -192,7 +192,7 @@ public class ProfileActivity extends AppCompatActivity
         userName.setText(userDetails.getUserName());
         userEmail.setText(userDetails.getUserEmail());
 
-        loginUser.setText("Logout");
+        loginUser.setText(getResources().getString(R.string.profile_logout_button));
         loginUser.setBackgroundResource(R.drawable.custom_border_red);
 
         loginUser.setOnClickListener(new View.OnClickListener() {

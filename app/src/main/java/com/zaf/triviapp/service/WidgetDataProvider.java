@@ -23,6 +23,9 @@ import java.util.List;
 
 public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
 
+    public static final String DATA_SCORES = "DataScores";
+    public static final String SCORES_BY_USER = "ScoresByUser";
+    public static final String SCORE = "Score";
     private List<Scores> scoresList = new ArrayList<>();
     String userId;
     DatabaseReference childNode;
@@ -89,12 +92,12 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
             scoresList.clear();
             assert FirebaseAuth.getInstance().getCurrentUser() != null;
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            childNode = FirebaseDatabase.getInstance().getReference("DataScores").child("ScoresByUser").child(userId);
+            childNode = FirebaseDatabase.getInstance().getReference(DATA_SCORES).child(SCORES_BY_USER).child(userId);
             childNode.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (final DataSnapshot category : dataSnapshot.getChildren()) {
-                        scoresList.add(new Scores(userId, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString())));
+                        scoresList.add(new Scores(userId, category.getKey(), Integer.parseInt(category.child(SCORE).getValue().toString())));
                     }
                 }
                 @Override

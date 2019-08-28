@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingStart="10sp"
-                    android:text="Mathematics"
+                    android:text="@string/activity_gameplay_category_name"
                     android:textColor="?attr/textcolor"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -91,7 +91,7 @@
                     android:layout_weight="1"
                     android:textColor="?attr/textcolor"
                     android:gravity="center"
-                    android:text="5/10"
+                    android:text="@string/activity_gameplay_score"
                     android:textSize="16sp" />
 
                 <TextView
@@ -101,7 +101,7 @@
                     android:layout_weight="1"
                     android:gravity="right"
                     android:paddingEnd="10sp"
-                    android:text="Easy"
+                    android:text="@string/activity_gameplay_level"
                     android:textColor="#33691E"
                     android:textSize="16sp"
                     android:textStyle="bold" />

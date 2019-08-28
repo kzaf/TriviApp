@@ -59,7 +59,7 @@
             android:keepScreenOn="true"
             android:paddingTop="8sp"
             android:paddingBottom="8sp"
-            android:text="Select Category"
+            android:text="@string/activity_select_category_text"
             android:textColor="@color/colorAccentBlue"
             android:textSize="52sp"
             android:textStyle="bold" />
