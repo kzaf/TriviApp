@@ -45,6 +45,8 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String DIFFICULTY = "difficulty";
     private static final String TYPE = "type";
+    public static final String[] difficultyOptions = {"Any Difficulty", "Easy", "Medium", "Hard"};
+    public static final String[] typeOptions = {"Any Type", "Multiple Choice", "True/False"};
     private String difficulty = "Any Difficulty", type = "Any Type";
     private AppDatabase mDb;
     private int scorePercentage = 0;
@@ -111,14 +113,14 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     scorePercentage = scores.getCategoryScore() * 10;
                     float successScore = (float) scorePercentage;
                     float failScore = (float) 100 - scorePercentage;
-                    pieChartEntries.add(new PieEntry(successScore, "Correct"));
-                    pieChartEntries.add(new PieEntry(failScore, "Wrong"));
+                    pieChartEntries.add(new PieEntry(successScore, getResources().getString(R.string.category_details_activity_pie_entry_correct)));
+                    pieChartEntries.add(new PieEntry(failScore, getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
                     textPercent.setText(scorePercentage + " %");
-                    textSuccess.setText("Success");
+                    textSuccess.setText(getResources().getString(R.string.category_details_activity_pie_entry_success));
                 }else{
-                    pieChartEntries.add(new PieEntry(0, "Correct"));
-                    pieChartEntries.add(new PieEntry(0, "Wrong"));
-                    textPercent.setText("You haven't played yet in " + categoryName.getText().toString());
+                    pieChartEntries.add(new PieEntry(0, getResources().getString(R.string.category_details_activity_pie_entry_correct)));
+                    pieChartEntries.add(new PieEntry(0, getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
+                    textPercent.setText(getResources().getString(R.string.category_details_activity_pie_entry_havent_played_yet_text) + categoryName.getText().toString());
                     textSuccess.setText("");
                 }
 
@@ -150,11 +152,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
         NDialog nDialog = new NDialog(CategoryDetailsActivity.this, ButtonType.TWO_BUTTON);
         nDialog.setIcon(R.drawable.triviapp_icon);
-        nDialog.setTitle("Select gameplay options");
+        nDialog.setTitle(getResources().getString(R.string.category_details_activity_game_options_dialog_title));
         nDialog.setCustomView(dialogLayout);
 
         SwitchMultiButton mSwitchMultiButtonDifficulty = dialogLayout.findViewById(R.id.switch_difficulty);
-        mSwitchMultiButtonDifficulty.setText("Any Difficulty", "Easy", "Medium", "Hard").setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
+        mSwitchMultiButtonDifficulty.setText(difficultyOptions).setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
             @Override
             public void onSwitch(int position, String tabText) {
                 difficulty = tabText;
@@ -162,7 +164,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         });
 
         SwitchMultiButton mSwitchMultiButtonType = dialogLayout.findViewById(R.id.switch_type);
-        mSwitchMultiButtonType.setText("Any Type", "Multiple Choice", "True/False").setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
+        mSwitchMultiButtonType.setText(typeOptions).setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
             @Override
             public void onSwitch(int position, String tabText) {
                 type = tabText;
@@ -186,11 +188,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                 }
             }
         };
-        nDialog.setPositiveButtonText("Play!");
+        nDialog.setPositiveButtonText(getResources().getString(R.string.category_details_activity_game_options_dialog_positive_button));
         nDialog.setPositiveButtonTextColor(Color.BLUE);
         nDialog.setPositiveButtonClickListener(buttonClickListener);
 
-        nDialog.setNegativeButtonText("Back");
+        nDialog.setNegativeButtonText(getResources().getString(R.string.category_details_activity_game_options_dialog_negative_button));
         nDialog.setNegativeButtonTextColor(Color.RED);
         nDialog.setNegativeButtonClickListener(buttonClickListener);
 

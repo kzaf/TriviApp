@@ -56,6 +56,8 @@ public class SelectCategoryActivity extends AppCompatActivity
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String CATEGORIES_LIST = "categories_list";
     private static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
+    public static final String WIFI = "WIFI";
+    public static final String MOBILE = "MOBILE";
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
     private SharedPref sharedPref;
@@ -151,7 +153,7 @@ public class SelectCategoryActivity extends AppCompatActivity
         initializeDialog();
 
         if (!haveNetworkConnection()){
-            DynamicToast.make(getApplicationContext(), "No internet connection!", getResources()
+            DynamicToast.make(getApplicationContext(), getResources().getString(R.string.select_category_no_internet_label), getResources()
                     .getColor(R.color.colorAccentRed), getResources()
                     .getColor(R.color.textWhite))
                     .show();
@@ -193,10 +195,10 @@ public class SelectCategoryActivity extends AppCompatActivity
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+            if (ni.getTypeName().equalsIgnoreCase(WIFI))
                 if (ni.isConnected())
                     haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+            if (ni.getTypeName().equalsIgnoreCase(MOBILE))
                 if (ni.isConnected())
                     haveConnectedMobile = true;
         }

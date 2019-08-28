@@ -47,6 +47,10 @@ import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    public static final String DATA_SCORES = "DataScores";
+    public static final String DATA_USERS = "DataUsers";
+    public static final String SCORES_BY_USER = "ScoresByUser";
+    public static final String USER_DETAILS = "UserDetails";
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.about_tv) TextView aboutButton;
     @BindView(R.id.back_button) ImageView back;
@@ -134,12 +138,12 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void alertDialogDeleteAccount(){
         new FancyGifDialog.Builder(this)
-                .setTitle("Are you sure you want to delete your account?")
-                .setMessage("You will permanently lose your score if you delete, are you sure?")
-                .setNegativeBtnText("Nop! Keep me signed!")
-                .setPositiveBtnBackground("#b80c00")
-                .setPositiveBtnText("Yes I am sure!")
-                .setNegativeBtnBackground("#FFA9A7A8")
+                .setTitle(getResources().getString(R.string.settings_activity_delete_account_dialog_title))
+                .setMessage(getResources().getString(R.string.settings_activity_delete_account_dialog_message))
+                .setNegativeBtnText(getResources().getString(R.string.settings_activity_delete_account_dialog_negative_button_text))
+                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(getResources().getString(R.string.settings_activity_delete_account_dialog_positive_button_text))
+                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(true)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -152,7 +156,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .OnNegativeClicked(new FancyGifDialogListener() {
                     @Override
                     public void OnClick() {
-                        DynamicToast.make(getApplicationContext(), "Cool!", getResources()
+                        DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
                                 .getColor(R.color.colorAccentBlue), getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
@@ -164,7 +168,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void deleteUserFromFirebase(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null){
-            DynamicToast.make(getApplicationContext(), "You have to be logged", getResources()
+            DynamicToast.make(getApplicationContext(), getResources().getString(R.string.settings_activity_delete_from_firebase_toast), getResources()
                     .getColor(R.color.colorAccentRed), getResources()
                     .getColor(R.color.textWhite))
                     .show();
@@ -179,7 +183,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         nDialog = new NDialog(SettingsActivity.this, ButtonType.TWO_BUTTON);
         nDialog.setIcon(R.drawable.triviapp_icon);
-        nDialog.setTitle("Please enter you credentials");
+        nDialog.setTitle(getResources().getString(R.string.settings_activity_reauth_ndialog_title));
         nDialog.setCustomView(dialogLayout);
 
         final EditText email = dialogLayout.findViewById(R.id.email_et);
@@ -198,11 +202,11 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         };
-        nDialog.setPositiveButtonText("Delete!");
+        nDialog.setPositiveButtonText(getResources().getString(R.string.settings_activity_reauth_ndialog_positive_button_text));
         nDialog.setPositiveButtonTextColor(Color.RED);
         nDialog.setPositiveButtonClickListener(buttonClickListener);
 
-        nDialog.setNegativeButtonText("Back");
+        nDialog.setNegativeButtonText(getResources().getString(R.string.settings_activity_reauth_ndialog_negative_button_text));
         nDialog.setNegativeButtonTextColor(Color.BLUE);
         nDialog.setNegativeButtonClickListener(buttonClickListener);
 
@@ -228,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
                                         }
                                     });
                                     deleteFirebaseRecords(user);
-                                    DynamicToast.make(getApplicationContext(), "Bye bye..!", getResources()
+                                    DynamicToast.make(getApplicationContext(), getResources().getString(R.string.settings_activity_delete_user_toast), getResources()
                                             .getColor(R.color.colorAccentBlue), getResources()
                                             .getColor(R.color.textWhite))
                                             .show();
@@ -242,8 +246,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void deleteFirebaseRecords(FirebaseUser user){
-        Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(user.getUid());
-        Query usersQuery = FirebaseDatabase.getInstance().getReference().child("DataUsers").child("UserDetails").child(user.getUid());
+        Query scoresQuery = FirebaseDatabase.getInstance().getReference().child(DATA_SCORES).child(SCORES_BY_USER).child(user.getUid());
+        Query usersQuery = FirebaseDatabase.getInstance().getReference().child(DATA_USERS).child(USER_DETAILS).child(user.getUid());
 
         scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -270,11 +274,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void alertResetScores(){
         new FancyGifDialog.Builder(this)
-            .setTitle("Are you sure you want to reset your score?")
-            .setPositiveBtnBackground("#b80c00")
-            .setNegativeBtnBackground("#FFA9A7A8")
-            .setPositiveBtnText("Yes")
-            .setNegativeBtnText("Nop!")
+            .setTitle(getResources().getString(R.string.settings_activity_alert_reset_score_title))
+            .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+            .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
+            .setPositiveBtnText(getResources().getString(R.string.settings_activity_alert_reset_score_positive_button_text))
+            .setNegativeBtnText(getResources().getString(R.string.settings_activity_alert_reset_score_negative_button_text))
             .setGifResource(R.drawable.reset)
             .isCancellable(true)
             .OnPositiveClicked(new FancyGifDialogListener() {
@@ -286,7 +290,7 @@ public class SettingsActivity extends AppCompatActivity {
             .OnNegativeClicked(new FancyGifDialogListener() {
                 @Override
                 public void OnClick() {
-                    DynamicToast.make(getApplicationContext(), "Cool!", getResources()
+                    DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
                             .getColor(R.color.colorAccentBlue), getResources()
                             .getColor(R.color.textWhite))
                             .show();
@@ -304,14 +308,14 @@ public class SettingsActivity extends AppCompatActivity {
                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
-                            Query scoresQuery = FirebaseDatabase.getInstance().getReference().child("DataScores").child("ScoresByUser").child(userDetails.getUserId());
+                            Query scoresQuery = FirebaseDatabase.getInstance().getReference().child(DATA_SCORES).child(SCORES_BY_USER).child(userDetails.getUserId());
                             scoresQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
                                         appleSnapshot.getRef().removeValue();
                                     }
-                                    DynamicToast.make(getApplicationContext(), "Your score has been reset!", getResources()
+                                    DynamicToast.make(getApplicationContext(), getResources().getString(R.string.settings_activity_reset_score_toast), getResources()
                                             .getColor(R.color.orange), getResources()
                                             .getColor(R.color.textBlack))
                                             .show();
@@ -326,7 +330,7 @@ public class SettingsActivity extends AppCompatActivity {
                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
-                            DynamicToast.make(getApplicationContext(), "You are not logged in!", getResources()
+                            DynamicToast.make(getApplicationContext(), getResources().getString(R.string.settings_activity_reset_score_fail_toast), getResources()
                                     .getColor(R.color.orange), getResources()
                                     .getColor(R.color.textBlack))
                                     .show();

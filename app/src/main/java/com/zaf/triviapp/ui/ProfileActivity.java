@@ -60,6 +60,10 @@ public class ProfileActivity extends AppCompatActivity
     public static final String SCORES_LIST = "scores_list";
     public static final String SCORES_LAYOUT_MANAGER = "scores_layout_manager";
     public static final String SELECTED_CATEGORY = "selected_category";
+    public static final String WIFI = "WIFI";
+    public static final String MOBILE = "MOBILE";
+    public static final String DATA_SCORES = "DataScores";
+    public static final String TOTAL_SCORE = "total score";
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.profile_username_tv) TextView userName;
@@ -145,10 +149,10 @@ public class ProfileActivity extends AppCompatActivity
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+            if (ni.getTypeName().equalsIgnoreCase(WIFI))
                 if (ni.isConnected())
                     haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+            if (ni.getTypeName().equalsIgnoreCase(MOBILE))
                 if (ni.isConnected())
                     haveConnectedMobile = true;
         }
@@ -156,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity
     }
 
     private void readScores(final String uid){
-        FirebaseDatabase.getInstance().getReference("DataScores").child("ScoresByUser").child(uid).addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference(DATA_SCORES).child("ScoresByUser").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot category: dataSnapshot.getChildren()){
@@ -220,10 +224,10 @@ public class ProfileActivity extends AppCompatActivity
     }
 
     private void userNotLoggedPopulateUi() {
-        userName.setText("Login to continue...");
+        userName.setText(getResources().getString(R.string.profile_activity_not_logged_label));
         userEmail.setText("");
 
-        loginUser.setText("Login");
+        loginUser.setText(getResources().getString(R.string.profile_activity_login_label));
         loginUser.setBackgroundResource(R.drawable.custom_border_blue);
 
         loginUser.setOnClickListener(new View.OnClickListener() {
@@ -253,11 +257,11 @@ public class ProfileActivity extends AppCompatActivity
 
     private void alertDialogLogout(){
         new FancyGifDialog.Builder(this)
-                .setTitle("Are you sure you want to logout?")
-                .setNegativeBtnText("Nop! Keep me signed!")
-                .setPositiveBtnBackground("#b80c00")
-                .setPositiveBtnText("Yes I am sure!")
-                .setNegativeBtnBackground("#FFA9A7A8")
+                .setTitle(getString(R.string.profile_activity_dialog_logout_title))
+                .setNegativeBtnText(getResources().getString(R.string.profile_activity_dialog_logout_negatibe_btn_text))
+                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(getResources().getString(R.string.profile_activity_dialog_logout_positive_btn_text))
+                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(true)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -273,7 +277,7 @@ public class ProfileActivity extends AppCompatActivity
                                 startActivity(new Intent(ProfileActivity.this, SelectCategoryActivity.class));
                             }
                         });
-                        DynamicToast.make(getApplicationContext(), "See you again!", getResources()
+                        DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_error_dialog_toast_positive), getResources()
                                 .getColor(R.color.colorAccentBlue), getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
@@ -282,7 +286,7 @@ public class ProfileActivity extends AppCompatActivity
                 .OnNegativeClicked(new FancyGifDialogListener() {
                     @Override
                     public void OnClick() {
-                        DynamicToast.make(getApplicationContext(), "Cool!", getResources()
+                        DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
                                 .getColor(R.color.colorAccentBlue), getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
@@ -323,11 +327,11 @@ public class ProfileActivity extends AppCompatActivity
             mChart.setNoDataText(getResources().getString(R.string.no_chart));
         }else{
             profilePercent.setText(scores * 10 + "%");
-            profileSuccess.setText("total score");
+            profileSuccess.setText(TOTAL_SCORE);
 
             List<PieEntry> pieChartEntries = new ArrayList<>();
-            pieChartEntries.add(new PieEntry(scores * 10, "Success"));
-            pieChartEntries.add(new PieEntry((10 - scores) * 10, "Failure"));
+            pieChartEntries.add(new PieEntry(scores * 10, getResources().getString(R.string.category_details_activity_pie_entry_success)));
+            pieChartEntries.add(new PieEntry((10 - scores) * 10, getResources().getString(R.string.category_details_activity_pie_entry_failure)));
 
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
             dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
