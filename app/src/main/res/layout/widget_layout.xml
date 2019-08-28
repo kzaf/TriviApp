@@ -19,22 +19,6 @@
             android:textStyle="bold|italic" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!-- Widget enrolled classes -->
-
-        <TextView
-            android:id="@+id/appwidget_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textColor="#ffffff"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
     <ListView
         android:id="@+id/widget_list"
         android:layout_width="match_parent"

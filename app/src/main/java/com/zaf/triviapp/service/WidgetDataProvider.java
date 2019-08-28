@@ -94,8 +94,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (final DataSnapshot category : dataSnapshot.getChildren()) {
-                        final Scores score = new Scores(userId, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString()));
-                        scoresList.add(score);
+                        scoresList.add(new Scores(userId, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString())));
                     }
                 }
                 @Override
