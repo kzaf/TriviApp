@@ -19,6 +19,7 @@
             android:id="@+id/imageView"
             android:layout_width="25sp"
             android:layout_height="25sp"
+            android:contentDescription="@string/toolbar_image_cd"
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <TextView

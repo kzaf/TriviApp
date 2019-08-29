@@ -110,4 +110,10 @@
     <string name="profile_logout_button">Logout</string>
     <string name="about_github">GitHub:</string>
     <string name="about_github_link">https://github.com/kzaf</string>
+    <string name="back_button_cd">back button</string>
+    <string name="toolbar_image_cd">toolbar image</string>
+    <string name="category_details_image_cd">category details image</string>
+    <string name="play_button_image_darts_cd">play button image darts</string>
+    <string name="toolbar_cancel_button_cd">toolbar cancel button</string>
+    <string name="gameplay_answer_button_text_placeholder">\?</string>
 </resources>

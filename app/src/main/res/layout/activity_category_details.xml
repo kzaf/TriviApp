@@ -20,12 +20,14 @@
             android:id="@+id/back_button"
             android:layout_width="25sp"
             android:layout_height="25sp"
+            android:contentDescription="@string/back_button_cd"
             app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="25sp"
             android:layout_height="25sp"
+            android:contentDescription="@string/toolbar_image_cd"
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <TextView
@@ -77,6 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="fitXY"
+                    android:contentDescription="@string/category_details_image_cd"
                     app:srcCompat="@drawable/t19" />
 
                 <TextView
@@ -171,6 +174,7 @@
                         android:layout_width="20sp"
                         android:layout_height="20sp"
                         android:layout_margin="5sp"
+                        android:contentDescription="@string/play_button_image_darts_cd"
                         app:srcCompat="@drawable/dices" />
 
                     <TextView

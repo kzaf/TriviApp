@@ -20,12 +20,14 @@
             android:id="@+id/back_button_about"
             android:layout_width="@dimen/toolbar_image_size"
             android:layout_height="@dimen/toolbar_image_size"
+            android:contentDescription="@string/back_button_cd"
             app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/toolbar_image_size"
             android:layout_height="@dimen/toolbar_image_size"
+            android:contentDescription="@string/toolbar_image_cd"
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <TextView
@@ -114,9 +116,8 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-
             <TextView
-                android:id="@+id/github_tv"
+                android:id="@+id/contact_me_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
