@@ -46,6 +46,7 @@ import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.threads.AppExecutors;
+import com.zaf.triviapp.threads.NetworkUtilTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,15 +56,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProfileActivity extends AppCompatActivity
-        implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener{
+        implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener,
+        NetworkUtilTask.AsyncTaskCompleteListener{
 
     public static final String SCORES_LIST = "scores_list";
     public static final String SCORES_LAYOUT_MANAGER = "scores_layout_manager";
     public static final String SELECTED_CATEGORY = "selected_category";
-    public static final String WIFI = "WIFI";
-    public static final String MOBILE = "MOBILE";
     public static final String DATA_SCORES = "DataScores";
     public static final String TOTAL_SCORE = "total score";
+    private boolean hasInternet;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.profile_username_tv) TextView userName;
@@ -94,15 +95,6 @@ public class ProfileActivity extends AppCompatActivity
         mDb = AppDatabase.getInstance(getApplicationContext());
         taskDao = mDb.taskDao();
 
-        toolbarOptions();
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                setupUi(taskDao);
-            }
-        });
-
         if(savedInstanceState != null){
             // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
             // It's a hack to delay the onRestoreInstanceState
@@ -116,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity
             setupUi(taskDao);
 
         }else{
-            setupUi(taskDao);
+            haveNetworkConnection();
         }
     }
 
@@ -132,31 +124,21 @@ public class ProfileActivity extends AppCompatActivity
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                UserDetails userDetails = taskDao.loadUserDetails();
-                if(userDetails == null){
-                    userNotLoggedPopulateUi();
-                }else{
-                    userLoggedPopulateUi(userDetails);
-                }
+                final UserDetails userDetails = taskDao.loadUserDetails();
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(userDetails == null) userNotLoggedPopulateUi();
+                        else userLoggedPopulateUi(userDetails);
+                    }
+                });
             }
         });
     }
 
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase(WIFI))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase(MOBILE))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
+    private void haveNetworkConnection() {
+        NetworkUtilTask netTask = new NetworkUtilTask(this, this);
+        netTask.execute();
     }
 
     private void readScores(final String uid){
@@ -185,7 +167,7 @@ public class ProfileActivity extends AppCompatActivity
     }
 
     private void userLoggedPopulateUi(UserDetails userDetails) {
-        if(haveNetworkConnection()){
+        if(hasInternet){
             readScores(userDetails.getUserId());
         }
 
@@ -370,5 +352,21 @@ public class ProfileActivity extends AppCompatActivity
         intent.putExtra(SELECTED_CATEGORY, new Category(categoryName, 0));
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onTaskComplete(boolean hasInternet) {
+        this.hasInternet = hasInternet;
+
+        toolbarOptions();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupUi(taskDao);
+            }
+        });
+
+        setupUi(taskDao);
     }
 }

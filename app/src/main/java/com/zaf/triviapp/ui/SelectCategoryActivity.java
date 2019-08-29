@@ -1,45 +1,28 @@
 package com.zaf.triviapp.ui;
 
 import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.zaf.triviapp.R;
-import com.zaf.triviapp.database.AppDatabase;
-import com.zaf.triviapp.database.tables.UserDetails;
-import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.adapters.CategoriesAdapter;
-import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
+import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.threads.NetworkUtilTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +34,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SelectCategoryActivity extends AppCompatActivity
-        implements CategoriesAdapter.CategoriesAdapterListItemClickListener {
+        implements CategoriesAdapter.CategoriesAdapterListItemClickListener,
+        NetworkUtilTask.AsyncTaskCompleteListener{
 
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String CATEGORIES_LIST = "categories_list";
     private static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
-    public static final String WIFI = "WIFI";
-    public static final String MOBILE = "MOBILE";
+    private boolean hasInternet;
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
     private SharedPref sharedPref;
@@ -78,15 +61,6 @@ public class SelectCategoryActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        toolbarOptions();
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchCategories();
-            }
-        });
-
         if(savedInstanceState != null){
             // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
             // It's a hack to delay the onRestoreInstanceState
@@ -98,7 +72,7 @@ public class SelectCategoryActivity extends AppCompatActivity
             categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
             generateCategoriesList(categoriesList);
         }else{
-            fetchCategories();
+            haveNetworkConnection();
         }
     }
 
@@ -129,7 +103,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     private void toolbarOptions() {
         toolbar.inflateMenu(R.menu.select_category_menu_items);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
-        if (haveNetworkConnection()) selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+        if (hasInternet) selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
         else selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -152,7 +126,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     private void fetchCategories() {
         initializeDialog();
 
-        if (!haveNetworkConnection()){
+        if (!hasInternet){
             DynamicToast.make(getApplicationContext(), getResources().getString(R.string.select_category_no_internet_label), getResources()
                     .getColor(R.color.colorAccentRed), getResources()
                     .getColor(R.color.textWhite))
@@ -188,21 +162,9 @@ public class SelectCategoryActivity extends AppCompatActivity
         }
     }
 
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase(WIFI))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase(MOBILE))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
+    private void haveNetworkConnection() {
+        NetworkUtilTask netTask = new NetworkUtilTask(this, this);
+        netTask.execute();
     }
 
     private void generateCategoriesList(List<Category> categoriesList) {
@@ -211,5 +173,21 @@ public class SelectCategoryActivity extends AppCompatActivity
         categoriesRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         categoriesRecyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void onTaskComplete(boolean hasInternet) {
+        this.hasInternet = hasInternet;
+
+        toolbarOptions();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchCategories();
+            }
+        });
+
+        fetchCategories();
     }
 }
