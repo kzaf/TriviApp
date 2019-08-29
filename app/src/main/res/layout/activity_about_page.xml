@@ -32,7 +32,7 @@
             android:id="@+id/toolbar_title_about"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/toolbar_title_padding"
+            android:paddingStart="@dimen/toolbar_title_padding"
             android:text="@string/about_textview"
             android:textColor="?attr/textcolor"
             android:textSize="@dimen/toolbar_image_size"
@@ -51,9 +51,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10sp"
+        android:layout_marginStart="10sp"
         android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginRight="10sp"
+        android:layout_marginEnd="10sp"
         android:orientation="vertical">
 
         <TextView
