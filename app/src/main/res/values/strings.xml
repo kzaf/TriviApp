@@ -116,4 +116,6 @@
     <string name="play_button_image_darts_cd">play button image darts</string>
     <string name="toolbar_cancel_button_cd">toolbar cancel button</string>
     <string name="gameplay_answer_button_text_placeholder">\?</string>
+    <string name="widget_title">TriviApp</string>
+    <string name="widget_title_no_data">Open profile to load scores!</string>
 </resources>

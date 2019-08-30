@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -47,6 +48,7 @@ import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.threads.NetworkUtilTask;
+import com.zaf.triviapp.widget.AppWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,6 +112,13 @@ public class ProfileActivity extends AppCompatActivity
         }else{
             haveNetworkConnection();
         }
+    }
+
+    private void sendScoresToWidget(List<Scores> scoresList) {
+        Intent intent = new Intent(this, AppWidgetProvider.class);
+        intent.putParcelableArrayListExtra("WidgetUpdatedScore", (ArrayList<? extends Parcelable>) scoresList);
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        sendBroadcast(intent);
     }
 
     @Override
@@ -343,6 +352,8 @@ public class ProfileActivity extends AppCompatActivity
         profileRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         profileRecyclerView.scheduleLayoutAnimation();
+
+        sendScoresToWidget(scoresList);
     }
 
     @Override
