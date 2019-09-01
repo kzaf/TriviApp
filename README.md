@@ -22,13 +22,13 @@ An Android app game to help you have fun for hours. All the question/answers are
 ![Screenshot_20190830-215024](https://user-images.githubusercontent.com/11368889/64077931-c7985a00-ccdd-11e9-8417-5df7d4a7921b.jpg)
 ![Screenshot_20190830-214958](https://user-images.githubusercontent.com/11368889/64077930-c7985a00-ccdd-11e9-9790-71e3cec69ed3.jpg)
 
-- Night mode
+# Night mode
 
 
 ![Screenshot_20190830-215043](https://user-images.githubusercontent.com/11368889/64077928-c6ffc380-ccdd-11e9-8030-1715bb6c6f35.jpg)
 ![Screenshot_20190830-215052](https://user-images.githubusercontent.com/11368889/64077929-c6ffc380-ccdd-11e9-9c62-298d9fbd69a6.jpg)
 
-- Widget
+# Widget
 
 
 ![Screenshot_20190830-2152061](https://user-images.githubusercontent.com/11368889/64077927-c6ffc380-ccdd-11e9-8798-5216948d4fc8.jpg)
