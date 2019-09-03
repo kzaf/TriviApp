@@ -1,5 +1,5 @@
 # TriviApp
-TriviApp for Udacity Android Nanodegree.     
+TriviApp is made as the Capstone project for Udacity Android Nanodegree.     
 An Android app game to help you have fun for hours. All the question/answers are fetched from [OpenTriviaDB](https://opentdb.com/)
 
 ## Features
