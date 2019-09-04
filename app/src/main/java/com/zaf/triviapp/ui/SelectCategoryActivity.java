@@ -40,6 +40,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     private static final String SELECTED_CATEGORY = "selected_category";
     private static final String CATEGORIES_LIST = "categories_list";
     private static final String CATEGORIES_LAYOUT_MANAGER = "categories_layout_manager";
+    public static final String HAS_INTERNET = "has_internet";
     private boolean hasInternet;
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
@@ -71,6 +72,8 @@ public class SelectCategoryActivity extends AppCompatActivity
             }, 300);
             categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
             generateCategoriesList(categoriesList);
+            this.hasInternet = savedInstanceState.getBoolean(HAS_INTERNET);
+            toolbarOptions();
         }else{
             haveNetworkConnection();
         }
@@ -89,6 +92,7 @@ public class SelectCategoryActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(CATEGORIES_LIST, categoriesList);
         outState.putParcelable(CATEGORIES_LAYOUT_MANAGER, categoriesRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putBoolean(HAS_INTERNET, this.hasInternet);
         super.onSaveInstanceState(outState);
     }
 

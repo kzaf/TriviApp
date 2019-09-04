@@ -66,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity
     public static final String SELECTED_CATEGORY = "selected_category";
     public static final String DATA_SCORES = "DataScores";
     public static final String TOTAL_SCORE = "total score";
+    public static final String HAS_INTERNET = "has_internet";
     private boolean hasInternet;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
@@ -107,6 +108,8 @@ public class ProfileActivity extends AppCompatActivity
             }, 300);
             scoresList = savedInstanceState.getParcelableArrayList(SCORES_LIST);
             generateProfileCategoriesList(scoresList);
+            this.hasInternet = savedInstanceState.getBoolean(HAS_INTERNET);
+            toolbarOptions();
             setupUi(taskDao);
 
         }else{
@@ -125,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(SCORES_LIST, scoresList);
         outState.putParcelable(SCORES_LAYOUT_MANAGER, profileRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putBoolean(HAS_INTERNET, this.hasInternet);
         super.onSaveInstanceState(outState);
     }
 
