@@ -6,6 +6,6 @@
         android:id="@+id/profile_settings"
         android:title="@string/menu_settings"
         android:icon="@drawable/ic_settings_applications_24dp"
-        app:showAsAction="never"/>
+        app:showAsAction="always"/>
 
 </menu>

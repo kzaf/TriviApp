@@ -1,5 +1,6 @@
 package com.zaf.triviapp.ui;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -64,8 +66,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_details);
 
@@ -81,8 +86,9 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     }
 
     private void populateUi(final Category selectedCategory) {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             backgroundPictureOptions(selectedCategory);
+        }
 
         categoryName.setText(selectedCategory.getName());
 
@@ -142,7 +148,9 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
                 mChart.invalidate();
 
-                if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
@@ -201,8 +209,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
     private void backgroundPictureOptions(Category selectedCategory) {
         int imageId = getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", getPackageName());
-        if (imageId != 0) selectedCategoryImage.setImageResource(imageId);
-        else selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", getPackageName()));
+        if (imageId != 0) {
+            selectedCategoryImage.setImageResource(imageId);
+        } else {
+            selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", getPackageName()));
+        }
     }
 
     private void checkIfUserIsLogged() {
@@ -210,15 +221,20 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (mDb.taskDao().checkIfUsersTableIsEmpty().size() == 0){
-                    if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
                     mChart.setNoDataText(getResources().getString(R.string.no_chart));
                     Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
-                }else loadSuccessPercentage();
+                }else {
+                    loadSuccessPercentage();
+                }
             }
         });
     }
 
+    @SuppressLint("RestrictedApi")
     private void toolbarOptions() {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,12 +246,20 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
 
         toolbar.inflateMenu(R.menu.category_details_menu_items);
+        if(toolbar.getMenu() instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) toolbar.getMenu();
+            m.setOptionalIconsVisible(true);
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.category_details_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                else if(menuItem.getItemId()== R.id.category_details_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                else checkIfUserIsLogged();
+                if(menuItem.getItemId()==R.id.category_details_profile) {
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                } else if(menuItem.getItemId()== R.id.category_details_settings) {
+                    startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                } else {
+                    checkIfUserIsLogged();
+                }
                 return false;
             }
         });

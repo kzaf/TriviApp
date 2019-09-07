@@ -24,8 +24,11 @@ public class AboutPageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPref sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
 

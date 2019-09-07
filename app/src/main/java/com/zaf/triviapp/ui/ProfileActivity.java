@@ -88,8 +88,11 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -141,8 +144,11 @@ public class ProfileActivity extends AppCompatActivity
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if(userDetails == null) userNotLoggedPopulateUi();
-                        else userLoggedPopulateUi(userDetails);
+                        if(userDetails == null) {
+                            userNotLoggedPopulateUi();
+                        } else {
+                            userLoggedPopulateUi(userDetails);
+                        }
                     }
                 });
             }
@@ -209,7 +215,9 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (progressDialog != null) progressDialog.dismiss();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private void initializeDialog() {
@@ -307,7 +315,9 @@ public class ProfileActivity extends AppCompatActivity
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.profile_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                if(menuItem.getItemId()==R.id.profile_settings) {
+                    startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                }
                 return false;
             }
         });
@@ -321,7 +331,7 @@ public class ProfileActivity extends AppCompatActivity
             profileSuccess.setText("");
             mChart.setNoDataText(getResources().getString(R.string.no_chart));
         }else{
-            profilePercent.setText(scores * 10 + "%");
+            profilePercent.setText(String.format("%s%%", String.format("%.2f", scores * 10)));
             profileSuccess.setText(TOTAL_SCORE);
 
             List<PieEntry> pieChartEntries = new ArrayList<>();
@@ -346,8 +356,12 @@ public class ProfileActivity extends AppCompatActivity
             mChart.setData(data);
             mChart.invalidate();
         }
-        if (mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
-        if (progressDialog != null) progressDialog.dismiss();
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     private void generateProfileCategoriesList(List<Scores> scoresList) {

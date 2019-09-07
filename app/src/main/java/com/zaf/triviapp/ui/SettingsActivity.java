@@ -67,8 +67,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -99,7 +102,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        if(sharedPref.loadVibrateState()) vibrateSwitch.setChecked(true);
+        if(sharedPref.loadVibrateState()) {
+            vibrateSwitch.setChecked(true);
+        }
 
         vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

@@ -1,5 +1,6 @@
 package com.zaf.triviapp.ui;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -7,10 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -104,17 +108,30 @@ public class SelectCategoryActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @SuppressLint("RestrictedApi")
     private void toolbarOptions() {
         toolbar.inflateMenu(R.menu.select_category_menu_items);
         toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
-        if (hasInternet) selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
-        else selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+        if (hasInternet) {
+            selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+        } else {
+            selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+        }
+        Menu menu = toolbar.getMenu();
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.categories_menu_profile) startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                else if(menuItem.getItemId()== R.id.categories_menu_settings) startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-                else fetchCategories();
+                if(menuItem.getItemId()==R.id.categories_menu_profile) {
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                } else if(menuItem.getItemId()== R.id.categories_menu_settings) {
+                    startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                } else {
+                    fetchCategories();
+                }
                 return false;
             }
         });

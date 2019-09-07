@@ -96,8 +96,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 
@@ -201,8 +204,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT) :
                 Html.fromHtml(savedInstanceState.getString(ANSWER_2)));
         answer2.setOnClickListener(this);
-        if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) secondTwoButtons.setVisibility(View.INVISIBLE);
-        else{
+        if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) {
+            secondTwoButtons.setVisibility(View.INVISIBLE);
+        } else{
             secondTwoButtons.setVisibility(View.VISIBLE);
             answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
                     Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT) :
@@ -242,12 +246,19 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private void fetchQuestions() {
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get Retrofit instance
 
-        if(type.equals("True/False")) type = "boolean";
-        else if(type.equals("Multiple Choice")) type = "multiple";
-        else type = null;
+        if(type.equals("True/False")) {
+            type = "boolean";
+        } else if(type.equals("Multiple Choice")) {
+            type = "multiple";
+        } else {
+            type = null;
+        }
 
-        if(difficulty.equals("Any Difficulty")) difficulty = null;
-        else difficulty = difficulty.toLowerCase();
+        if(difficulty.equals("Any Difficulty")) {
+            difficulty = null;
+        } else {
+            difficulty = difficulty.toLowerCase();
+        }
 
         Call<QuestionList> call = service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
         call.enqueue(new Callback<QuestionList>() {
@@ -292,8 +303,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         answer1.setOnClickListener(this);
         answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(1)));
         answer2.setOnClickListener(this);
-        if(questionList.get(questionIndex).getType().equals("boolean")) secondTwoButtons.setVisibility(View.INVISIBLE);
-        else{
+        if(questionList.get(questionIndex).getType().equals("boolean")) {
+            secondTwoButtons.setVisibility(View.INVISIBLE);
+        } else{
             secondTwoButtons.setVisibility(View.VISIBLE);
             answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(2)));
             answer3.setOnClickListener(this);
@@ -461,12 +473,18 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         if(answerText.contentEquals(answerCorrect.toString())){
             answer.setBackgroundColor(getResources().getColor(R.color.green));
             particlesEffect(answer);
-            if(sharedPref.loadVibrateState()) vibe.vibrate(50);
-            else vibe.vibrate(0);
+            if(sharedPref.loadVibrateState()) {
+                vibe.vibrate(50);
+            } else {
+                vibe.vibrate(0);
+            }
             scoreCorrectAnswers++;
         }else{
-            if(sharedPref.loadVibrateState()) vibe.vibrate(300);
-            else vibe.vibrate(0);
+            if(sharedPref.loadVibrateState()) {
+                vibe.vibrate(300);
+            } else {
+                vibe.vibrate(0);
+            }
             ArrayList<TextView> questions = new ArrayList<>();
             questions.add(answer1);
             questions.add(answer2);

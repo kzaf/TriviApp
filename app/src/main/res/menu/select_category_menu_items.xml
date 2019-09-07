@@ -4,14 +4,17 @@
     <item
         android:id="@+id/categories_menu_profile"
         android:title="@string/menu_profile"
+        android:icon="@drawable/ic_profile_circle_24dp"
         app:showAsAction="never"/>
     <item
         android:id="@+id/categories_menu_settings"
         android:title="@string/menu_settings"
+        android:icon="@drawable/ic_settings_applications_24dp"
         app:showAsAction="never"/>
     <item
         android:id="@+id/categories_menu_refresh"
         android:title="@string/menu_refresh"
+        android:icon="@drawable/ic_refresh_24dp"
         app:showAsAction="never"/>
 
 </menu>
