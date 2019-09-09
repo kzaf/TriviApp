@@ -12,6 +12,21 @@ An Android app game to help you have fun for hours. All the question/answers are
  - Vibration on/off option
  - Profile screen to display the total score and an overview of each category you have played
  
+ ## Libraries
+- Firebase Auth
+- Firebase Core
+- Firebase ui auth
+- Firebase Database
+- Picasso & OkHttp3
+- Retofit & Gson
+- MPAndroidChart
+- FancyGifDialog-Android
+- EasyNativeDialog-for-Android
+- Support:preference-v7
+- ButterKnife
+- Room
+- Lifecycle 
+ 
 ## Screenshots
 ![Screenshot_20190830-213051](https://user-images.githubusercontent.com/11368889/64077937-c8c98700-ccdd-11e9-86d9-d2eaa44e1e12.jpg)
 ![Screenshot_20190830-214746](https://user-images.githubusercontent.com/11368889/64077936-c8c98700-ccdd-11e9-8a15-3bf70adce983.jpg)
