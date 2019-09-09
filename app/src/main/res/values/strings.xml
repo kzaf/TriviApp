@@ -121,4 +121,5 @@
     <string name="gameplay_answer_button_text_placeholder">\?</string>
     <string name="widget_title">TriviApp</string>
     <string name="widget_title_no_data">Open profile to load scores!</string>
+    <string name="category_details_login_text">Login</string>
 </resources>

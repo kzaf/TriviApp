@@ -129,6 +129,8 @@
                         android:id="@+id/text_percent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="30sp"
+                        android:layout_marginEnd="30sp"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:textColor="?attr/textcolor"

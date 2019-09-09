@@ -28,6 +28,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.gohn.nativedialog.ButtonClickListener;
 import com.gohn.nativedialog.ButtonType;
 import com.gohn.nativedialog.NDialog;
+import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
@@ -232,6 +233,17 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     mChart.setNoDataText(getResources().getString(R.string.no_chart));
                     Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
+
+                    textPercent.setText(getResources().getString(R.string.category_details_login_text));
+                    textPercent.setBackground(getResources().getDrawable(R.drawable.custom_border_blue));
+                    textPercent.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                            Intent intent = new Intent(CategoryDetailsActivity.this, LoginAuth.class);
+                            startActivity(intent);
+                        }
+                    });
                 }else {
                     loadSuccessPercentage();
                 }
