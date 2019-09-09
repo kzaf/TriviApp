@@ -235,13 +235,18 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     paint.setColor(getResources().getColor(R.color.colorAccentRed));
 
                     textPercent.setText(getResources().getString(R.string.category_details_login_text));
-                    textPercent.setBackground(getResources().getDrawable(R.drawable.custom_border_blue));
-                    textPercent.setOnClickListener(new View.OnClickListener() {
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
                         @Override
-                        public void onClick(View v) {
-                            finish();
-                            Intent intent = new Intent(CategoryDetailsActivity.this, LoginAuth.class);
-                            startActivity(intent);
+                        public void run() {
+                            textPercent.setBackground(getResources().getDrawable(R.drawable.custom_border_blue));
+                            textPercent.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    finish();
+                                    Intent intent = new Intent(CategoryDetailsActivity.this, LoginAuth.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     });
                 }else {

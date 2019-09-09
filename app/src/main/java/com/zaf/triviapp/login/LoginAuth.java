@@ -89,7 +89,12 @@ public class LoginAuth extends AppCompatActivity {
                 getResources().getColor(R.color.colorAccentBlue),
                 getResources().getColor(R.color.textWhite))
                 .show();
-        Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        DynamicToast.make(getApplicationContext(),
+                "Welcome " + user.getDisplayName(),
+                getResources().getDrawable(R.drawable.ic_sentiment_welcome_smile_black_24dp),
+                getResources().getColor(R.color.colorAccentBlue),
+                getResources().getColor(R.color.textWhite))
+                .show();
     }
 
     private void firebaseInstance(FirebaseUser user){

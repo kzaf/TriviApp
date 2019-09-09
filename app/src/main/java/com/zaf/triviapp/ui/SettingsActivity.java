@@ -104,6 +104,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         if(sharedPref.loadVibrateState()) {
             vibrateSwitch.setChecked(true);
+        }else{
+            vibrateSwitch.setChecked(false);
         }
 
         vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

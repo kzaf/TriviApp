@@ -25,7 +25,7 @@ public class SharedPref {
     }
 
     public Boolean loadVibrateState(){
-        return mySharedPref.getBoolean("Vibrate", false);
+        return mySharedPref.getBoolean("Vibrate", true);
     }
 
 }
