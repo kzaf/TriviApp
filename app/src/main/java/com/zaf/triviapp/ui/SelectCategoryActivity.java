@@ -59,8 +59,11 @@ public class SelectCategoryActivity extends AppCompatActivity
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         sharedPref = new SharedPref(this);
-        if(sharedPref.loadNightModeState()) setTheme(R.style.AppThemeDark);
-        else setTheme(R.style.AppTheme);
+        if(sharedPref.loadNightModeState()) {
+            setTheme(R.style.AppThemeDark);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_category);
 
@@ -111,12 +114,22 @@ public class SelectCategoryActivity extends AppCompatActivity
     @SuppressLint("RestrictedApi")
     private void toolbarOptions() {
         toolbar.inflateMenu(R.menu.select_category_menu_items);
-        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
-        if (hasInternet) {
-            selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+        if(sharedPref.loadNightModeState()) {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+            if (hasInternet) {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label_dark)));
+            } else {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label_dark)));
+            }
         } else {
-            selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+            if (hasInternet) {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+            } else {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+            }
         }
+
         Menu menu = toolbar.getMenu();
         if(menu instanceof MenuBuilder){
             MenuBuilder m = (MenuBuilder) menu;

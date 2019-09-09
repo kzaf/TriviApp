@@ -52,6 +52,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     private String difficulty = "Any Difficulty", type = "Any Type";
     private AppDatabase mDb;
     private int scorePercentage = 0;
+    private SharedPref sharedPref;
     @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.selected_category_name) TextView categoryName;
@@ -65,7 +66,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPref sharedPref = new SharedPref(this);
+        sharedPref = new SharedPref(this);
         if(sharedPref.loadNightModeState()) {
             setTheme(R.style.AppThemeDark);
         } else {
@@ -131,7 +132,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                 }
 
                 PieDataSet dataset = new PieDataSet(pieChartEntries, "");
-                dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                if(sharedPref.loadNightModeState()) {
+                    dataset.setColors(getResources().getColor(R.color.colorAccentBlueDark), getResources().getColor(R.color.colorAccentRedDark));
+                } else {
+                    dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                }
                 dataset.setSliceSpace(0);
                 dataset.setValueTextSize(20);
                 dataset.setValueTextColor(android.R.color.white);
@@ -243,7 +248,11 @@ public class CategoryDetailsActivity extends AppCompatActivity {
             }
         });
 
-        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        if(sharedPref.loadNightModeState()) {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+        } else {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        }
 
         toolbar.inflateMenu(R.menu.category_details_menu_items);
         if(toolbar.getMenu() instanceof MenuBuilder){

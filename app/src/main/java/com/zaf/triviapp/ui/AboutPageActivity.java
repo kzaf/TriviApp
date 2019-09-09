@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 
 public class AboutPageActivity extends AppCompatActivity {
 
+    private SharedPref sharedPref;
     @BindView(R.id.toolbar_title_about) TextView toolbarTitle;
     @BindView(R.id.mail_tv) TextView mailTextView;
     @BindView(R.id.about_text) TextView aboutTextView;
@@ -23,7 +24,7 @@ public class AboutPageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPref sharedPref = new SharedPref(this);
+        sharedPref = new SharedPref(this);
         if(sharedPref.loadNightModeState()) {
             setTheme(R.style.AppThemeDark);
         } else {
@@ -51,6 +52,10 @@ public class AboutPageActivity extends AppCompatActivity {
                 finish();
             }
         });
-        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        if(sharedPref.loadNightModeState()) {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+        } else {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        }
     }
 }

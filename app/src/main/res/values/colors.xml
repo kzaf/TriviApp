@@ -5,11 +5,14 @@
     <color name="textBlack">#3C3C3C</color>
 
     <color name="colorPrimaryNight">#1D1D1D</color>
-    <color name="colorPrimaryDarkNight">#202020</color>
+    <color name="colorPrimaryDarkNight">#121212</color>
     <color name="textWhite">#D1D1D1</color>
 
     <color name="colorAccentRed">#AD0000</color>
     <color name="colorAccentBlue">#0031AA</color>
+
+    <color name="colorAccentRedDark">#B62E2E</color>
+    <color name="colorAccentBlueDark">#0D47A1</color>
 
     <color name="orange">#FF6F00</color>
     <color name="green">#1B5E20</color>

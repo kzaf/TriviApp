@@ -308,7 +308,11 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
 
-        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        if(sharedPref.loadNightModeState()) {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+        } else {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        }
 
         toolbar.inflateMenu(R.menu.profile_menu_items);
 
@@ -339,8 +343,11 @@ public class ProfileActivity extends AppCompatActivity
             pieChartEntries.add(new PieEntry((10 - scores) * 10, getResources().getString(R.string.category_details_activity_pie_entry_failure)));
 
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
-            dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
-            dataset.setSliceSpace(0);
+            if(sharedPref.loadNightModeState()) {
+                dataset.setColors(getResources().getColor(R.color.colorAccentBlueDark), getResources().getColor(R.color.colorAccentRedDark));
+            } else {
+                dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+            }            dataset.setSliceSpace(0);
             dataset.setValueTextSize(20);
             dataset.setValueTextColor(android.R.color.white);
 

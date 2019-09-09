@@ -26,7 +26,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="backgroundcolor">@color/colorPrimaryDarkNight</item>
-        <item name="recyclerviewcolor">@color/colorPrimaryDarkNight</item>
+        <item name="recyclerviewcolor">@color/colorPrimaryNight</item>
         <item name="textcolor">@color/textWhite</item>
 
         <item name="android:textColorSecondary">@color/textWhite</item>

@@ -18,6 +18,9 @@
     <string name="triviapp_label"><![CDATA[<font color=#0031AA>Trivi</font><font color=#AD0000>App</font>]]></string>
     <string name="select_category_label"><![CDATA[<font color=#0031AA>Select </font><font color=#AD0000>Category</font>]]></string>
     <string name="no_internet_label"><![CDATA[<font color=#AD0000>No Internet!</font>]]></string>
+    <string name="triviapp_label_dark"><![CDATA[<font color=#0D47A1>Trivi</font><font color=#B62E2E>App</font>]]></string>
+    <string name="select_category_label_dark"><![CDATA[<font color=#0D47A1>Select </font><font color=#B62E2E>Category</font>]]></string>
+    <string name="no_internet_label_dark"><![CDATA[<font color=#B62E2E>No Internet!</font>]]></string>
     <string name="loading_categories">Loading categories..</string>
     <string name="loading_profile">Loading data..</string>
     <string name="widget_item_format">%1$d. %2$s, %3$s %4$s</string>

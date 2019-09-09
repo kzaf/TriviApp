@@ -233,7 +233,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 alertDialogExit();
             }
         });
-        toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        if(sharedPref.loadNightModeState()) {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+        } else {
+            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+        }
     }
 
     private void initializeDialog() {
