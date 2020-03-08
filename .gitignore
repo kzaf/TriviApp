@@ -11,3 +11,8 @@
 /build
 /captures
 .externalNativeBuild
+app/release/app.aab
+app/google-services.json
+app-release.textClipping
+.idea/render.experimental.xml
+.idea/codeStyles/Project.xml

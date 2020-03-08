@@ -1,17 +1,18 @@
 package com.zaf.triviapp.ui;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -250,7 +251,12 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                         }
                     });
                 }else {
-                    loadSuccessPercentage();
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadSuccessPercentage();
+                        }
+                    });
                 }
             }
         });
