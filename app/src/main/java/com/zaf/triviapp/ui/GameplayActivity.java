@@ -7,7 +7,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -79,6 +78,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     private ProgressDialog progressDialog;
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.cancel_button) ImageView cancel;
@@ -137,11 +137,12 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (!isDialogOpen){
-            if (questionList == null) errorDialog();
+            if (questionList == null)
+                errorDialog();
             else{
                 outState.putParcelableArrayList(QUESTION_LIST, questionList);
                 outState.putInt(QUESTION_INDEX, questionIndex);
-                outState.putString(LEVEL, questionList.get(questionIndex).getDifficulty());
+                outState.putString(LEVEL, questionList.get(questionIndex-1).getDifficulty());
                 outState.putString(QUESTION, question.getText().toString());
                 outState.putString(ANSWER_1, answer1.getText().toString());
                 outState.putString(ANSWER_2, answer2.getText().toString());
@@ -149,8 +150,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 outState.putString(ANSWER_4, answer4.getText().toString());
                 outState.putString(STEP, gameplayStepNumber.getText().toString());
                 outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
-                if (secondTwoButtons.getVisibility() == View.INVISIBLE) outState.putBoolean(IS_TRUE_FALSE, true);
-                else outState.putBoolean(IS_TRUE_FALSE, false);
+
+                if (secondTwoButtons.getVisibility() == View.INVISIBLE)
+                    outState.putBoolean(IS_TRUE_FALSE, true);
+                else
+                    outState.putBoolean(IS_TRUE_FALSE, false);
             }
         }else{
             outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
@@ -192,29 +196,23 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         questionList = savedInstanceState.getParcelableArrayList(QUESTION_LIST);
         questionIndex = savedInstanceState.getInt(QUESTION_INDEX);
         scoreCorrectAnswers = savedInstanceState.getInt(SCORE_CORRECT_ANSWERS);
+
         setLevelLabelTextAndColor(savedInstanceState.getString(LEVEL));
-        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT) :
-                Html.fromHtml(savedInstanceState.getString(QUESTION)));
-        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT) :
-                Html.fromHtml(savedInstanceState.getString(ANSWER_1)));
+
+        question.setText(Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT));
+        answer1.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT));
         answer1.setOnClickListener(this);
-        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT) :
-                Html.fromHtml(savedInstanceState.getString(ANSWER_2)));
+        answer2.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT));
         answer2.setOnClickListener(this);
+
         if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) {
             secondTwoButtons.setVisibility(View.INVISIBLE);
         } else{
             secondTwoButtons.setVisibility(View.VISIBLE);
-            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                    Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT) :
-                    Html.fromHtml(savedInstanceState.getString(ANSWER_3)));
+
+            answer3.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT));
             answer3.setOnClickListener(this);
-            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                    Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT) :
-                    Html.fromHtml(savedInstanceState.getString(ANSWER_4)));
+            answer4.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT));
             answer4.setOnClickListener(this);
         }
         gameplayStepNumber.setText(savedInstanceState.getString(STEP));
@@ -233,6 +231,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 alertDialogExit();
             }
         });
+
         if(sharedPref.loadNightModeState()) {
             toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
         } else {
@@ -248,7 +247,9 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void fetchQuestions() {
-        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get Retrofit instance
+
+        GetDataService service =
+                RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class); // Get Retrofit instance
 
         if(type.equals("True/False")) {
             type = "boolean";
@@ -264,17 +265,22 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             difficulty = difficulty.toLowerCase();
         }
 
-        Call<QuestionList> call = service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
+        Call<QuestionList> call =
+                service.getQuestions(selectedCategory.getId(), difficulty, type);// Get questions request
+
         call.enqueue(new Callback<QuestionList>() {
             @Override
             public void onResponse(Call<QuestionList> call, Response<QuestionList> response) {
+
                 progressDialog.dismiss();
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+
                 if (response.body() != null) {
                     questionList = (ArrayList<Question>) response.body().getTrivia_questions();
                     populateQuestions(questionList);
                 }
             }
+
             @Override
             public void onFailure(Call<QuestionList> call, Throwable t) {
                 progressDialog.dismiss();
@@ -288,6 +294,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             errorDialog();
             return;
         }
+
         answer1.setBackground(getResources().getDrawable(R.drawable.custom_border));
         answer2.setBackground(getResources().getDrawable(R.drawable.custom_border));
         answer3.setBackground(getResources().getDrawable(R.drawable.custom_border));
@@ -300,20 +307,22 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         Collections.shuffle(mixedQuestions);
 
         // Question
-        question.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(questionList.get(questionIndex).getQuestion(), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(questionList.get(questionIndex).getQuestion()));
+        question.setText(Html.fromHtml(questionList.get(questionIndex).getQuestion(),
+                Html.FROM_HTML_MODE_COMPACT));
 
         // Answers
-        answer1.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(0)));
+        answer1.setText(Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT));
         answer1.setOnClickListener(this);
-        answer2.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(1)));
+        answer2.setText(Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT));
         answer2.setOnClickListener(this);
+
         if(questionList.get(questionIndex).getType().equals("boolean")) {
             secondTwoButtons.setVisibility(View.INVISIBLE);
         } else{
             secondTwoButtons.setVisibility(View.VISIBLE);
-            answer3.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(2)));
+            answer3.setText(Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT));
             answer3.setOnClickListener(this);
-            answer4.setText(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ? Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT) : Html.fromHtml(mixedQuestions.get(3)));
+            answer4.setText(Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT));
             answer4.setOnClickListener(this);
         }
 
@@ -349,6 +358,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         isDialogOpen = true;
         String message;
         int gifImage;
+
         if(score==10){
             message = getResources().getString(R.string.gameplay_endgame_dialog_wow);
             gifImage = R.drawable.wow;
@@ -365,44 +375,8 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
             message = getResources().getString(R.string.gameplay_endgame_dialog_fail);
             gifImage = R.drawable.fail;
         }
-        new FancyGifDialog.Builder(this)
-            .setTitle(message)
-            .setMessage("Your score is " + score + "/10")
-            .setPositiveBtnBackground("#b80c00")
-            .setPositiveBtnText("OK")
-            .setGifResource(gifImage)
-            .isCancellable(false)
-            .OnPositiveClicked(new FancyGifDialogListener() {
-                @Override
-                public void OnClick() {
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            final UserDetails userDetails = mDb.taskDao().loadUserDetails();
-                            if(userDetails != null){
-                                mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
-                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
-                                    }
-                                });
-                            }else{
-                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_endgame_dialog_login_toast), getResources()
-                                                .getColor(R.color.orange), getResources()
-                                                .getColor(R.color.textBlack))
-                                                .show();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    finish();
-                }
-            }).build();
+
+        setUpFancyDialog(score, message, gifImage);
     }
 
     private void updateFirebase(Scores scores){
@@ -462,38 +436,89 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 .build();
     }
 
-    private void checkAnswerCorrection(TextView answer) {
+    private void setUpFancyDialog(final int score, String message, int gifImage) {
+        new FancyGifDialog.Builder(this)
+                .setTitle(message)
+                .setMessage("Your score is " + score + "/10")
+                .setPositiveBtnBackground("#b80c00")
+                .setPositiveBtnText("OK")
+                .setGifResource(gifImage)
+                .isCancellable(false)
+                .OnPositiveClicked(new FancyGifDialogListener() {
 
+                    @Override
+                    public void OnClick() {
+
+                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                final UserDetails userDetails = mDb.taskDao().loadUserDetails();
+                                if(userDetails != null){
+                                    mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+
+                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                        }
+
+                                    });
+                                }else{
+
+                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DynamicToast.make(getApplicationContext(), getResources().getString(R.string.gameplay_endgame_dialog_login_toast), getResources()
+                                                    .getColor(R.color.orange), getResources()
+                                                    .getColor(R.color.textBlack))
+                                                    .show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        finish();
+                    }
+                }).build();
+    }
+
+
+    private void checkAnswerCorrection(TextView answer) {
         answer1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         answer2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         answer3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
         answer4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
-        Spanned answerCorrect = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
-                Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT) :
-                Html.fromHtml(questionList.get(questionIndex-1).getCorrect_answer());
+        Spanned answerCorrect =
+                Html.fromHtml(questionList.get(questionIndex - 1).getCorrect_answer(), Html.FROM_HTML_MODE_COMPACT);
 
         if(answerText.contentEquals(answerCorrect.toString())){
+
             answer.setBackgroundColor(getResources().getColor(R.color.green));
             particlesEffect(answer);
+
             if(sharedPref.loadVibrateState()) {
                 vibe.vibrate(50);
             } else {
                 vibe.vibrate(0);
             }
             scoreCorrectAnswers++;
+
         }else{
+
             if(sharedPref.loadVibrateState()) {
                 vibe.vibrate(300);
             } else {
                 vibe.vibrate(0);
             }
+
             ArrayList<TextView> questions = new ArrayList<>();
             questions.add(answer1);
             questions.add(answer2);
             questions.add(answer3);
             questions.add(answer4);
+
             for (int j=0; j<questions.size(); j++){
                 if(questions.get(j).getText().toString().equals(answerCorrect.toString())){
                     manageBlinkEffect(questions.get(j));
@@ -504,6 +529,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         // Block UI from touch events and orientation change
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -512,6 +538,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                     alertDialogEndGame(scoreCorrectAnswers);
                     return;
                 }
+
                 populateQuestions(questionList);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
@@ -520,9 +547,11 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void particlesEffect(TextView button){
-        new ParticleSystem(this, 10, getResources().getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
-                .setSpeedRange(0.2f, 0.5f)
-                .oneShot(button, 10);
+        new ParticleSystem(this, 10,
+                getResources()
+                        .getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
+                        .setSpeedRange(0.2f, 0.5f)
+                        .oneShot(button, 10);
     }
 
     @SuppressLint("WrongConstant")
@@ -532,6 +561,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
                 getResources().getColor(R.color.green),
                 Color.WHITE,
                 getResources().getColor(R.color.green));
+
         anim.setDuration(500);
         anim.setEvaluator(new ArgbEvaluator());
         anim.setRepeatMode(Animation.RESTART);
