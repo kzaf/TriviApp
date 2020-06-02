@@ -114,7 +114,9 @@ public class SettingsActivity extends AppCompatActivity {
                 if(isChecked){
                     sharedPref.setVibrateEnabled(true);
                     vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibe.vibrate(50);
+                    if (vibe != null) {
+                        vibe.vibrate(50);
+                    }
                 }else{
                     sharedPref.setVibrateEnabled(false);
                 }
@@ -138,7 +140,7 @@ public class SettingsActivity extends AppCompatActivity {
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, AboutPageActivity.class));
+//                startActivity(new Intent(SettingsActivity.this, AboutPageActivity.class));
             }
         });
     }

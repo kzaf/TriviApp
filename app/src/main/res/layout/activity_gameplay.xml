@@ -24,7 +24,7 @@
             app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/logo_image"
             android:layout_width="25sp"
             android:layout_height="25sp"
             android:contentDescription="@string/toolbar_image_cd"

@@ -69,8 +69,8 @@ public class LoginAuth extends AppCompatActivity {
                 firebaseInstance(user);
                 Intent intent = new Intent(LoginAuth.this, ProfileActivity.class);
                 startActivity(intent);
-                finish();
-            }else finish();
+            }
+            finish();
         }
     }
 
