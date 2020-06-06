@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -23,8 +25,6 @@ import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
-import com.zaf.triviapp.preferences.SharedPref;
-import com.zaf.triviapp.threads.NetworkUtilTask;
 import com.zaf.triviapp.utils.Utils;
 
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,7 +46,7 @@ public class SelectCategoryFragment extends Fragment
     private boolean hasInternet;
     private ProgressDialog progressDialog;
     private ArrayList<Category> categoriesList;
-    private SharedPref sharedPref;
+    private MainActivity mainActivity;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.categories_recycler_view) RecyclerView categoriesRecyclerView;
     @BindView(R.id.select_category_label) TextView selectCategoryLabel;
@@ -59,9 +58,10 @@ public class SelectCategoryFragment extends Fragment
         View view = inflater.inflate(R.layout.activity_select_category, container, false);
         ButterKnife.bind(this, view);
 
-        ((MainActivity)getActivity()).backButton.setVisibility(View.INVISIBLE);
+        mainActivity = ((MainActivity)getActivity());
 
         if(savedInstanceState != null){
+            this.hasInternet = savedInstanceState.getBoolean(HAS_INTERNET);
             // The RecyclerView keeps going back to initial state because the data in Adapter still being populated when we call the onRestoreInstanceState
             // It's a hack to delay the onRestoreInstanceState
             new Handler().postDelayed(new Runnable() {
@@ -71,7 +71,6 @@ public class SelectCategoryFragment extends Fragment
             }, 300);
             categoriesList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
             generateCategoriesList(categoriesList);
-            this.hasInternet = savedInstanceState.getBoolean(HAS_INTERNET);
         }else{
             Utils utils = new Utils(getActivity());
             this.hasInternet = utils.hasActiveInternetConnection();
@@ -80,11 +79,13 @@ public class SelectCategoryFragment extends Fragment
                 @Override
                 public void onRefresh() {
                     fetchCategories();
+                    initUi();
                 }
             });
 
             fetchCategories();
         }
+        initUi();
 
         return view;
     }
@@ -94,7 +95,7 @@ public class SelectCategoryFragment extends Fragment
         super.onDestroyView();
         if (progressDialog != null) {
             progressDialog.dismiss();
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         }
     }
 
@@ -118,7 +119,24 @@ public class SelectCategoryFragment extends Fragment
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage(getResources().getString(R.string.loading_categories));
         progressDialog.show();
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+    }
+
+    private void initUi(){
+        mainActivity.backButton.setVisibility(View.INVISIBLE);
+        if(mainActivity.getSharedPref().loadNightModeState()) {
+            if (hasInternet) {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label_dark)));
+            } else {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label_dark)));
+            }
+        } else {
+            if (hasInternet) {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+            } else {
+                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+            }
+        }
     }
 
     private void fetchCategories() {
@@ -139,7 +157,7 @@ public class SelectCategoryFragment extends Fragment
                 @Override
                 public void onResponse(Call<CategoriesList> call, Response<CategoriesList> response) {
                     progressDialog.dismiss();
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                    mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                     generateCategoriesList(response.body().getCategory());
                     if (response.body() != null) {
                         categoriesList = (ArrayList<Category>) response.body().getCategory();
@@ -151,7 +169,7 @@ public class SelectCategoryFragment extends Fragment
                 @Override
                 public void onFailure(Call<CategoriesList> call, Throwable t) {
                     progressDialog.dismiss();
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                    mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
                     if (mSwipeRefreshLayout.isRefreshing()) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -162,6 +180,10 @@ public class SelectCategoryFragment extends Fragment
 
     @Override
     public void onListItemClick(int item) {
+        FragmentTransaction fragmentTransaction =
+                getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new AboutPageFragment());
+        fragmentTransaction.commit();
 
     }
 
