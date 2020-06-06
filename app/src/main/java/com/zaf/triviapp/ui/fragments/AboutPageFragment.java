@@ -1,4 +1,4 @@
-package com.zaf.triviapp.ui;
+package com.zaf.triviapp.ui.fragments;
 
 import android.os.Bundle;
 import android.text.Html;

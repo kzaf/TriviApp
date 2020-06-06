@@ -1,10 +1,8 @@
 package com.zaf.triviapp.ui;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.ui.fragments.SelectCategoryFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,5 +103,13 @@ public class MainActivity extends AppCompatActivity {
 
     public SharedPref getSharedPref() {
         return sharedPref;
+    }
+
+    public void setBackButtonVisibility(boolean toBeVisible){
+        if (toBeVisible){
+            backButton.setVisibility(View.VISIBLE);
+        }{
+            backButton.setVisibility(View.INVISIBLE);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.zaf.triviapp.ui;
+package com.zaf.triviapp.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
@@ -25,6 +25,7 @@ import com.zaf.triviapp.models.CategoriesList;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
+import com.zaf.triviapp.ui.MainActivity;
 import com.zaf.triviapp.utils.Utils;
 
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public class SelectCategoryFragment extends Fragment
     }
 
     private void initUi(){
-        mainActivity.backButton.setVisibility(View.INVISIBLE);
+        mainActivity.setBackButtonVisibility(false);
         if(mainActivity.getSharedPref().loadNightModeState()) {
             if (hasInternet) {
                 selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label_dark)));
@@ -143,7 +144,7 @@ public class SelectCategoryFragment extends Fragment
         initializeDialog();
 
         if (!hasInternet){
-            DynamicToast.make(getActivity(), getResources().getString(R.string.select_category_no_internet_label), getResources()
+            DynamicToast.make(mainActivity, getResources().getString(R.string.select_category_no_internet_label), getResources()
                     .getColor(R.color.colorAccentRed), getResources()
                     .getColor(R.color.textWhite))
                     .show();
@@ -180,9 +181,14 @@ public class SelectCategoryFragment extends Fragment
 
     @Override
     public void onListItemClick(int item) {
-        FragmentTransaction fragmentTransaction =
-                getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, new AboutPageFragment());
+
+        CategoryDetailsFragment categoryDetailsFragment = new CategoryDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(SELECTED_CATEGORY, categoriesList.get(item));
+        categoryDetailsFragment.setArguments(bundle);
+
+        FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, categoryDetailsFragment);
         fragmentTransaction.commit();
 
     }
