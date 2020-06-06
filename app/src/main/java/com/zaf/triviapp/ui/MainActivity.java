@@ -1,13 +1,19 @@
 package com.zaf.triviapp.ui;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
 
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
@@ -21,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.back_button_main) ImageView backButton;
     @BindView(R.id.logo_image) ImageView logoImage;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +47,28 @@ public class MainActivity extends AppCompatActivity {
         initFragment();
     }
 
+    @SuppressLint("RestrictedApi")
     private void toolbarOptions() {
+        toolbar.inflateMenu(R.menu.select_category_menu_items);
+        if(toolbar.getMenu() instanceof MenuBuilder){
+            ((MenuBuilder) toolbar.getMenu()).setOptionalIconsVisible(true);
+        }
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if(menuItem.getItemId()==R.id.categories_menu_profile) {
+                    // TODO
+                    //startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                } else if(menuItem.getItemId()== R.id.categories_menu_settings) {
+                    // TODO
+                    //startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                } else {
+                    // TODO
+                    //fetchCategories();
+                }
+                return false;
+            }
+        });
 
         logoImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,4 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    public SharedPref getSharedPref() {
+        return sharedPref;
+    }
 }
