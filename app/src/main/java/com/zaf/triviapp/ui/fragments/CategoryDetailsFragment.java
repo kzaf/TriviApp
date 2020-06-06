@@ -197,16 +197,16 @@ public class CategoryDetailsFragment extends Fragment {
             public void onClick(int button) {
                 switch (button) {
                     case NDialog.BUTTON_POSITIVE:
-//                        GameplayFragment gameplayFragment = new GameplayFragment();
-//                        Bundle bundle = new Bundle();
-//                        bundle.putParcelable(SELECTED_CATEGORY, selectedCategory);
-//                        bundle.putString(DIFFICULTY, difficulty);
-//                        bundle.putString(TYPE, type);
-//                        gameplayFragment.setArguments(bundle);
-//
-//                        FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
-//                        fragmentTransaction.replace(R.id.fragment_container, gameplayFragment);
-//                        fragmentTransaction.commit();
+                        GameplayFragment gameplayFragment = new GameplayFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(SELECTED_CATEGORY, selectedCategory);
+                        bundle.putString(DIFFICULTY, difficulty);
+                        bundle.putString(TYPE, type);
+                        gameplayFragment.setArguments(bundle);
+
+                        FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, gameplayFragment);
+                        fragmentTransaction.commit();
 
                         break;
                     case NDialog.BUTTON_NEGATIVE:
