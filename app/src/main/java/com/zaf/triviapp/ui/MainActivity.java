@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.ui.fragments.ProfileFragment;
 import com.zaf.triviapp.ui.fragments.SelectCategoryFragment;
 
 import butterknife.BindView;
@@ -56,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId()==R.id.categories_menu_profile) {
-                    // TODO
-                    //startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                    ProfileFragment profileFragment = new ProfileFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, profileFragment, "profileFragment")
+                            .commit();
                 } else if(menuItem.getItemId()== R.id.categories_menu_settings) {
                     // TODO
                     //startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
