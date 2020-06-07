@@ -17,6 +17,7 @@ import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.ui.fragments.ProfileFragment;
 import com.zaf.triviapp.ui.fragments.SelectCategoryFragment;
+import com.zaf.triviapp.ui.fragments.SettingsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId()==R.id.categories_menu_profile) {
-                    ProfileFragment profileFragment = new ProfileFragment();
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, profileFragment, "profileFragment")
+                            .replace(R.id.fragment_container, new ProfileFragment(), "profileFragment")
                             .commit();
                 } else if(menuItem.getItemId()== R.id.categories_menu_settings) {
-                    // TODO
-                    //startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new SettingsFragment(), "settingsFragment")
+                            .commit();
                 } else {
                     // TODO
                     //fetchCategories();
