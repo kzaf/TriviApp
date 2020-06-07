@@ -34,9 +34,6 @@ import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
-import com.zaf.triviapp.threads.AppExecutors;
-import com.zaf.triviapp.ui.CategoryDetailsActivity;
-import com.zaf.triviapp.ui.GameplayActivity;
 import com.zaf.triviapp.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -88,7 +85,7 @@ public class CategoryDetailsFragment extends Fragment {
 
     private void populateUi(final Category selectedCategory) {
         mainActivity.setBackButtonVisibility(true);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (mainActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             backgroundPictureOptions(selectedCategory);
         }
 
@@ -112,14 +109,14 @@ public class CategoryDetailsFragment extends Fragment {
     }
 
     private void backgroundPictureOptions(Category selectedCategory) {
-        int imageId = getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", mainActivity.getPackageName());
+        int imageId = mainActivity.getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", mainActivity.getPackageName());
         if (imageId != 0) {
             if (selectedCategoryImage != null) {
                 selectedCategoryImage.setImageResource(imageId);
             }
         } else {
             if (selectedCategoryImage != null) {
-                selectedCategoryImage.setImageResource(getResources().getIdentifier("t9", "drawable", mainActivity.getPackageName()));
+                selectedCategoryImage.setImageResource(mainActivity.getResources().getIdentifier("t9", "drawable", mainActivity.getPackageName()));
             }
         }
     }
@@ -134,16 +131,16 @@ public class CategoryDetailsFragment extends Fragment {
                     if (mSwipeRefreshLayout.isRefreshing()) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                    mChart.setNoDataText(getResources().getString(R.string.no_chart));
-                    mChart.getPaint(Chart.PAINT_INFO).setColor(getResources().getColor(R.color.colorAccentRed));
+                    mChart.setNoDataText(mainActivity.getString(R.string.no_chart));
+                    mChart.getPaint(Chart.PAINT_INFO).setColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
 
-                    textPercent.setText(getResources().getString(R.string.category_details_login_text));
+                    textPercent.setText(mainActivity.getResources().getString(R.string.category_details_login_text));
 
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
 
-                            textPercent.setBackground(getResources().getDrawable(R.drawable.custom_border_blue));
+                            textPercent.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border_blue));
                             textPercent.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -173,7 +170,7 @@ public class CategoryDetailsFragment extends Fragment {
 
         NDialog nDialog = new NDialog(mainActivity, ButtonType.TWO_BUTTON);
         nDialog.setIcon(R.drawable.triviapp_icon);
-        nDialog.setTitle(getResources().getString(R.string.category_details_activity_game_options_dialog_title));
+        nDialog.setTitle(mainActivity.getResources().getString(R.string.category_details_activity_game_options_dialog_title));
         nDialog.setCustomView(dialogLayout);
 
         SwitchMultiButton mSwitchMultiButtonDifficulty = dialogLayout.findViewById(R.id.switch_difficulty);
@@ -214,11 +211,11 @@ public class CategoryDetailsFragment extends Fragment {
                 }
             }
         };
-        nDialog.setPositiveButtonText(getResources().getString(R.string.category_details_activity_game_options_dialog_positive_button));
+        nDialog.setPositiveButtonText(mainActivity.getResources().getString(R.string.category_details_activity_game_options_dialog_positive_button));
         nDialog.setPositiveButtonTextColor(Color.BLUE);
         nDialog.setPositiveButtonClickListener(buttonClickListener);
 
-        nDialog.setNegativeButtonText(getResources().getString(R.string.category_details_activity_game_options_dialog_negative_button));
+        nDialog.setNegativeButtonText(mainActivity.getResources().getString(R.string.category_details_activity_game_options_dialog_negative_button));
         nDialog.setNegativeButtonTextColor(Color.RED);
         nDialog.setNegativeButtonClickListener(buttonClickListener);
 
@@ -235,22 +232,22 @@ public class CategoryDetailsFragment extends Fragment {
                     scorePercentage = scores.getCategoryScore() * 10;
                     float successScore = (float) scorePercentage;
                     float failScore = (float) 100 - scorePercentage;
-                    pieChartEntries.add(new PieEntry(successScore, getResources().getString(R.string.category_details_activity_pie_entry_correct)));
-                    pieChartEntries.add(new PieEntry(failScore, getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
+                    pieChartEntries.add(new PieEntry(successScore, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_correct)));
+                    pieChartEntries.add(new PieEntry(failScore, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
                     textPercent.setText(scorePercentage + " %");
-                    textSuccess.setText(getResources().getString(R.string.category_details_activity_pie_entry_success));
+                    textSuccess.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_success));
                 }else{
-                    pieChartEntries.add(new PieEntry(0, getResources().getString(R.string.category_details_activity_pie_entry_correct)));
-                    pieChartEntries.add(new PieEntry(0, getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
-                    textPercent.setText(getResources().getString(R.string.category_details_activity_pie_entry_havent_played_yet_text) + categoryName.getText().toString());
+                    pieChartEntries.add(new PieEntry(0, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_correct)));
+                    pieChartEntries.add(new PieEntry(0, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
+                    textPercent.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_havent_played_yet_text) + categoryName.getText().toString());
                     textSuccess.setText("");
                 }
 
                 PieDataSet dataset = new PieDataSet(pieChartEntries, "");
                 if(mainActivity.getSharedPref().loadNightModeState()) {
-                    dataset.setColors(getResources().getColor(R.color.colorAccentBlueDark), getResources().getColor(R.color.colorAccentRedDark));
+                    dataset.setColors(mainActivity.getResources().getColor(R.color.colorAccentBlueDark), mainActivity.getResources().getColor(R.color.colorAccentRedDark));
                 } else {
-                    dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                    dataset.setColors(mainActivity.getResources().getColor(R.color.colorAccentBlue), mainActivity.getResources().getColor(R.color.colorAccentRed));
                 }
                 dataset.setSliceSpace(0);
                 dataset.setValueTextSize(20);

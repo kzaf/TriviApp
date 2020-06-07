@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,7 +41,6 @@ import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
-import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.ui.MainActivity;
 import com.zaf.triviapp.utils.Utils;
 
@@ -74,7 +72,6 @@ public class ProfileFragment extends Fragment
     @BindView(R.id.login_user) TextView loginUser;
     @BindView(R.id.profile_percent) TextView profilePercent;
     @BindView(R.id.profile_success) TextView profileSuccess;
-    @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
     @BindView(R.id.swipe_refresh_layout_profile) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.piechart_sum) PieChart mChart;
@@ -137,6 +134,7 @@ public class ProfileFragment extends Fragment
     }
 
     private void setupUi(final TaskDao taskDao){
+        mainActivity.setBackButtonVisibility(true);
         initializeDialog();
 
         new Thread(new Runnable() {
@@ -163,19 +161,20 @@ public class ProfileFragment extends Fragment
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot category: dataSnapshot.getChildren()){
                     final Scores score = new Scores(uid, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString()));
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             mDb.taskDao().insertScore(score);
+
                         }
-                    });
+                    }).start();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                DynamicToast.make(mainActivity, "" + databaseError.getMessage(), getResources()
-                        .getColor(R.color.colorAccentRed), getResources()
+                DynamicToast.make(mainActivity, "" + databaseError.getMessage(), mainActivity.getResources()
+                        .getColor(R.color.colorAccentRed), mainActivity.getResources()
                         .getColor(R.color.textWhite))
                         .show();
             }
@@ -193,7 +192,7 @@ public class ProfileFragment extends Fragment
 
     private void initializeDialog() {
         progressDialog = new ProgressDialog(mainActivity);
-        progressDialog.setMessage(getResources().getString(R.string.loading_profile));
+        progressDialog.setMessage(mainActivity.getResources().getString(R.string.loading_profile));
         progressDialog.show();
     }
 
@@ -205,7 +204,7 @@ public class ProfileFragment extends Fragment
         userName.setText(userDetails.getUserName());
         userEmail.setText(userDetails.getUserEmail());
 
-        loginUser.setText(getResources().getString(R.string.profile_logout_button));
+        loginUser.setText(mainActivity.getResources().getString(R.string.profile_logout_button));
         loginUser.setBackgroundResource(R.drawable.custom_border_red);
 
         loginUser.setOnClickListener(new View.OnClickListener() {
@@ -225,10 +224,10 @@ public class ProfileFragment extends Fragment
     }
 
     private void userNotLoggedPopulateUi() {
-        userName.setText(getResources().getString(R.string.profile_activity_not_logged_label));
+        userName.setText(mainActivity.getResources().getString(R.string.profile_activity_not_logged_label));
         userEmail.setText("");
 
-        loginUser.setText(getResources().getString(R.string.profile_activity_login_label));
+        loginUser.setText(mainActivity.getResources().getString(R.string.profile_activity_login_label));
         loginUser.setBackgroundResource(R.drawable.custom_border_blue);
 
         loginUser.setOnClickListener(new View.OnClickListener() {
@@ -259,10 +258,10 @@ public class ProfileFragment extends Fragment
     private void alertDialogLogout(){
         new FancyGifDialog.Builder(mainActivity)
                 .setTitle(getString(R.string.profile_activity_dialog_logout_title))
-                .setNegativeBtnText(getResources().getString(R.string.profile_activity_dialog_logout_negatibe_btn_text))
-                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setPositiveBtnText(getResources().getString(R.string.profile_activity_dialog_logout_positive_btn_text))
-                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
+                .setNegativeBtnText(mainActivity.getResources().getString(R.string.profile_activity_dialog_logout_negatibe_btn_text))
+                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(mainActivity.getResources().getString(R.string.profile_activity_dialog_logout_positive_btn_text))
+                .setNegativeBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(true)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -282,8 +281,8 @@ public class ProfileFragment extends Fragment
 
                             }
                         }).start();
-                        DynamicToast.make(mainActivity, getResources().getString(R.string.gameplay_error_dialog_toast_positive), getResources()
-                                .getColor(R.color.colorAccentBlue), getResources()
+                        DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.gameplay_error_dialog_toast_positive), mainActivity.getResources()
+                                .getColor(R.color.colorAccentBlue), mainActivity.getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
                     }
@@ -291,8 +290,8 @@ public class ProfileFragment extends Fragment
                 .OnNegativeClicked(new FancyGifDialogListener() {
                     @Override
                     public void OnClick() {
-                        DynamicToast.make(mainActivity, getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
-                                .getColor(R.color.colorAccentBlue), getResources()
+                        DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.gameplay_error_dialog_toast_negative), mainActivity.getResources()
+                                .getColor(R.color.colorAccentBlue), mainActivity.getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
                     }
@@ -303,23 +302,23 @@ public class ProfileFragment extends Fragment
     private void chartOptions(boolean isUserLogged, float scores) {
         if (!isUserLogged){
             Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
-            paint.setColor(getResources().getColor(R.color.colorAccentRed));
+            paint.setColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
             profilePercent.setText("");
             profileSuccess.setText("");
-            mChart.setNoDataText(getResources().getString(R.string.no_chart));
+            mChart.setNoDataText(mainActivity.getResources().getString(R.string.no_chart));
         }else{
             profilePercent.setText(String.format("%s%%", String.format("%.2f", scores * 10)));
             profileSuccess.setText(TOTAL_SCORE);
 
             List<PieEntry> pieChartEntries = new ArrayList<>();
-            pieChartEntries.add(new PieEntry(scores * 10, getResources().getString(R.string.category_details_activity_pie_entry_success)));
-            pieChartEntries.add(new PieEntry((10 - scores) * 10, getResources().getString(R.string.category_details_activity_pie_entry_failure)));
+            pieChartEntries.add(new PieEntry(scores * 10, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_success)));
+            pieChartEntries.add(new PieEntry((10 - scores) * 10, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_failure)));
 
             PieDataSet dataset = new PieDataSet(pieChartEntries, "");
             if(mainActivity.getSharedPref().loadNightModeState()) {
-                dataset.setColors(getResources().getColor(R.color.colorAccentBlueDark), getResources().getColor(R.color.colorAccentRedDark));
+                dataset.setColors(mainActivity.getResources().getColor(R.color.colorAccentBlueDark), mainActivity.getResources().getColor(R.color.colorAccentRedDark));
             } else {
-                dataset.setColors(getResources().getColor(R.color.colorAccentBlue), getResources().getColor(R.color.colorAccentRed));
+                dataset.setColors(mainActivity.getResources().getColor(R.color.colorAccentBlue), mainActivity.getResources().getColor(R.color.colorAccentRed));
             }            dataset.setSliceSpace(0);
             dataset.setValueTextSize(20);
             dataset.setValueTextColor(android.R.color.white);
@@ -351,6 +350,7 @@ public class ProfileFragment extends Fragment
         adapter.notifyDataSetChanged();
         profileRecyclerView.scheduleLayoutAnimation();
 
+        // TODO
 //        sendScoresToWidget(scoresList);
     }
 

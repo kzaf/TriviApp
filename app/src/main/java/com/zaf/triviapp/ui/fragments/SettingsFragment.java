@@ -39,10 +39,7 @@ import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.UserDetails;
-import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.ui.MainActivity;
-import com.zaf.triviapp.ui.SelectCategoryActivity;
-import com.zaf.triviapp.ui.SettingsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,11 +86,10 @@ public class SettingsFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     mainActivity.getSharedPref().setNightModeEnabled(true);
-                    restartApp(SettingsActivity.class);
                 }else{
                     mainActivity.getSharedPref().setNightModeEnabled(false);
-                    restartApp(SettingsActivity.class);
                 }
+                restartApp(mainActivity.getClass());
             }
         });
 
@@ -120,6 +116,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void buttonOptions(){
+        mainActivity.setBackButtonVisibility(true);
         deleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,18 +132,20 @@ public class SettingsFragment extends Fragment {
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(SettingsActivity.this, AboutPageActivity.class));
+                FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, new AboutPageFragment());
+                fragmentTransaction.commit();
             }
         });
     }
 
     private void alertResetScores(){
         new FancyGifDialog.Builder(mainActivity)
-                .setTitle(getResources().getString(R.string.settings_activity_alert_reset_score_title))
-                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
-                .setPositiveBtnText(getResources().getString(R.string.settings_activity_alert_reset_score_positive_button_text))
-                .setNegativeBtnText(getResources().getString(R.string.settings_activity_alert_reset_score_negative_button_text))
+                .setTitle(mainActivity.getResources().getString(R.string.settings_activity_alert_reset_score_title))
+                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setNegativeBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
+                .setPositiveBtnText(mainActivity.getResources().getString(R.string.settings_activity_alert_reset_score_positive_button_text))
+                .setNegativeBtnText(mainActivity.getResources().getString(R.string.settings_activity_alert_reset_score_negative_button_text))
                 .setGifResource(R.drawable.reset)
                 .isCancellable(true)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -158,8 +157,8 @@ public class SettingsFragment extends Fragment {
                 .OnNegativeClicked(new FancyGifDialogListener() {
                     @Override
                     public void OnClick() {
-                        DynamicToast.make(mainActivity, getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
-                                .getColor(R.color.colorAccentBlue), getResources()
+                        DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.gameplay_error_dialog_toast_negative), mainActivity.getResources()
+                                .getColor(R.color.colorAccentBlue), mainActivity.getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
                     }
@@ -167,13 +166,13 @@ public class SettingsFragment extends Fragment {
     }
 
     private void resetScorePositiveAlertButtonClick() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 final UserDetails userDetails = mDb.taskDao().loadUserDetails();
                 if(userDetails != null){
                     mDb.taskDao().resetScore();
-                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Query scoresQuery = FirebaseDatabase.getInstance().getReference().child(DATA_SCORES).child(SCORES_BY_USER).child(userDetails.getUserId());
@@ -183,30 +182,30 @@ public class SettingsFragment extends Fragment {
                                     for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
                                         appleSnapshot.getRef().removeValue();
                                     }
-                                    DynamicToast.make(mainActivity, getResources().getString(R.string.settings_activity_reset_score_toast), getResources()
-                                            .getColor(R.color.orange), getResources()
+                                    DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.settings_activity_reset_score_toast), getResources()
+                                            .getColor(R.color.orange), mainActivity.getResources()
                                             .getColor(R.color.textBlack))
                                             .show();
                                 }
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) { }
                             });
-
                         }
                     });
+
                 }else{
-                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            DynamicToast.make(mainActivity, getResources().getString(R.string.settings_activity_reset_score_fail_toast), getResources()
-                                    .getColor(R.color.orange), getResources()
+                            DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.settings_activity_reset_score_fail_toast), getResources()
+                                    .getColor(R.color.orange), mainActivity.getResources()
                                     .getColor(R.color.textBlack))
                                     .show();
                         }
                     });
                 }
             }
-        });
+        }).start();
     }
 
 
@@ -218,12 +217,12 @@ public class SettingsFragment extends Fragment {
 
     private void alertDialogDeleteAccount(){
         new FancyGifDialog.Builder(mainActivity)
-                .setTitle(getResources().getString(R.string.settings_activity_delete_account_dialog_title))
-                .setMessage(getResources().getString(R.string.settings_activity_delete_account_dialog_message))
-                .setNegativeBtnText(getResources().getString(R.string.settings_activity_delete_account_dialog_negative_button_text))
-                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setPositiveBtnText(getResources().getString(R.string.settings_activity_delete_account_dialog_positive_button_text))
-                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
+                .setTitle(mainActivity.getResources().getString(R.string.settings_activity_delete_account_dialog_title))
+                .setMessage(mainActivity.getResources().getString(R.string.settings_activity_delete_account_dialog_message))
+                .setNegativeBtnText(mainActivity.getResources().getString(R.string.settings_activity_delete_account_dialog_negative_button_text))
+                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(mainActivity.getResources().getString(R.string.settings_activity_delete_account_dialog_positive_button_text))
+                .setNegativeBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(true)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -236,8 +235,8 @@ public class SettingsFragment extends Fragment {
                 .OnNegativeClicked(new FancyGifDialogListener() {
                     @Override
                     public void OnClick() {
-                        DynamicToast.make(mainActivity, getResources().getString(R.string.gameplay_error_dialog_toast_negative), getResources()
-                                .getColor(R.color.colorAccentBlue), getResources()
+                        DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.gameplay_error_dialog_toast_negative), mainActivity.getResources()
+                                .getColor(R.color.colorAccentBlue), mainActivity.getResources()
                                 .getColor(R.color.textWhite))
                                 .show();
                     }
@@ -248,8 +247,8 @@ public class SettingsFragment extends Fragment {
     private void deleteUserFromFirebase(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null){
-            DynamicToast.make(mainActivity, getResources().getString(R.string.settings_activity_delete_from_firebase_toast), getResources()
-                    .getColor(R.color.colorAccentRed), getResources()
+            DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.settings_activity_delete_from_firebase_toast), mainActivity.getResources()
+                    .getColor(R.color.colorAccentRed), mainActivity.getResources()
                     .getColor(R.color.textWhite))
                     .show();
         }else{
@@ -263,7 +262,7 @@ public class SettingsFragment extends Fragment {
 
         nDialog = new NDialog(mainActivity, ButtonType.TWO_BUTTON);
         nDialog.setIcon(R.drawable.triviapp_icon);
-        nDialog.setTitle(getResources().getString(R.string.settings_activity_reauth_ndialog_title));
+        nDialog.setTitle(mainActivity.getResources().getString(R.string.settings_activity_reauth_ndialog_title));
         nDialog.setCustomView(dialogLayout);
 
         final EditText email = dialogLayout.findViewById(R.id.email_et);
@@ -282,11 +281,11 @@ public class SettingsFragment extends Fragment {
                 }
             }
         };
-        nDialog.setPositiveButtonText(getResources().getString(R.string.settings_activity_reauth_ndialog_positive_button_text));
+        nDialog.setPositiveButtonText(mainActivity.getResources().getString(R.string.settings_activity_reauth_ndialog_positive_button_text));
         nDialog.setPositiveButtonTextColor(Color.RED);
         nDialog.setPositiveButtonClickListener(buttonClickListener);
 
-        nDialog.setNegativeButtonText(getResources().getString(R.string.settings_activity_reauth_ndialog_negative_button_text));
+        nDialog.setNegativeButtonText(mainActivity.getResources().getString(R.string.settings_activity_reauth_ndialog_negative_button_text));
         nDialog.setNegativeButtonTextColor(Color.BLUE);
         nDialog.setNegativeButtonClickListener(buttonClickListener);
 
@@ -304,16 +303,16 @@ public class SettingsFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                            new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     mDb.taskDao().deleteUser();
                                                     mDb.taskDao().resetScore();
                                                 }
-                                            });
+                                            }).start();
                                             deleteFirebaseRecords(user);
-                                            DynamicToast.make(mainActivity, getResources().getString(R.string.settings_activity_delete_user_toast), getResources()
-                                                    .getColor(R.color.colorAccentBlue), getResources()
+                                            DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.settings_activity_delete_user_toast), mainActivity.getResources()
+                                                    .getColor(R.color.colorAccentBlue), mainActivity.getResources()
                                                     .getColor(R.color.textWhite))
                                                     .show();
 

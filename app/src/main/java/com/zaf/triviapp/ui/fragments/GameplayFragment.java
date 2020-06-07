@@ -41,9 +41,6 @@ import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
 import com.zaf.triviapp.network.GetDataService;
 import com.zaf.triviapp.network.RetrofitClientInstance;
-import com.zaf.triviapp.preferences.SharedPref;
-import com.zaf.triviapp.threads.AppExecutors;
-import com.zaf.triviapp.ui.GameplayActivity;
 import com.zaf.triviapp.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -165,7 +162,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     }
 
     private void populateUi(Bundle savedInstanceState) {
-
+        mainActivity.setBackButtonVisibility(false);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             selectedCategory = bundle.getParcelable(SELECTED_CATEGORY);
@@ -218,7 +215,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void initializeDialog() {
         progressDialog = new ProgressDialog(mainActivity);
-        progressDialog.setMessage(getResources().getString(R.string.loading_categories));
+        progressDialog.setMessage(mainActivity.getResources().getString(R.string.loading_categories));
         progressDialog.show();
         mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
     }
@@ -272,10 +269,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
             return;
         }
 
-        answer1.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        answer2.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        answer3.setBackground(getResources().getDrawable(R.drawable.custom_border));
-        answer4.setBackground(getResources().getDrawable(R.drawable.custom_border));
+        answer1.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        answer2.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        answer3.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        answer4.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
 
         setLevelLabelTextAndColor(questionList.get(questionIndex).getDifficulty());
 
@@ -312,21 +309,21 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void setLevelLabelTextAndColor(String level) {
         if (level == null){
-            gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_medium));
-            gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
+            gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
+            gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
         }else{
             switch (level){
                 case "medium":
-                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_medium));
-                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.orange));
+                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
+                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
                     break;
                 case "hard":
-                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_hard));
-                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.colorAccentRed));
+                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_hard));
+                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
                     break;
                 default:
-                    gameplayDifficultyLevel.setText(getResources().getString(R.string.gameplay_difficulty_easy));
-                    gameplayDifficultyLevel.setTextColor(getResources().getColor(R.color.green));
+                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_easy));
+                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.green));
             }
         }
     }
@@ -343,10 +340,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void errorDialog(){
         new FancyGifDialog.Builder(mainActivity)
-                .setTitle(getResources().getString(R.string.gameplay_error_dialog_title))
-                .setMessage(getResources().getString(R.string.gameplay_error_dialog_message))
-                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setPositiveBtnText(getResources().getString(R.string.gameplay_error_dialog_positive_button_text))
+                .setTitle(mainActivity.getResources().getString(R.string.gameplay_error_dialog_title))
+                .setMessage(mainActivity.getResources().getString(R.string.gameplay_error_dialog_message))
+                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_text))
                 .setGifResource(R.drawable.error)
                 .isCancellable(false)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -365,19 +362,19 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
         int gifImage;
 
         if(score==10){
-            message = getResources().getString(R.string.gameplay_endgame_dialog_wow);
+            message = mainActivity.getResources().getString(R.string.gameplay_endgame_dialog_wow);
             gifImage = R.drawable.wow;
         }
         else if(score<10 && score>=5){
-            message = getResources().getString(R.string.gameplay_endgame_dialog_welldone);
+            message = mainActivity.getResources().getString(R.string.gameplay_endgame_dialog_welldone);
             gifImage = R.drawable.welldone;
         }
         else if(score<5 && score>=2){
-            message = getResources().getString(R.string.gameplay_endgame_dialog_can_do_better);
+            message = mainActivity.getResources().getString(R.string.gameplay_endgame_dialog_can_do_better);
             gifImage = R.drawable.meh;
         }
         else{
-            message = getResources().getString(R.string.gameplay_endgame_dialog_fail);
+            message = mainActivity.getResources().getString(R.string.gameplay_endgame_dialog_fail);
             gifImage = R.drawable.fail;
         }
 
@@ -386,12 +383,12 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void alertDialogExit(){
         new FancyGifDialog.Builder(mainActivity)
-                .setTitle(getResources().getString(R.string.gameplay_exit_dialog_title))
-                .setMessage(getResources().getString(R.string.gameplay_exit_dialog_message))
-                .setNegativeBtnText(getResources().getString(R.string.gameplay_exit_dialog_negative_button))
-                .setPositiveBtnBackground(getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setPositiveBtnText(getResources().getString(R.string.gameplay_exit_dialog_positive_button))
-                .setNegativeBtnBackground(getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
+                .setTitle(mainActivity.getResources().getString(R.string.gameplay_exit_dialog_title))
+                .setMessage(mainActivity.getResources().getString(R.string.gameplay_exit_dialog_message))
+                .setNegativeBtnText(mainActivity.getResources().getString(R.string.gameplay_exit_dialog_negative_button))
+                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
+                .setPositiveBtnText(mainActivity.getResources().getString(R.string.gameplay_exit_dialog_positive_button))
+                .setNegativeBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_negative_button_color))
                 .setGifResource(R.drawable.cancel)
                 .isCancellable(false)
                 .OnPositiveClicked(new FancyGifDialogListener() {
@@ -405,10 +402,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void OnClick() {
                         DynamicToast.make(mainActivity,
-                                getResources().getString(R.string.gameplay_exit_dialog_keep_going_toast),
-                                getResources().getDrawable(R.drawable.ic_thumb_up_blue_24dp),
-                                getResources().getColor(R.color.colorAccentBlue),
-                                getResources().getColor(R.color.textWhite))
+                                mainActivity.getResources().getString(R.string.gameplay_exit_dialog_keep_going_toast),
+                                mainActivity.getResources().getDrawable(R.drawable.ic_thumb_up_blue_24dp),
+                                mainActivity.getResources().getColor(R.color.colorAccentBlue),
+                                mainActivity.getResources().getColor(R.color.textWhite))
                                 .show();
                     }
                 })
@@ -427,35 +424,31 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
                     @Override
                     public void OnClick() {
-
-                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 final UserDetails userDetails = mDb.taskDao().loadUserDetails();
                                 if(userDetails != null){
                                     mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
 
-                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    mainActivity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
                                         }
-
                                     });
                                 }else{
-
-                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    mainActivity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            DynamicToast.make(mainActivity, getResources().getString(R.string.gameplay_endgame_dialog_login_toast), getResources()
-                                                    .getColor(R.color.orange), getResources()
+                                            DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.gameplay_endgame_dialog_login_toast), getResources()
+                                                    .getColor(R.color.orange), mainActivity.getResources()
                                                     .getColor(R.color.textBlack))
-                                                    .show();
-                                        }
+                                                    .show();                                        }
                                     });
                                 }
                             }
-                        });
+                        }).start();
                         // TODO
                         //finish();
                     }
@@ -463,10 +456,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     }
 
     private void checkAnswerCorrection(TextView answer) {
-        answer1.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        answer2.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        answer3.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
-        answer4.setBackgroundColor(getResources().getColor(R.color.colorAccentRed));
+        answer1.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        answer2.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        answer3.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        answer4.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
         Spanned answerCorrect =
@@ -474,7 +467,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
         if(answerText.contentEquals(answerCorrect.toString())){
 
-            answer.setBackgroundColor(getResources().getColor(R.color.green));
+            answer.setBackgroundColor(mainActivity.getResources().getColor(R.color.green));
             particlesEffect(answer);
 
             if(mainActivity.getSharedPref().loadVibrateState()) {
@@ -527,7 +520,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void particlesEffect(TextView button){
         new ParticleSystem(mainActivity, 10,
-                getResources()
+                mainActivity.getResources()
                         .getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
                 .setSpeedRange(0.2f, 0.5f)
                 .oneShot(button, 10);
@@ -537,9 +530,9 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     private void manageBlinkEffect(TextView buttonClicked) {
         ObjectAnimator anim = ObjectAnimator.ofInt(buttonClicked,
                 "backgroundColor",
-                getResources().getColor(R.color.green),
+                mainActivity.getResources().getColor(R.color.green),
                 Color.WHITE,
-                getResources().getColor(R.color.green));
+                mainActivity.getResources().getColor(R.color.green));
 
         anim.setDuration(500);
         anim.setEvaluator(new ArgbEvaluator());

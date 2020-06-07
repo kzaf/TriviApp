@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPref sharedPref;
+    private String intentFragment = "";
     @BindView(R.id.back_button_main) ImageView backButton;
     @BindView(R.id.logo_image) ImageView logoImage;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
@@ -66,8 +67,9 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.fragment_container, new SettingsFragment(), "settingsFragment")
                             .commit();
                 } else {
-                    // TODO
-                    //fetchCategories();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new SelectCategoryFragment(), "selectCategoryFragment")
+                            .commit();
                 }
                 return false;
             }
@@ -99,10 +101,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initFragment() {
-        SelectCategoryFragment selectCategoryFragment = new SelectCategoryFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, selectCategoryFragment, "selectCategoryFragment")
-                .commit();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            intentFragment = bundle.getString("frgToLoad");
+        }
+        if (intentFragment == null || !intentFragment.equals("profileFragment")){
+            SelectCategoryFragment selectCategoryFragment = new SelectCategoryFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, selectCategoryFragment, "selectCategoryFragment")
+                    .commit();
+        }else{
+            ProfileFragment profileFragment = new ProfileFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, profileFragment, "profileFragment")
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
     }
 
     public SharedPref getSharedPref() {

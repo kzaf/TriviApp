@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,11 +17,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.zaf.triviapp.database.tables.Scores;
-import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.UserDetails;
-import com.zaf.triviapp.ui.ProfileActivity;
+import com.zaf.triviapp.ui.MainActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,7 @@ public class LoginAuth extends AppCompatActivity {
 
     private static final int MY_REQUEST_CODE = 101;
     List<AuthUI.IdpConfig> providers;
+    private MainActivity mainActivity;
     private AppDatabase mDb;
     private DatabaseReference mFirebaseDatabaseUsers;
     private DatabaseReference mFirebaseDatabaseScores;
@@ -39,6 +41,7 @@ public class LoginAuth extends AppCompatActivity {
         setContentView(R.layout.activity_login_auth);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
+        mainActivity = new MainActivity();
 
         // Init providers
         providers = Arrays.asList(
@@ -67,7 +70,8 @@ public class LoginAuth extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 importUserDetailsToDb(user);
                 firebaseInstance(user);
-                Intent intent = new Intent(LoginAuth.this, ProfileActivity.class);
+                Intent intent = new Intent(LoginAuth.this, MainActivity.class);
+                intent.putExtra("frgToLoad", "profileFragment");
                 startActivity(intent);
             }
             finish();
@@ -76,12 +80,13 @@ public class LoginAuth extends AppCompatActivity {
 
     private void importUserDetailsToDb(final FirebaseUser user){
         final UserDetails userDetails = new UserDetails(user.getUid(), user.getDisplayName(), user.getEmail(), 0);
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 mDb.taskDao().insertLoggedUser(userDetails);
+
             }
-        });
+        }).start();
         DynamicToast.make(getApplicationContext(),
                 "Welcome " + user.getDisplayName(),
                 getResources().getColor(R.color.colorAccentBlue),
@@ -116,12 +121,13 @@ public class LoginAuth extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot category: dataSnapshot.getChildren()){
                     final Scores score = new Scores(uid, category.getKey(), Integer.parseInt(category.child("Score").getValue().toString()));
-                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             mDb.taskDao().insertScore(score);
+
                         }
-                    });
+                    }).start();
                 }
             }
 

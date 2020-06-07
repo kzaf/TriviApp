@@ -118,7 +118,7 @@ public class SelectCategoryFragment extends Fragment
 
     private void initializeDialog() {
         progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage(getResources().getString(R.string.loading_categories));
+        progressDialog.setMessage(mainActivity.getResources().getString(R.string.loading_categories));
         progressDialog.show();
         mainActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
     }
@@ -127,15 +127,15 @@ public class SelectCategoryFragment extends Fragment
         mainActivity.setBackButtonVisibility(false);
         if(mainActivity.getSharedPref().loadNightModeState()) {
             if (hasInternet) {
-                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label_dark)));
+                selectCategoryLabel.setText(Html.fromHtml(mainActivity.getResources().getString(R.string.select_category_label_dark)));
             } else {
-                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label_dark)));
+                selectCategoryLabel.setText(Html.fromHtml(mainActivity.getResources().getString(R.string.no_internet_label_dark)));
             }
         } else {
             if (hasInternet) {
-                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.select_category_label)));
+                selectCategoryLabel.setText(Html.fromHtml(mainActivity.getResources().getString(R.string.select_category_label)));
             } else {
-                selectCategoryLabel.setText(Html.fromHtml(getResources().getString(R.string.no_internet_label)));
+                selectCategoryLabel.setText(Html.fromHtml(mainActivity.getResources().getString(R.string.no_internet_label)));
             }
         }
     }
@@ -144,8 +144,8 @@ public class SelectCategoryFragment extends Fragment
         initializeDialog();
 
         if (!hasInternet){
-            DynamicToast.make(mainActivity, getResources().getString(R.string.select_category_no_internet_label), getResources()
-                    .getColor(R.color.colorAccentRed), getResources()
+            DynamicToast.make(mainActivity, mainActivity.getResources().getString(R.string.select_category_no_internet_label), mainActivity.getResources()
+                    .getColor(R.color.colorAccentRed), mainActivity.getResources()
                     .getColor(R.color.textWhite))
                     .show();
             progressDialog.dismiss();
