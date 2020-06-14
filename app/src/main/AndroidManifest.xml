@@ -24,31 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.AboutPageActivity" />
-        <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.ProfileActivity" />
-        <activity
-            android:name=".ui.GameplayActivity"
-            android:parentActivityName=".ui.CategoryDetailsActivity" />
-        <activity
-            android:name=".ui.CategoryDetailsActivity"
-            android:parentActivityName=".ui.SelectCategoryActivity" />
-        <activity
-            android:name=".login.LoginAuth"
-            android:label="@string/title_activity_login_auth"
-            android:parentActivityName=".ui.SelectCategoryActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.SelectCategoryActivity"
-            android:theme="@style/SplashTheme">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
-
         <receiver
             android:name=".widget.AppWidgetProvider">
             <intent-filter>
