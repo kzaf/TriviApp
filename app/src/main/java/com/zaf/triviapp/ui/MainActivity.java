@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPref sharedPref;
     private String intentFragment = "";
+    private Dialogs dialogs;
     @BindView(R.id.back_button_main) ImageView backButton;
     @BindView(R.id.logo_image) ImageView logoImage;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
@@ -48,23 +49,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+        dialogs = new Dialogs(MainActivity.this);
 
         toolbarOptions(new SelectCategoryFragment());
         initFragment();
     }
 
     @SuppressLint("RestrictedApi")
-        public void toolbarOptions(Fragment currentFragment) {
+        public void toolbarOptions(final Fragment currentFragment) {
         toolbar.getMenu().clear();
         if(toolbar.getMenu() instanceof MenuBuilder){
             ((MenuBuilder) toolbar.getMenu()).setOptionalIconsVisible(true);
         }
         if (currentFragment instanceof ProfileFragment){
             toolbar.inflateMenu(R.menu.profile_menu_items);
-        }else if (currentFragment instanceof CategoryDetailsFragment){
-            toolbar.inflateMenu(R.menu.category_details_menu_items);
-        }else if (currentFragment instanceof GameplayFragment){
+        }else if (currentFragment instanceof GameplayFragment) {
             toolbar.inflateMenu(R.menu.gameplay_menu_item);
+        }else if (currentFragment instanceof SettingsFragment){
+            toolbar.getMenu().clear();
         }else {
             toolbar.inflateMenu(R.menu.select_category_menu_items);
         }
@@ -77,18 +79,25 @@ public class MainActivity extends AppCompatActivity {
                             .replace(R.id.fragment_container, new ProfileFragment(), "profileFragment")
                             .addToBackStack(null)
                             .commit();
-                } else if(menuItem.getItemId() == R.id.categories_menu_settings) {
+                } else if(menuItem.getItemId() == R.id.categories_menu_settings || menuItem.getItemId() == R.id.profile_settings) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new SettingsFragment(), "settingsFragment")
                             .addToBackStack(null)
                             .commit();
                 } else if(menuItem.getItemId() == R.id.categories_menu_refresh){
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new SelectCategoryFragment(), "selectCategoryFragment")
-                            .addToBackStack(null)
-                            .commit();
+                    if (currentFragment instanceof CategoryDetailsFragment){
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new CategoryDetailsFragment(), "categoryDetailsFragment")
+                                .addToBackStack(null)
+                                .commit();
+                    }else {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new SelectCategoryFragment(), "selectCategoryFragment")
+                                .addToBackStack(null)
+                                .commit();
+                    }
                 }else if(menuItem.getItemId() == R.id.gameplay_exit){
-                    Dialogs.alertDialogExit(MainActivity.this);
+                    dialogs.alertDialogExit();
                 }
                 return false;
             }
@@ -109,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void previousFragment(){
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof GameplayFragment) {
+            return;
+        }
         if(getFragmentManager().getBackStackEntryCount() == 0) {
             super.onBackPressed();
         }
@@ -120,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initFragment() {
+    public void initFragment() {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -146,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
 
     public SharedPref getSharedPref() {
         return sharedPref;
+    }
+
+    public Dialogs getDialogs() {
+        return dialogs;
     }
 
     public void setBackButtonVisibility(boolean toBeVisible){

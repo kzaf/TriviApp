@@ -3,9 +3,7 @@ package com.zaf.triviapp.ui.fragments;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Trace;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +40,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lib.kingja.switchbutton.SwitchMultiButton;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class CategoryDetailsFragment extends Fragment {
 
