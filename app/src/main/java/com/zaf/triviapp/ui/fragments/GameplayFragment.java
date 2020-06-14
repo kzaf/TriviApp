@@ -17,14 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,6 +35,7 @@ import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.dialogs.Dialogs;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
@@ -112,7 +112,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     public void onSaveInstanceState(Bundle outState) {
         if (!isDialogOpen){
             if (questionList == null)
-                errorDialog();
+                mainActivity.getDialogs().errorDialog(selectedCategory);
             else{
                 outState.putParcelableArrayList(QUESTION_LIST, questionList);
                 outState.putInt(QUESTION_INDEX, questionIndex);
@@ -266,7 +266,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     private void populateQuestions(ArrayList<Question> questionList){
         if (questionList.size() == 0){
-            errorDialog();
+            mainActivity.getDialogs().errorDialog(selectedCategory);
             return;
         }
 
@@ -339,24 +339,6 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
         mFirebaseDatabase.child("ScoresByUser").child(userId).child(categoryName).child("Score").setValue(categoryScore);
     }
 
-    private void errorDialog(){
-        new FancyGifDialog.Builder(mainActivity)
-                .setTitle(mainActivity.getResources().getString(R.string.gameplay_error_dialog_title))
-                .setMessage(mainActivity.getResources().getString(R.string.gameplay_error_dialog_message))
-                .setPositiveBtnBackground(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_color))
-                .setPositiveBtnText(mainActivity.getResources().getString(R.string.gameplay_error_dialog_positive_button_text))
-                .setGifResource(R.drawable.error)
-                .isCancellable(false)
-                .OnPositiveClicked(new FancyGifDialogListener() {
-                    @Override
-                    public void OnClick() {
-                        // TODO
-                        //finish();
-                    }
-                })
-                .build();
-    }
-
     private void alertDialogEndGame(final int score){
         isDialogOpen = true;
         String message;
@@ -419,8 +401,14 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
                                 }
                             }
                         }).start();
-                        // TODO
-                        //finish();
+                        CategoryDetailsFragment categoryDetailsFragment = new CategoryDetailsFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(SELECTED_CATEGORY, selectedCategory);
+                        categoryDetailsFragment.setArguments(bundle);
+
+                        FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, categoryDetailsFragment);
+                        fragmentTransaction.commit();
                     }
                 }).build();
     }
