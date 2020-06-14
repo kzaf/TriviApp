@@ -69,7 +69,6 @@
             android:layout_margin="50sp"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="@string/gameplay_answer_button_text_placeholder"
             android:textColor="?attr/textcolor"
             android:textSize="30sp"
             android:textStyle="bold" />
@@ -99,7 +98,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/custom_border"
                     android:gravity="center"
-                    android:text="@string/gameplay_answer_button_text_placeholder"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -115,7 +113,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/custom_border"
                     android:gravity="center"
-                    android:text="@string/gameplay_answer_button_text_placeholder"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -141,7 +138,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/custom_border"
                     android:gravity="center"
-                    android:text="@string/gameplay_answer_button_text_placeholder"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -157,7 +153,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/custom_border"
                     android:gravity="center"
-                    android:text="@string/gameplay_answer_button_text_placeholder"
                     android:textColor="?attr/textcolor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
