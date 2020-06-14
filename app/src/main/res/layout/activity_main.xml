@@ -21,6 +21,7 @@
             android:layout_width="@dimen/toolbar_image_size"
             android:layout_height="@dimen/toolbar_image_size"
             android:contentDescription="@string/back_button_cd"
+            android:visibility="invisible"
             app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView

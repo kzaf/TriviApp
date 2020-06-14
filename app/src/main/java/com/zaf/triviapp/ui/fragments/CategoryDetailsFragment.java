@@ -85,6 +85,7 @@ public class CategoryDetailsFragment extends Fragment {
 
     private void populateUi(final Category selectedCategory) {
         mainActivity.setBackButtonVisibility(true);
+        mainActivity.toolbarOptions(this);
         if (mainActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             backgroundPictureOptions(selectedCategory);
         }
@@ -203,6 +204,7 @@ public class CategoryDetailsFragment extends Fragment {
 
                         FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment_container, gameplayFragment);
+                        fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
 
                         break;

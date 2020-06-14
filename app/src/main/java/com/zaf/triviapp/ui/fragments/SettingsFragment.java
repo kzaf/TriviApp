@@ -117,6 +117,7 @@ public class SettingsFragment extends Fragment {
 
     private void buttonOptions(){
         mainActivity.setBackButtonVisibility(true);
+        mainActivity.toolbarOptions(this);
         deleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +135,7 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, new AboutPageFragment());
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });
@@ -318,6 +320,7 @@ public class SettingsFragment extends Fragment {
 
                                             FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                                             fragmentTransaction.replace(R.id.fragment_container, new SelectCategoryFragment());
+                                            fragmentTransaction.addToBackStack(null);
                                             fragmentTransaction.commit();
                                         }
                                     }

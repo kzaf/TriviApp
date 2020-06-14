@@ -135,6 +135,7 @@ public class ProfileFragment extends Fragment
 
     private void setupUi(final TaskDao taskDao){
         mainActivity.setBackButtonVisibility(true);
+        mainActivity.toolbarOptions(this);
         initializeDialog();
 
         new Thread(new Runnable() {
@@ -277,6 +278,7 @@ public class ProfileFragment extends Fragment
 
                                 FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
                                 fragmentTransaction.replace(R.id.fragment_container, new SelectCategoryFragment());
+                                fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
 
                             }
@@ -365,6 +367,7 @@ public class ProfileFragment extends Fragment
 
         FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, categoryDetailsFragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
     }

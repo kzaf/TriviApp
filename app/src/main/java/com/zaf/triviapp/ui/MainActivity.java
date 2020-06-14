@@ -12,9 +12,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.dialogs.Dialogs;
 import com.zaf.triviapp.preferences.SharedPref;
+import com.zaf.triviapp.ui.fragments.CategoryDetailsFragment;
+import com.zaf.triviapp.ui.fragments.GameplayFragment;
 import com.zaf.triviapp.ui.fragments.ProfileFragment;
 import com.zaf.triviapp.ui.fragments.SelectCategoryFragment;
 import com.zaf.triviapp.ui.fragments.SettingsFragment;
@@ -45,40 +49,48 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        toolbarOptions();
+        toolbarOptions(new SelectCategoryFragment());
         initFragment();
     }
 
     @SuppressLint("RestrictedApi")
-    private void toolbarOptions() {
-        toolbar.inflateMenu(R.menu.select_category_menu_items);
+        public void toolbarOptions(Fragment currentFragment) {
+        toolbar.getMenu().clear();
         if(toolbar.getMenu() instanceof MenuBuilder){
             ((MenuBuilder) toolbar.getMenu()).setOptionalIconsVisible(true);
         }
+        if (currentFragment instanceof ProfileFragment){
+            toolbar.inflateMenu(R.menu.profile_menu_items);
+        }else if (currentFragment instanceof CategoryDetailsFragment){
+            toolbar.inflateMenu(R.menu.category_details_menu_items);
+        }else if (currentFragment instanceof GameplayFragment){
+            toolbar.inflateMenu(R.menu.gameplay_menu_item);
+        }else {
+            toolbar.inflateMenu(R.menu.select_category_menu_items);
+        }
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.categories_menu_profile) {
+                if(menuItem.getItemId() == R.id.categories_menu_profile) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new ProfileFragment(), "profileFragment")
+                            .addToBackStack(null)
                             .commit();
-                } else if(menuItem.getItemId()== R.id.categories_menu_settings) {
+                } else if(menuItem.getItemId() == R.id.categories_menu_settings) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new SettingsFragment(), "settingsFragment")
+                            .addToBackStack(null)
                             .commit();
-                } else {
+                } else if(menuItem.getItemId() == R.id.categories_menu_refresh){
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new SelectCategoryFragment(), "selectCategoryFragment")
+                            .addToBackStack(null)
                             .commit();
+                }else if(menuItem.getItemId() == R.id.gameplay_exit){
+                    Dialogs.alertDialogExit(MainActivity.this);
                 }
                 return false;
-            }
-        });
-
-        logoImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                previousFragment();
             }
         });
 
@@ -97,7 +109,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void previousFragment(){
-
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        }
+        else if(getFragmentManager().getBackStackEntryCount() == 1) {
+            moveTaskToBack(false);
+        }
+        else {
+            getFragmentManager().popBackStack();
+        }
     }
 
     private void initFragment() {
@@ -121,15 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-        if (count == 0) {
-            super.onBackPressed();
-            //additional code
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
-
+        previousFragment();
     }
 
     public SharedPref getSharedPref() {
@@ -139,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     public void setBackButtonVisibility(boolean toBeVisible){
         if (toBeVisible){
             backButton.setVisibility(View.VISIBLE);
-        }{
+        }else {
             backButton.setVisibility(View.INVISIBLE);
         }
     }

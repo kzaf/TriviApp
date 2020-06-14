@@ -125,6 +125,7 @@ public class SelectCategoryFragment extends Fragment
 
     private void initUi(){
         mainActivity.setBackButtonVisibility(false);
+        mainActivity.toolbarOptions(this);
         if(mainActivity.getSharedPref().loadNightModeState()) {
             if (hasInternet) {
                 selectCategoryLabel.setText(Html.fromHtml(mainActivity.getResources().getString(R.string.select_category_label_dark)));
@@ -189,6 +190,7 @@ public class SelectCategoryFragment extends Fragment
 
         FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, categoryDetailsFragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
     }
