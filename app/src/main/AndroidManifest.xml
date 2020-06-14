@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".login.LoginAuth"
+            android:label="@string/title_activity_login_auth"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <receiver
             android:name=".widget.AppWidgetProvider">
             <intent-filter>
