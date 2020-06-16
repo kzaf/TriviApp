@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5sp"
-                android:layout_weight="4"
+                android:layout_weight="5"
                 android:orientation="vertical"
                 android:weightSum="2"
                 tools:layout_editor_absoluteX="8dp"
@@ -78,8 +78,8 @@
                     android:id="@+id/category_details_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scaleType="fitXY"
                     android:contentDescription="@string/category_details_image_cd"
+                    android:scaleType="fitXY"
                     app:srcCompat="@drawable/t19" />
 
                 <TextView
@@ -189,6 +189,15 @@
                         android:textColor="?attr/textcolor"
                         android:textSize="24sp" />
                 </LinearLayout>
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:adSize="BANNER"
+                    app:adUnitId="@string/ad_id">
+
+                </com.google.android.gms.ads.AdView>
 
             </LinearLayout>
 

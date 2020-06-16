@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:foregroundGravity="bottom"
                     app:adSize="BANNER"
-                    app:adUnitId="ca-app-pub-6864543288948197/4199682110">
+                    app:adUnitId="@string/ad_id">
 
                 </com.google.android.gms.ads.AdView>
             </LinearLayout>

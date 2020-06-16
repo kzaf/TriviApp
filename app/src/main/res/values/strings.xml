@@ -122,4 +122,5 @@
     <string name="widget_title">TriviApp</string>
     <string name="widget_title_no_data">Open profile to load scores!</string>
     <string name="category_details_login_text">Login</string>
+    <string name="ad_id">ca-app-pub-6864543288948197/4199682110</string>
 </resources>

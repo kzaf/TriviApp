@@ -50,6 +50,7 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,6 +58,15 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginEnd="10sp"
         android:orientation="vertical">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:adSize="BANNER"
+            app:adUnitId="@string/ad_id">
+
+        </com.google.android.gms.ads.AdView>
 
         <TextView
             android:id="@+id/about_tv"
@@ -170,6 +180,8 @@
                 android:text="@string/about_github_link"
                 android:textSize="18sp" />
         </LinearLayout>
+
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

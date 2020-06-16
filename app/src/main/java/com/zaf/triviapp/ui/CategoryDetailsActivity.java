@@ -29,6 +29,11 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.gohn.nativedialog.ButtonClickListener;
 import com.gohn.nativedialog.ButtonType;
 import com.gohn.nativedialog.NDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.threads.AppExecutors;
 import com.zaf.triviapp.R;
@@ -65,6 +70,7 @@ public class CategoryDetailsActivity extends AppCompatActivity {
     @BindView(R.id.back_button) ImageView back;
     @BindView(R.id.piechart) PieChart mChart;
     @BindView(R.id.play_button) LinearLayout play;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,19 @@ public class CategoryDetailsActivity extends AppCompatActivity {
         toolbarOptions();
 
         populateUi(selectedCategory);
+
+        initAdMob();
+    }
+
+    private void initAdMob() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void populateUi(final Category selectedCategory) {

@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.preferences.SharedPref;
 
@@ -21,6 +26,7 @@ public class AboutPageActivity extends AppCompatActivity {
     @BindView(R.id.mail_tv) TextView mailTextView;
     @BindView(R.id.about_text) TextView aboutTextView;
     @BindView(R.id.back_button_about) ImageView back;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,19 @@ public class AboutPageActivity extends AppCompatActivity {
         } else {
             aboutTextView.setText(Html.fromHtml(getResources().getString(R.string.about_description)));
         }
+
+        initAdMob();
+    }
+
+    private void initAdMob() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void toolbarOptions() {

@@ -117,6 +117,10 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
         toolbarOptions();
         populateUi(savedInstanceState);
 
+        initAdMob();
+    }
+
+    private void initAdMob() {
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
