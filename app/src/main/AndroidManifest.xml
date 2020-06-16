@@ -44,6 +44,10 @@
             android:name=".service.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6864543288948197~5512763786"/>
+
     </application>
 
 </manifest>

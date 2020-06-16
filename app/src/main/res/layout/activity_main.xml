@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/backgroundcolor"
-    tools:context=".ui.AboutPageActivity">
+    tools:context=".ui.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -17,11 +17,10 @@
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <ImageView
-            android:id="@+id/back_button_main"
+            android:id="@+id/back_button"
             android:layout_width="@dimen/toolbar_image_size"
             android:layout_height="@dimen/toolbar_image_size"
             android:contentDescription="@string/back_button_cd"
-            android:visibility="invisible"
             app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         <ImageView
@@ -51,12 +50,29 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
 
-    </androidx.fragment.app.FragmentContainerView>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+        </androidx.fragment.app.FragmentContainerView>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-6864543288948197/4199682110">
+
+        </com.google.android.gms.ads.AdView>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

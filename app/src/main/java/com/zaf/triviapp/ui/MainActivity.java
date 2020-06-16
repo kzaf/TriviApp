@@ -14,6 +14,11 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.dialogs.Dialogs;
 import com.zaf.triviapp.preferences.SharedPref;
@@ -31,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private SharedPref sharedPref;
     private String intentFragment = "";
     private Dialogs dialogs;
-    @BindView(R.id.back_button_main) ImageView backButton;
+    @BindView(R.id.back_button) ImageView backButton;
     @BindView(R.id.logo_image) ImageView logoImage;
     @BindView(R.id.toolbar_title) TextView toolbarTitle;
     @BindView(R.id.toolbar) Toolbar toolbar;
-
+    private AdView mAdView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +58,19 @@ public class MainActivity extends AppCompatActivity {
 
         toolbarOptions(new SelectCategoryFragment());
         initFragment();
+
+        initializeGoogleAd();
+    }
+
+    private void initializeGoogleAd() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @SuppressLint("RestrictedApi")
