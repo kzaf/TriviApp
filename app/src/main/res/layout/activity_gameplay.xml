@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/backgroundcolor"
+    app:layout_anchorGravity="bottom"
     tools:context=".ui.GameplayActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -55,9 +55,9 @@
         android:id="@+id/toolbar_shadow"
         android:layout_width="match_parent"
         android:layout_height="3dp"
+        android:background="@drawable/toolbar_dropshadow"
         app:layout_anchor="@id/toolbar"
-        app:layout_anchorGravity="bottom|end"
-        android:background="@drawable/toolbar_dropshadow" />
+        app:layout_anchorGravity="bottom|end" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,8 +88,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="?attr/textcolor"
                 android:text="@string/activity_gameplay_score"
+                android:textColor="?attr/textcolor"
                 android:textSize="16sp" />
 
             <TextView
@@ -178,6 +178,7 @@
                 android:id="@+id/second_two_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="20sp"
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:weightSum="2">
@@ -217,6 +218,17 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="bottom"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-6864543288948197/4199682110">
+
+        </com.google.android.gms.ads.AdView>
+
 
     </LinearLayout>
 

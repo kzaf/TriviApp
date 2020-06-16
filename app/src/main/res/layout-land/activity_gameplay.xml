@@ -127,17 +127,35 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <TextView
-                android:id="@+id/question_text"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="50sp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/gameplay_answer_button_text_placeholder"
-                android:textColor="?attr/textcolor"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/question_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="50sp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/gameplay_answer_button_text_placeholder"
+                    android:textColor="?attr/textcolor"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/adView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foregroundGravity="bottom"
+                    app:adSize="BANNER"
+                    app:adUnitId="ca-app-pub-6864543288948197/4199682110">
+
+                </com.google.android.gms.ads.AdView>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -221,6 +239,8 @@
             </LinearLayout>
 
         </LinearLayout>
+
+
 
     </LinearLayout>
 

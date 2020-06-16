@@ -21,6 +21,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.plattysoft.leonids.ParticleSystem;
@@ -92,6 +97,7 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
     @BindView(R.id.answer2) TextView answer2;
     @BindView(R.id.answer3) TextView answer3;
     @BindView(R.id.answer4) TextView answer4;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +116,15 @@ public class GameplayActivity extends AppCompatActivity implements View.OnClickL
 
         toolbarOptions();
         populateUi(savedInstanceState);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void populateUi(Bundle savedInstanceState) {
