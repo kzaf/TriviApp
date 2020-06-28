@@ -225,7 +225,7 @@
             android:layout_height="wrap_content"
             android:foregroundGravity="bottom"
             app:adSize="BANNER"
-            app:adUnitId="@string/ad_id">
+            app:adUnitId="@string/ad_id_gameplay">
 
         </com.google.android.gms.ads.AdView>
 

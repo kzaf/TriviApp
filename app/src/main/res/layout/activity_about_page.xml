@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:adSize="BANNER"
-            app:adUnitId="@string/ad_id">
+            app:adUnitId="@string/ad_id_about">
 
         </com.google.android.gms.ads.AdView>
 
