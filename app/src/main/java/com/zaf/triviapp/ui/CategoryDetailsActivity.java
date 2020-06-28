@@ -258,7 +258,6 @@ public class CategoryDetailsActivity extends AppCompatActivity {
                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
-                            textPercent.setBackground(getResources().getDrawable(R.drawable.custom_border_blue));
                             textPercent.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
