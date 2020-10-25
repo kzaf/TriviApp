@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface GetDataService {
+
     @GET("/api_category.php")
     Call<CategoriesList> getAllCategories();
 

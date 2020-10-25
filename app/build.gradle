@@ -3,14 +3,14 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    compileSdkVersion 30
+    buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.zaf.triviapp"
         minSdkVersion 26
-        targetSdkVersion 29
-        versionCode 8
-        versionName "1.8"
+        targetSdkVersion 30
+        versionCode 10
+        versionName "2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -50,7 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
 
     // Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
 
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
