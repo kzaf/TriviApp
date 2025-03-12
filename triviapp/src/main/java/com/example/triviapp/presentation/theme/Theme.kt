@@ -8,7 +8,14 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.triviapp.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -32,6 +39,37 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+private val HandwrittenFont = FontFamily(
+    Font(R.font.handwritten_font, FontWeight.Normal),
+)
+
+private val AppTypography = androidx.compose.material3.Typography(
+    titleLarge = TextStyle(
+        fontFamily = HandwrittenFont,
+        fontSize = 30.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black
+    ),
+    titleMedium = TextStyle(
+        fontFamily = HandwrittenFont,
+        fontSize = 26.sp,
+        fontWeight = FontWeight.Medium,
+        color = Color.Black
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = HandwrittenFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Normal,
+        color = Color.Black
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = HandwrittenFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+        color = Color.Black
+    )
+)
+
 @Composable
 fun TriviAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -44,14 +82,13 @@ fun TriviAppTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = AppTypography,
         content = content
     )
 }
