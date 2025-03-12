@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +18,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.zaf.triviapp.R;
+import com.zaf.triviapp.databinding.ActivityMainBinding;
 import com.zaf.triviapp.dialogs.Dialogs;
 import com.zaf.triviapp.preferences.SharedPref;
 import com.zaf.triviapp.ui.fragments.CategoryDetailsFragment;
@@ -28,19 +27,13 @@ import com.zaf.triviapp.ui.fragments.ProfileFragment;
 import com.zaf.triviapp.ui.fragments.SelectCategoryFragment;
 import com.zaf.triviapp.ui.fragments.SettingsFragment;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MainActivity extends AppCompatActivity {
 
     private SharedPref sharedPref;
     private String intentFragment = "";
     private Dialogs dialogs;
-    @BindView(R.id.back_button) ImageView backButton;
-    @BindView(R.id.logo_image) ImageView logoImage;
-    @BindView(R.id.toolbar_title) TextView toolbarTitle;
-    @BindView(R.id.toolbar) Toolbar toolbar;
     private AdView mAdView;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.AppTheme);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        ButterKnife.bind(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         dialogs = new Dialogs(MainActivity.this);
 
         toolbarOptions(new SelectCategoryFragment());
@@ -61,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeGoogleAd();
     }
+
 
     private void initializeGoogleAd() {
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -75,21 +70,21 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("RestrictedApi")
         public void toolbarOptions(final Fragment currentFragment) {
-        toolbar.getMenu().clear();
-        if(toolbar.getMenu() instanceof MenuBuilder){
-            ((MenuBuilder) toolbar.getMenu()).setOptionalIconsVisible(true);
+        binding.toolbar.getMenu().clear();
+        if(binding.toolbar.getMenu() instanceof MenuBuilder){
+            ((MenuBuilder) binding.toolbar.getMenu()).setOptionalIconsVisible(true);
         }
         if (currentFragment instanceof ProfileFragment){
-            toolbar.inflateMenu(R.menu.profile_menu_items);
+            binding.toolbar.inflateMenu(R.menu.profile_menu_items);
         }else if (currentFragment instanceof GameplayFragment) {
-            toolbar.inflateMenu(R.menu.gameplay_menu_item);
+            binding.toolbar.inflateMenu(R.menu.gameplay_menu_item);
         }else if (currentFragment instanceof SettingsFragment){
-            toolbar.getMenu().clear();
+            binding.toolbar.getMenu().clear();
         }else {
-            toolbar.inflateMenu(R.menu.select_category_menu_items);
+            binding.toolbar.inflateMenu(R.menu.select_category_menu_items);
         }
 
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        binding.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId() == R.id.categories_menu_profile) {
@@ -121,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 previousFragment();
@@ -129,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(sharedPref.loadNightModeState()) {
-            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
+            binding.toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label_dark)));
         } else {
-            toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
+            binding.toolbarTitle.setText(Html.fromHtml(getResources().getString(R.string.triviapp_label)));
         }
     }
 
@@ -185,9 +180,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBackButtonVisibility(boolean toBeVisible){
         if (toBeVisible){
-            backButton.setVisibility(View.VISIBLE);
+            binding.backButton.setVisibility(View.VISIBLE);
         }else {
-            backButton.setVisibility(View.INVISIBLE);
+            binding.backButton.setVisibility(View.INVISIBLE);
         }
     }
 }

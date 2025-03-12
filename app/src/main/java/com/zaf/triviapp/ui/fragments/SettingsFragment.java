@@ -10,9 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,10 +36,9 @@ import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.databinding.ActivitySelectCategoryBinding;
+import com.zaf.triviapp.databinding.ActivitySettingsBinding;
 import com.zaf.triviapp.ui.MainActivity;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class SettingsFragment extends Fragment {
 
@@ -50,23 +46,19 @@ public class SettingsFragment extends Fragment {
     public static final String DATA_USERS = "DataUsers";
     public static final String SCORES_BY_USER = "ScoresByUser";
     public static final String USER_DETAILS = "UserDetails";
-    @BindView(R.id.theme_switch) Switch themeSwitch;
-    @BindView(R.id.vibrate_switch) Switch vibrateSwitch;
-    @BindView(R.id.button_delete_account) LinearLayout deleteAccount;
-    @BindView(R.id.button_reset_score)LinearLayout resetScore;
-    @BindView(R.id.about_tv) TextView aboutButton;
     private String emailReauth, passReauth;
     private Vibrator vibe;
     private NDialog nDialog;
     private MainActivity mainActivity;
     private AppDatabase mDb;
+    private ActivitySettingsBinding binding;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_settings, container, false);
-        ButterKnife.bind(this, view);
+        binding = ActivitySettingsBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         mainActivity = ((MainActivity)getActivity());
         mDb = AppDatabase.getInstance(mainActivity);
@@ -79,9 +71,9 @@ public class SettingsFragment extends Fragment {
 
     private void switchStateChange() {
         if(mainActivity.getSharedPref().loadNightModeState()){
-            themeSwitch.setChecked(true);
+            binding.themeSwitch.setChecked(true);
         }
-        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -94,12 +86,12 @@ public class SettingsFragment extends Fragment {
         });
 
         if(mainActivity.getSharedPref().loadVibrateState()) {
-            vibrateSwitch.setChecked(true);
+            binding.vibrateSwitch.setChecked(true);
         }else{
-            vibrateSwitch.setChecked(false);
+            binding.vibrateSwitch.setChecked(false);
         }
 
-        vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -118,19 +110,19 @@ public class SettingsFragment extends Fragment {
     private void buttonOptions(){
         mainActivity.setBackButtonVisibility(true);
         mainActivity.toolbarOptions(this);
-        deleteAccount.setOnClickListener(new View.OnClickListener() {
+        binding.deleteAccountText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialogDeleteAccount();
             }
         });
-        resetScore.setOnClickListener(new View.OnClickListener() {
+        binding.buttonResetScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertResetScores();
             }
         });
-        aboutButton.setOnClickListener(new View.OnClickListener() {
+        binding.aboutTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = mainActivity.getSupportFragmentManager().beginTransaction();

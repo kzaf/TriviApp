@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +16,6 @@ import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.charts.Chart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -30,16 +26,15 @@ import com.gohn.nativedialog.NDialog;
 import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.Scores;
+import com.zaf.triviapp.databinding.ActivityAboutPageBinding;
+import com.zaf.triviapp.databinding.ActivityCategoryDetailsBinding;
+import com.zaf.triviapp.databinding.GameplayOptionsDialogBinding;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class CategoryDetailsFragment extends Fragment {
 
@@ -52,20 +47,17 @@ public class CategoryDetailsFragment extends Fragment {
     public static final String[] difficultyOptions = {"Any Difficulty", "Easy", "Medium", "Hard"};
     public static final String[] typeOptions = {"Any Type", "Multiple Choice", "True/False"};
     private String difficulty = "Any Difficulty", type = "Any Type";
-    @BindView(R.id.text_success) TextView textSuccess;
-    @BindView(R.id.category_details_image) @Nullable ImageView selectedCategoryImage;
-    @BindView(R.id.selected_category_name) TextView categoryName;
-    @BindView(R.id.play_button) LinearLayout play;
-    @BindView(R.id.swipe_refresh_layout_details) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.piechart) PieChart mChart;
-    @BindView(R.id.text_percent) TextView textPercent;
+    private ActivityCategoryDetailsBinding binding;
+    private GameplayOptionsDialogBinding optionsBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_category_details, container, false);
-        ButterKnife.bind(this, view);
+//        View view = inflater.inflate(R.layout.activity_category_details, container, false);
+        binding = ActivityCategoryDetailsBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
 
         mainActivity = ((MainActivity)getActivity());
         mDb = AppDatabase.getInstance(mainActivity);
@@ -86,18 +78,18 @@ public class CategoryDetailsFragment extends Fragment {
             backgroundPictureOptions(selectedCategory);
         }
 
-        categoryName.setText(selectedCategory.getName());
+        binding.selectedCategoryName.setText(selectedCategory.getName());
 
         checkIfUserIsLogged();
 
-        play.setOnClickListener(new View.OnClickListener() {
+        binding.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gameOptionsDialog(selectedCategory);
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.swipeRefreshLayoutDetails.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 checkIfUserIsLogged();
@@ -108,12 +100,12 @@ public class CategoryDetailsFragment extends Fragment {
     private void backgroundPictureOptions(Category selectedCategory) {
         int imageId = mainActivity.getResources().getIdentifier("t"+selectedCategory.getId(), "drawable", mainActivity.getPackageName());
         if (imageId != 0) {
-            if (selectedCategoryImage != null) {
-                selectedCategoryImage.setImageResource(imageId);
+            if (binding.categoryDetailsImage != null) {
+                binding.categoryDetailsImage.setImageResource(imageId);
             }
         } else {
-            if (selectedCategoryImage != null) {
-                selectedCategoryImage.setImageResource(mainActivity.getResources().getIdentifier("t9", "drawable", mainActivity.getPackageName()));
+            if (binding.categoryDetailsImage != null) {
+                binding.categoryDetailsImage.setImageResource(mainActivity.getResources().getIdentifier("t9", "drawable", mainActivity.getPackageName()));
             }
         }
     }
@@ -125,20 +117,20 @@ public class CategoryDetailsFragment extends Fragment {
             public void run() {
 
                 if (mDb.taskDao().checkIfUsersTableIsEmpty().size() == 0){
-                    if (mSwipeRefreshLayout.isRefreshing()) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                    if (binding.swipeRefreshLayoutDetails.isRefreshing()) {
+                        binding.swipeRefreshLayoutDetails.setRefreshing(false);
                     }
-                    mChart.setNoDataText(mainActivity.getString(R.string.no_chart));
-                    mChart.getPaint(Chart.PAINT_INFO).setColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+                    binding.piechart.setNoDataText(mainActivity.getString(R.string.no_chart));
+                    binding.piechart.getPaint(Chart.PAINT_INFO).setColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
 
-                    textPercent.setText(mainActivity.getResources().getString(R.string.category_details_login_text));
+                    binding.textPercent.setText(mainActivity.getResources().getString(R.string.category_details_login_text));
 
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
 
-                            textPercent.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border_blue));
-                            textPercent.setOnClickListener(new View.OnClickListener() {
+                            binding.textPercent.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border_blue));
+                            binding.textPercent.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     mainActivity.finish();
@@ -170,21 +162,19 @@ public class CategoryDetailsFragment extends Fragment {
         nDialog.setTitle(mainActivity.getResources().getString(R.string.category_details_activity_game_options_dialog_title));
         nDialog.setCustomView(dialogLayout);
 
-        SwitchMultiButton mSwitchMultiButtonDifficulty = dialogLayout.findViewById(R.id.switch_difficulty);
-        mSwitchMultiButtonDifficulty.setText(difficultyOptions).setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
-            @Override
-            public void onSwitch(int position, String tabText) {
-                difficulty = tabText;
-            }
-        });
-
-        SwitchMultiButton mSwitchMultiButtonType = dialogLayout.findViewById(R.id.switch_type);
-        mSwitchMultiButtonType.setText(typeOptions).setOnSwitchListener(new SwitchMultiButton.OnSwitchListener() {
-            @Override
-            public void onSwitch(int position, String tabText) {
-                type = tabText;
-            }
-        });
+//        optionsBinding.switchDifficulty.setText(difficultyOptions).setOnSwitchListener(new SwitchMaterial.OnSwitchListener() {
+//            @Override
+//            public void onSwitch(int position, String tabText) {
+//                difficulty = tabText;
+//            }
+//        });
+//
+//        optionsBinding.switchType.setText(typeOptions).setOnSwitchListener(new SwitchMaterial.OnSwitchListener() {
+//            @Override
+//            public void onSwitch(int position, String tabText) {
+//                type = tabText;
+//            }
+//        });
 
         ButtonClickListener buttonClickListener = new ButtonClickListener() {
             @Override
@@ -221,7 +211,7 @@ public class CategoryDetailsFragment extends Fragment {
     }
 
     private void loadSuccessPercentage(){
-        mDb.taskDao().loadSelectedCategoryScore(categoryName.getText().toString()).observe(mainActivity, new Observer<Scores>() {
+        mDb.taskDao().loadSelectedCategoryScore(binding.selectedCategoryName.getText().toString()).observe(mainActivity, new Observer<Scores>() {
             @Override
             public void onChanged(@Nullable Scores scores) {
                 final List<PieEntry> pieChartEntries = new ArrayList<>();
@@ -232,13 +222,13 @@ public class CategoryDetailsFragment extends Fragment {
                     float failScore = (float) 100 - scorePercentage;
                     pieChartEntries.add(new PieEntry(successScore, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_correct)));
                     pieChartEntries.add(new PieEntry(failScore, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
-                    textPercent.setText(scorePercentage + " %");
-                    textSuccess.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_success));
+                    binding.textPercent.setText(scorePercentage + " %");
+                    binding.textSuccess.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_success));
                 }else{
                     pieChartEntries.add(new PieEntry(0, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_correct)));
                     pieChartEntries.add(new PieEntry(0, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_wrong)));
-                    textPercent.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_havent_played_yet_text) + categoryName.getText().toString());
-                    textSuccess.setText("");
+                    binding.textPercent.setText(mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_havent_played_yet_text) + binding.selectedCategoryName.getText().toString());
+                    binding.textSuccess.setText("");
                 }
 
                 PieDataSet dataset = new PieDataSet(pieChartEntries, "");
@@ -255,16 +245,16 @@ public class CategoryDetailsFragment extends Fragment {
                 data.setValueFormatter(new PercentFormatter());
                 data.setValueTextSize(20);
 
-                mChart.setDrawHoleEnabled(false);
-                mChart.setData(data);
-                mChart.setDrawSliceText(false);
-                mChart.getDescription().setEnabled(false);
-                mChart.getLegend().setEnabled(false);
+                binding.piechart.setDrawHoleEnabled(false);
+                binding.piechart.setData(data);
+                binding.piechart.setDrawSliceText(false);
+                binding.piechart.getDescription().setEnabled(false);
+                binding.piechart.getLegend().setEnabled(false);
 
-                mChart.invalidate();
+                binding.piechart.invalidate();
 
-                if (mSwipeRefreshLayout.isRefreshing()) {
-                    mSwipeRefreshLayout.setRefreshing(false);
+                if (binding.swipeRefreshLayoutDetails.isRefreshing()) {
+                    binding.swipeRefreshLayoutDetails.setRefreshing(false);
                 }
             }
         });

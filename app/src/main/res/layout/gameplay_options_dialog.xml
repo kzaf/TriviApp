@@ -17,17 +17,12 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <lib.kingja.switchbutton.SwitchMultiButton
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20sp"
-        android:padding="8dp"
-        app:selectedColor="#1A237E"
-        app:selectedTab="0"
-        app:strokeRadius="5dp"
-        app:strokeWidth="1dp"
-        app:textSize="10sp" />
+        android:padding="8dp"/>
 
     <TextView
         android:id="@+id/textView3"
@@ -38,17 +33,12 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <lib.kingja.switchbutton.SwitchMultiButton
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20sp"
-        android:padding="8dp"
-        app:selectedColor="#B71C1C"
-        app:selectedTab="0"
-        app:strokeRadius="5dp"
-        app:strokeWidth="1dp"
-        app:textSize="10sp" />
+        android:padding="8dp" />
 
 
 </LinearLayout>

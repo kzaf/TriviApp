@@ -8,7 +8,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.charts.Chart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -39,6 +39,7 @@ import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.TaskDao;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
+import com.zaf.triviapp.databinding.ActivityProfileBinding;
 import com.zaf.triviapp.login.LoginAuth;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.ui.MainActivity;
@@ -48,11 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class ProfileFragment extends Fragment
-        implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener {
+public class ProfileFragment extends Fragment implements CategoriesProfileAdapter.CategoriesProfileAdapterListItemClickListener {
 
     public static final String SCORES_LIST = "scores_list";
     public static final String SCORES_LAYOUT_MANAGER = "scores_layout_manager";
@@ -66,23 +63,16 @@ public class ProfileFragment extends Fragment
     private AppDatabase mDb;
     private TaskDao taskDao;
     private MainActivity mainActivity;
-
-    @BindView(R.id.profile_username_tv) TextView userName;
-    @BindView(R.id.profile_email_tv) TextView userEmail;
-    @BindView(R.id.login_user) TextView loginUser;
-    @BindView(R.id.profile_percent) TextView profilePercent;
-    @BindView(R.id.profile_success) TextView profileSuccess;
-    @BindView(R.id.profile_recycler_view) RecyclerView profileRecyclerView;
-    @BindView(R.id.swipe_refresh_layout_profile) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.piechart_sum) PieChart mChart;
+    private RecyclerView recyclerView;
+    private ActivityProfileBinding binding;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_profile, container, false);
-        ButterKnife.bind(this, view);
+        binding = ActivityProfileBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         mainActivity = ((MainActivity)getActivity());
         mDb = AppDatabase.getInstance(mainActivity);
@@ -93,7 +83,15 @@ public class ProfileFragment extends Fragment
             // It's a hack to delay the onRestoreInstanceState
             new Handler().postDelayed(new Runnable() {
                 @Override public void run() {
-                    profileRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SCORES_LAYOUT_MANAGER));
+//                    binding.profileRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SCORES_LAYOUT_MANAGER));
+                    recyclerView = (RecyclerView) binding.profileRecyclerView;
+
+                    LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_from_bottom);
+                    recyclerView.setLayoutAnimation(controller);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    recyclerView.scheduleLayoutAnimation();
                 }
             }, 300);
             scoresList = savedInstanceState.getParcelableArrayList(SCORES_LIST);
@@ -104,7 +102,7 @@ public class ProfileFragment extends Fragment
             Utils utils = new Utils(getActivity());
             this.hasInternet = utils.hasActiveInternetConnection();
 
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            binding.swipeRefreshLayoutProfile.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     setupUi(taskDao);
@@ -128,7 +126,7 @@ public class ProfileFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(SCORES_LIST, scoresList);
-        outState.putParcelable(SCORES_LAYOUT_MANAGER, profileRecyclerView.getLayoutManager().onSaveInstanceState());
+//        outState.putParcelable(SCORES_LAYOUT_MANAGER, binding.profileRecyclerView.getLayoutManager().onSaveInstanceState());
         outState.putBoolean(HAS_INTERNET, this.hasInternet);
         super.onSaveInstanceState(outState);
     }
@@ -202,13 +200,13 @@ public class ProfileFragment extends Fragment
             readScores(userDetails.getUserId());
         }
 
-        userName.setText(userDetails.getUserName());
-        userEmail.setText(userDetails.getUserEmail());
+        binding.profileUsernameTv.setText(userDetails.getUserName());
+        binding.profileEmailTv.setText(userDetails.getUserEmail());
 
-        loginUser.setText(mainActivity.getResources().getString(R.string.profile_logout_button));
-        loginUser.setBackgroundResource(R.drawable.custom_border_red);
+        binding.loginUser.setText(mainActivity.getResources().getString(R.string.profile_logout_button));
+        binding.loginUser.setBackgroundResource(R.drawable.custom_border_red);
 
-        loginUser.setOnClickListener(new View.OnClickListener() {
+        binding.loginUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialogLogout();
@@ -225,13 +223,13 @@ public class ProfileFragment extends Fragment
     }
 
     private void userNotLoggedPopulateUi() {
-        userName.setText(mainActivity.getResources().getString(R.string.profile_activity_not_logged_label));
-        userEmail.setText("");
+        binding.profileUsernameTv.setText(mainActivity.getResources().getString(R.string.profile_activity_not_logged_label));
+        binding.profileEmailTv.setText("");
 
-        loginUser.setText(mainActivity.getResources().getString(R.string.profile_activity_login_label));
-        loginUser.setBackgroundResource(R.drawable.custom_border_blue);
+        binding.loginUser.setText(mainActivity.getResources().getString(R.string.profile_activity_login_label));
+        binding.loginUser.setBackgroundResource(R.drawable.custom_border_blue);
 
-        loginUser.setOnClickListener(new View.OnClickListener() {
+        binding.loginUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.finish();
@@ -303,14 +301,14 @@ public class ProfileFragment extends Fragment
 
     private void chartOptions(boolean isUserLogged, float scores) {
         if (!isUserLogged){
-            Paint paint =  mChart.getPaint(Chart.PAINT_INFO);
+            Paint paint =  binding.piechartSum.getPaint(Chart.PAINT_INFO);
             paint.setColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
-            profilePercent.setText("");
-            profileSuccess.setText("");
-            mChart.setNoDataText(mainActivity.getResources().getString(R.string.no_chart));
+            binding.profilePercent.setText("");
+            binding.profileSuccess.setText("");
+            binding.piechartSum.setNoDataText(mainActivity.getResources().getString(R.string.no_chart));
         }else{
-            profilePercent.setText(String.format("%s%%", String.format("%.2f", scores * 10)));
-            profileSuccess.setText(TOTAL_SCORE);
+            binding.profilePercent.setText(String.format("%s%%", String.format("%.2f", scores * 10)));
+            binding.profileSuccess.setText(TOTAL_SCORE);
 
             List<PieEntry> pieChartEntries = new ArrayList<>();
             pieChartEntries.add(new PieEntry(scores * 10, mainActivity.getResources().getString(R.string.category_details_activity_pie_entry_success)));
@@ -329,16 +327,16 @@ public class ProfileFragment extends Fragment
             data.setValueFormatter(new PercentFormatter());
             data.setValueTextSize(20);
 
-            mChart.setDrawHoleEnabled(false);
-            mChart.setDrawSliceText(false);
-            mChart.getDescription().setEnabled(false);
-            mChart.getLegend().setEnabled(false);
+            binding.piechartSum.setDrawHoleEnabled(false);
+            binding.piechartSum.setDrawSliceText(false);
+            binding.piechartSum.getDescription().setEnabled(false);
+            binding.piechartSum.getLegend().setEnabled(false);
 
-            mChart.setData(data);
-            mChart.invalidate();
+            binding.piechartSum.setData(data);
+            binding.piechartSum.invalidate();
         }
-        if (mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (binding.swipeRefreshLayoutProfile.isRefreshing()) {
+            binding.swipeRefreshLayoutProfile.setRefreshing(false);
         }
         if (progressDialog != null) {
             progressDialog.dismiss();
@@ -346,11 +344,11 @@ public class ProfileFragment extends Fragment
     }
 
     private void generateProfileCategoriesList(List<Scores> scoresList) {
-        CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, scoresList);
-        profileRecyclerView.setLayoutManager(new LinearLayoutManager(mainActivity));
-        profileRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        profileRecyclerView.scheduleLayoutAnimation();
+//        CategoriesProfileAdapter adapter = new CategoriesProfileAdapter(this, scoresList);
+//        binding.profileRecyclerView.setLayoutManager(new LinearLayoutManager(mainActivity));
+//        binding.profileRecyclerView.setAdapter(adapter);
+//        adapter.notifyDataSetChanged();
+//        binding.profileRecyclerView.scheduleLayoutAnimation();
 
         // TODO
 //        sendScoresToWidget(scoresList);

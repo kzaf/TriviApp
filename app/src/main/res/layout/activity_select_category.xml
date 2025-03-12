@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/backgroundcolor"
-    tools:context=".ui.SelectCategoryActivity">
+    tools:context=".ui.fragments.SelectCategoryFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,15 +36,10 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <com.mlsdev.animatedrv.AnimatedRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/categories_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:animationDuration="600"
-                app:layoutAnimation="@anim/layout_animation_from_bottom"
-                app:layoutManagerOrientation="vertical"
-                app:layoutManagerReverse="false"
-                app:layoutManagerType="linear" />
+                android:layout_height="match_parent" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.plattysoft.leonids.ParticleSystem;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
 import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
@@ -35,7 +33,7 @@ import com.zaf.triviapp.R;
 import com.zaf.triviapp.database.AppDatabase;
 import com.zaf.triviapp.database.tables.Scores;
 import com.zaf.triviapp.database.tables.UserDetails;
-import com.zaf.triviapp.dialogs.Dialogs;
+import com.zaf.triviapp.databinding.ActivityGameplayBinding;
 import com.zaf.triviapp.models.Category;
 import com.zaf.triviapp.models.Question;
 import com.zaf.triviapp.models.QuestionList;
@@ -47,8 +45,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,10 +57,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     private static final String QUESTION_LIST = "question_list";
     private static final String QUESTION_INDEX = "question_index";
     private static final String QUESTION = "question";
-    private static final String ANSWER_1 = "answer1";
-    private static final String ANSWER_2 = "answer2";
-    private static final String ANSWER_3 = "answer3";
-    private static final String ANSWER_4 = "answer4";
+    private static final String ANSWER_1 = "binding.answer1";
+    private static final String ANSWER_2 = "binding.answer2";
+    private static final String ANSWER_3 = "binding.answer3";
+    private static final String ANSWER_4 = "binding.answer4";
     private static final String STEP = "step";
     private static final String IS_TRUE_FALSE = "is_true_false";
     private static final String LEVEL = "level";
@@ -82,23 +78,13 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     private ProgressDialog progressDialog;
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
-
-    @BindView(R.id.second_two_buttons) LinearLayout secondTwoButtons;
-    @BindView(R.id.gameplay_selected_category_name) TextView gameplayCategoryName;
-    @BindView(R.id.gameplay_difficulty_level) TextView gameplayDifficultyLevel;
-    @BindView(R.id.gameplay_step_number) TextView gameplayStepNumber;
-    @BindView(R.id.question_text) TextView question;
-    @BindView(R.id.answer1) TextView answer1;
-    @BindView(R.id.answer2) TextView answer2;
-    @BindView(R.id.answer3) TextView answer3;
-    @BindView(R.id.answer4) TextView answer4;
+    private ActivityGameplayBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_gameplay, container, false);
-        ButterKnife.bind(this, view);
 
         mainActivity = ((MainActivity)getActivity());
         mDb = AppDatabase.getInstance(mainActivity);
@@ -117,15 +103,15 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
                 outState.putParcelableArrayList(QUESTION_LIST, questionList);
                 outState.putInt(QUESTION_INDEX, questionIndex);
                 outState.putString(LEVEL, questionList.get(questionIndex-1).getDifficulty());
-                outState.putString(QUESTION, question.getText().toString());
-                outState.putString(ANSWER_1, answer1.getText().toString());
-                outState.putString(ANSWER_2, answer2.getText().toString());
-                outState.putString(ANSWER_3, answer3.getText().toString());
-                outState.putString(ANSWER_4, answer4.getText().toString());
-                outState.putString(STEP, gameplayStepNumber.getText().toString());
+                outState.putString(QUESTION, binding.questionText.getText().toString());
+                outState.putString(ANSWER_1, binding.answer1.getText().toString());
+                outState.putString(ANSWER_2, binding.answer2.getText().toString());
+                outState.putString(ANSWER_3, binding.answer3.getText().toString());
+                outState.putString(ANSWER_4, binding.answer4.getText().toString());
+                outState.putString(STEP, binding.gameplayStepNumber.getText().toString());
                 outState.putInt(SCORE_CORRECT_ANSWERS, scoreCorrectAnswers);
 
-                if (secondTwoButtons.getVisibility() == View.INVISIBLE)
+                if (binding.secondTwoButtons.getVisibility() == View.INVISIBLE)
                     outState.putBoolean(IS_TRUE_FALSE, true);
                 else
                     outState.putBoolean(IS_TRUE_FALSE, false);
@@ -139,27 +125,19 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.answer1:
-                checkAnswerCorrection(answer1);
-                break;
+        int viewId = v.getId();
 
-            case R.id.answer2:
-                checkAnswerCorrection(answer2);
-                break;
-
-            case R.id.answer3:
-                checkAnswerCorrection(answer3);
-                break;
-
-            case R.id.answer4:
-                checkAnswerCorrection(answer4);
-                break;
-
-            default:
-                break;
+        if (viewId == R.id.answer1) {
+            checkAnswerCorrection(binding.answer1);
+        } else if (viewId == R.id.answer2) {
+            checkAnswerCorrection(binding.answer2);
+        } else if (viewId == R.id.answer3) {
+            checkAnswerCorrection(binding.answer3);
+        } else if (viewId == R.id.answer4) {
+            checkAnswerCorrection(binding.answer4);
         }
     }
+
 
     private void populateUi(Bundle savedInstanceState) {
         mainActivity.setBackButtonVisibility(false);
@@ -171,7 +149,7 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
             type = bundle.getString(TYPE);
         }
 
-        gameplayCategoryName.setText(selectedCategory.getName());
+        binding.gameplaySelectedCategoryName.setText(selectedCategory.getName());
         vibe = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
 
         if (savedInstanceState != null){
@@ -195,23 +173,23 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
 
         setLevelLabelTextAndColor(savedInstanceState.getString(LEVEL));
 
-        question.setText(Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT));
-        answer1.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT));
-        answer1.setOnClickListener(this);
-        answer2.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT));
-        answer2.setOnClickListener(this);
+        binding.questionText.setText(Html.fromHtml(savedInstanceState.getString(QUESTION), Html.FROM_HTML_MODE_COMPACT));
+        binding.answer1.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_1), Html.FROM_HTML_MODE_COMPACT));
+        binding.answer1.setOnClickListener(this);
+        binding.answer2.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_2), Html.FROM_HTML_MODE_COMPACT));
+        binding.answer2.setOnClickListener(this);
 
         if(savedInstanceState.getBoolean(IS_TRUE_FALSE)) {
-            secondTwoButtons.setVisibility(View.INVISIBLE);
+            binding.secondTwoButtons.setVisibility(View.INVISIBLE);
         } else{
-            secondTwoButtons.setVisibility(View.VISIBLE);
+            binding.secondTwoButtons.setVisibility(View.VISIBLE);
 
-            answer3.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT));
-            answer3.setOnClickListener(this);
-            answer4.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT));
-            answer4.setOnClickListener(this);
+            binding.answer3.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_3), Html.FROM_HTML_MODE_COMPACT));
+            binding.answer3.setOnClickListener(this);
+            binding.answer4.setText(Html.fromHtml(savedInstanceState.getString(ANSWER_4), Html.FROM_HTML_MODE_COMPACT));
+            binding.answer4.setOnClickListener(this);
         }
-        gameplayStepNumber.setText(savedInstanceState.getString(STEP));
+        binding.gameplayStepNumber.setText(savedInstanceState.getString(STEP));
     }
 
     private void initializeDialog() {
@@ -270,10 +248,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
             return;
         }
 
-        answer1.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
-        answer2.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
-        answer3.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
-        answer4.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        binding.answer1.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        binding.answer2.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        binding.answer3.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
+        binding.answer4.setBackground(mainActivity.getResources().getDrawable(R.drawable.custom_border));
 
         setLevelLabelTextAndColor(questionList.get(questionIndex).getDifficulty());
 
@@ -282,49 +260,49 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
         Collections.shuffle(mixedQuestions);
 
         // Question
-        question.setText(Html.fromHtml(questionList.get(questionIndex).getQuestion(),
+        binding.questionText.setText(Html.fromHtml(questionList.get(questionIndex).getQuestion(),
                 Html.FROM_HTML_MODE_COMPACT));
 
         // Answers
-        answer1.setText(Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT));
-        answer1.setOnClickListener(this);
-        answer2.setText(Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT));
-        answer2.setOnClickListener(this);
+        binding.answer1.setText(Html.fromHtml(mixedQuestions.get(0), Html.FROM_HTML_MODE_COMPACT));
+        binding.answer1.setOnClickListener(this);
+        binding.answer2.setText(Html.fromHtml(mixedQuestions.get(1), Html.FROM_HTML_MODE_COMPACT));
+        binding.answer2.setOnClickListener(this);
 
         if(questionList.get(questionIndex).getType().equals("boolean")) {
-            secondTwoButtons.setVisibility(View.INVISIBLE);
+            binding.secondTwoButtons.setVisibility(View.INVISIBLE);
         } else{
-            secondTwoButtons.setVisibility(View.VISIBLE);
-            answer3.setText(Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT));
-            answer3.setOnClickListener(this);
-            answer4.setText(Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT));
-            answer4.setOnClickListener(this);
+            binding.secondTwoButtons.setVisibility(View.VISIBLE);
+            binding.answer3.setText(Html.fromHtml(mixedQuestions.get(2), Html.FROM_HTML_MODE_COMPACT));
+            binding.answer3.setOnClickListener(this);
+            binding.answer4.setText(Html.fromHtml(mixedQuestions.get(3), Html.FROM_HTML_MODE_COMPACT));
+            binding.answer4.setOnClickListener(this);
         }
 
         // Step counter
         int step = questionIndex + 1;
-        gameplayStepNumber.setText(step + "/10");
+        binding.gameplayStepNumber.setText(step + "/10");
 
         questionIndex++;
     }
 
     private void setLevelLabelTextAndColor(String level) {
         if (level == null){
-            gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
-            gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
+            binding.gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
+            binding.gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
         }else{
             switch (level){
                 case "medium":
-                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
-                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
+                    binding.gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_medium));
+                    binding.gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.orange));
                     break;
                 case "hard":
-                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_hard));
-                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+                    binding.gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_hard));
+                    binding.gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
                     break;
                 default:
-                    gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_easy));
-                    gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.green));
+                    binding.gameplayDifficultyLevel.setText(mainActivity.getResources().getString(R.string.gameplay_difficulty_easy));
+                    binding.gameplayDifficultyLevel.setTextColor(mainActivity.getResources().getColor(R.color.green));
             }
         }
     }
@@ -381,12 +359,12 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
                             public void run() {
                                 final UserDetails userDetails = mDb.taskDao().loadUserDetails();
                                 if(userDetails != null){
-                                    mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                    mDb.taskDao().insertScore(new Scores(userDetails.getUserId(), binding.gameplaySelectedCategoryName.getText().toString(), score));
 
                                     mainActivity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            updateFirebase(new Scores(userDetails.getUserId(), gameplayCategoryName.getText().toString(), score));
+                                            updateFirebase(new Scores(userDetails.getUserId(), binding.gameplaySelectedCategoryName.getText().toString(), score));
                                         }
                                     });
                                 }else{
@@ -414,10 +392,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     }
 
     private void checkAnswerCorrection(TextView answer) {
-        answer1.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
-        answer2.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
-        answer3.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
-        answer4.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        binding.answer1.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        binding.answer2.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        binding.answer3.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
+        binding.answer4.setBackgroundColor(mainActivity.getResources().getColor(R.color.colorAccentRed));
 
         String answerText = answer.getText().toString();
         Spanned answerCorrect =
@@ -444,10 +422,10 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
             }
 
             ArrayList<TextView> questions = new ArrayList<>();
-            questions.add(answer1);
-            questions.add(answer2);
-            questions.add(answer3);
-            questions.add(answer4);
+            questions.add(binding.answer1);
+            questions.add(binding.answer2);
+            questions.add(binding.answer3);
+            questions.add(binding.answer4);
 
             for (int j=0; j<questions.size(); j++){
                 if(questions.get(j).getText().toString().equals(answerCorrect.toString())){
@@ -477,11 +455,11 @@ public class GameplayFragment extends Fragment implements View.OnClickListener{
     }
 
     private void particlesEffect(TextView button){
-        new ParticleSystem(mainActivity, 10,
-                mainActivity.getResources()
-                        .getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
-                .setSpeedRange(0.2f, 0.5f)
-                .oneShot(button, 10);
+//        new ParticleSystem(mainActivity, 10,
+//                mainActivity.getResources()
+//                        .getDrawable(R.drawable.ic_star_yellow_24dp), 1000)
+//                .setSpeedRange(0.2f, 0.5f)
+//                .oneShot(button, 10);
     }
 
     @SuppressLint("WrongConstant")

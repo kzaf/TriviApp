@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/backgroundcolor"
-    tools:context=".ui.ProfileActivity">
+    tools:context=".ui.fragments.ProfileFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout_profile"
@@ -128,16 +128,11 @@
 
             </LinearLayout>
 
-            <com.mlsdev.animatedrv.AnimatedRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profile_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:animationDuration="600"
-                app:layoutAnimation="@anim/layout_animation_from_bottom"
-                app:layoutManagerOrientation="vertical"
-                app:layoutManagerReverse="false"
-                app:layoutManagerType="linear" />
+                android:layout_weight="1" />
 
         </LinearLayout>
 
